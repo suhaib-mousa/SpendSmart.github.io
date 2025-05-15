@@ -11,6 +11,13 @@
         crossorigin="anonymous" referrerpolicy="no-referrer" />
          <link rel="icon" href="Media/budg.png">
   <style>
+     :root {
+            --primary-blue: #0056b3;
+            --secondary-blue: #007bff;
+            --light-blue: #e6f2ff;
+            --dark-blue: #004085;
+            --accent-blue: #00a0e9;
+        }
     body {
       height: 100vh;
       overflow: hidden;
@@ -20,9 +27,13 @@
     }
 
     .fa-wallet {
-            color: #628ecb;
+            color: var(--primary-blue);
             font-size: 20px;
            
+        }
+     .log:hover{
+
+          background-color: var(--primary-blue);
         }
     .hero {
       height: 100%;
@@ -172,8 +183,8 @@ data-title="Ways to make money from the Internet"
 
           </ul>
           <div class="ms-lg-4 mt-3 mt-lg-0">
-              <a href="LogIn.html" class="btn btn-outline-primary me-2">Log In</a>
-              <a href="SignUp.html" class="btn btn-primary">Sign Up</a>
+              <a href="LogIn.html" class="btn btn-outline-primary me-2 log" style="outline-color: var(--primary-blue);">Log In</a>
+              <a href="SignUp.html" class="btn btn-primary" style="background-color: var(--primary-blue);">Sign Up</a>
           </div>
       </div>
   </div>
