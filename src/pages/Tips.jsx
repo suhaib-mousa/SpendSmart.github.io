@@ -7,7 +7,7 @@ import '../styles/Tips.css';
 
 const Tips = () => {
   const [currentTip, setCurrentTip] = useState({
-    bg: '/html/Media/Untitled design(8).png',
+    bg: '/Media/Untitled design(8).png',
     title: 'Ways to make money from the Internet',
     text: 'A video from the Online Lessons channel discusses ways to make money online and increase your sources of income..',
     link: 'https://youtu.be/wAIIct0rNZU?si=duAyUiHhcqcePIbT'
@@ -15,25 +15,25 @@ const Tips = () => {
 
   const tips = [
     {
-      bg: '/html/Media/Untitled design(10).png',
+      bg: '/Media/Untitled design(10).png',
       title: 'The most important rule in investment',
       text: 'What is investment, why do we invest, and how? This clip will answer these questions.',
       link: 'https://youtu.be/bFfeCSbLaB8?si=EDYwvHJEwK6WHj4u'
     },
     {
-      bg: '/html/Media/Untitled design(11).png',
+      bg: '/Media/Untitled design(11).png',
       title: 'Best money management system',
       text: 'A video from the Dupamicaffeine channel shows a practical way to divide your monthly salary and increase your income..',
       link: 'https://youtu.be/loGAyJTbu88?si=C6H6odrof4pjwXlS'
     },
     {
-      bg: '/html/Media/Untitled design(14).png',
+      bg: '/Media/Untitled design(14).png',
       title: 'How to be creative in financial management and save your money?',
       text: 'YouTube video showing ways to manage your finances well.',
       link: 'https://youtu.be/s0t_4MSQEYQ?si=aX-tJnzhbu4Alc-w'
     },
     {
-      bg: '/html/Media/Untitled design(12).png',
+      bg: '/Media/Untitled design(12).png',
       title: 'financial freedom',
       text: 'YouTube clip from the show \'Seen\' talking about financial freedom.',
       link: 'https://youtu.be/kZTSzFfMFjY?si=yGGtVtRu5M5NTLLw'
@@ -44,7 +44,7 @@ const Tips = () => {
     const realIndex = swiper.realIndex;
     if (realIndex === 0) {
       setCurrentTip({
-        bg: '/html/Media/Untitled design(8).png',
+        bg: '/Media/Untitled design(8).png',
         title: 'Ways to make money from the Internet',
         text: 'A video from the Online Lessons channel discusses ways to make money online and increase your sources of income..',
         link: 'https://youtu.be/wAIIct0rNZU?si=duAyUiHhcqcePIbT'
@@ -55,14 +55,14 @@ const Tips = () => {
   };
 
   useEffect(() => {
-    document.body.style.backgroundImage = `url(${currentTip.bg})`;
+    document.body.style.backgroundImage = `url('${currentTip.bg}')`;
     return () => {
       document.body.style.backgroundImage = 'none';
     };
   }, [currentTip]);
 
   return (
-    <div className="tips-container" style={{ backgroundImage: `url(${currentTip.bg})` }}>
+    <div className="tips-container" style={{ backgroundImage: `url('${currentTip.bg}')` }}>
       <div className="hero d-flex align-items-end">
         <div className="hero-content mb-5">
           <h1 className="tip-title text-right">{currentTip.title}</h1>
@@ -103,7 +103,7 @@ const Tips = () => {
               {tips.map((tip, index) => (
                 <SwiperSlide
                   key={index}
-                  style={{ backgroundImage: `url(${tip.bg})` }}
+                  style={{ backgroundImage: `url('${tip.bg}')` }}
                 ></SwiperSlide>
               ))}
               <SwiperSlide style={{ opacity: 0 }}></SwiperSlide>
