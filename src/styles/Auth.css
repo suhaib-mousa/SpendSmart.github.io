@@ -177,12 +177,17 @@
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(0, 86, 179, 0.2);
 }
+.login.auth-cta-side {
+  clip-path: polygon(0% 0, 85% 0, 100% 100%, 0% 100%);
+}
 
+.signup.auth-cta-side {  
+  clip-path: polygon(15% 0, 100% 0, 100% 100%, 0% 100%);
+}
 /* Right side - CTA */
 .auth-cta-side {
   width: 50%;
   background: var(--primary-blue);
-  clip-path: polygon(15% 0, 100% 0, 100% 100%, 0% 100%);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -195,6 +200,8 @@
   z-index: 1;
   transition: clip-path 0.6s ease-in-out;
 }
+
+
 
 .auth-cta-content {
   max-width: 400px;
@@ -239,21 +246,20 @@
 /* Animations */
 @keyframes slideInLeft {
   from {
-    transform: translateX(-100%);
-    opacity: 0;
+    transform: translateX(100%);
   }
   to {
     transform: translateX(0);
-    opacity: 1;
   }
 }
 
+
 @keyframes slideInRight {
   from {
-    clip-path: polygon(100% 0, 100% 0, 100% 100%, 100% 100%);
+    transform: translateX(-100%);
   }
   to {
-    clip-path: polygon(15% 0, 100% 0, 100% 100%, 0% 100%);
+    transform: translateX(0);
   }
 }
 

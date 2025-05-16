@@ -5,7 +5,7 @@ import '../styles/Auth.css';
 function Login() {
   return (
     <div className="auth-container">
-      <div className="auth-form-side">
+      <div className="login auth-form-side">
         <div className="auth-logo">
           <Link to="/">
             <i className="fa-solid fa-wallet"> SpendSmart</i>
@@ -56,7 +56,7 @@ function Login() {
         </div>
       </div>
 
-      <div className="auth-cta-side">
+      <div className="signup auth-cta-side">
         <div className="auth-cta-content">
           <h2 className="auth-cta-title">Don't Have an Account Yet?</h2>
           <p className="auth-cta-text">
