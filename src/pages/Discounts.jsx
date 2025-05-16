@@ -21,6 +21,18 @@ function Discounts() {
     });
   }, []);
 
+  useEffect(() => {
+    if (selectedDeal) {
+      document.body.classList.add('modal-open');
+    } else {
+      document.body.classList.remove('modal-open');
+    }
+    
+    return () => {
+      document.body.classList.remove('modal-open');
+    };
+  }, [selectedDeal]);
+
   const handleDealClick = (deal) => {
     setSelectedDeal(deal);
     // Reset review form
