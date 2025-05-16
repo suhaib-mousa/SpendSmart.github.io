@@ -27,20 +27,38 @@
 }
 
 .auth-logo {
-  margin-bottom: 4rem;
+  position: absolute;
+  top: 20px;
+  left: 20px;
 }
 
 .auth-logo a {
   text-decoration: none;
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+}
+
+.auth-logo a i {
+  margin-right: 10px;
+}
+
+/* Logo color changes based on parent container */
+.auth-form-side .auth-logo a,
+.auth-form-side .auth-logo a i {
   color: var(--primary-blue);
-  font-size: 1.25rem;
-  font-weight: 600;
+}
+
+.auth-cta-side .auth-logo a,
+.auth-cta-side .auth-logo a i {
+  color: #fdfbf5;
 }
 
 .auth-form-container {
   max-width: 480px;
   margin: 0 auto;
   width: 100%;
+  margin-top: 80px;
 }
 
 .auth-title {
