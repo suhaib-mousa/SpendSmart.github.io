@@ -3,9 +3,13 @@ import { Link } from 'react-router-dom';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import '../styles/Discounts.css';
+import { getDeals, getDealReviews, createReview, getCategories } from '../services/api';
 
 function Discounts() {
+  const [deals, setDeals] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [selectedDeal, setSelectedDeal] = useState(null);
+  const [dealReviews, setDealReviews] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedLocation, setSelectedLocation] = useState('');
   const [selectedPriceRange, setPriceRange] = useState('');
@@ -13,17 +17,22 @@ function Discounts() {
   const [rating, setRating] = useState(0);
   const [reviewName, setReviewName] = useState('');
   const [reviewComment, setReviewComment] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     AOS.init({
       duration: 1000,
       once: true
     });
+    fetchDeals();
+    fetchCategories();
   }, []);
 
   useEffect(() => {
     if (selectedDeal) {
       document.body.classList.add('modal-open');
+      fetchDealReviews(selectedDeal._id);
     } else {
       document.body.classList.remove('modal-open');
     }
@@ -33,9 +42,40 @@ function Discounts() {
     };
   }, [selectedDeal]);
 
+  const fetchDeals = async () => {
+    try {
+      setLoading(true);
+      const data = await getDeals();
+      setDeals(data);
+      setError(null);
+    } catch (err) {
+      setError('Failed to fetch deals');
+      console.error('Error fetching deals:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchCategories = async () => {
+    try {
+      const data = await getCategories();
+      setCategories(data);
+    } catch (err) {
+      console.error('Error fetching categories:', err);
+    }
+  };
+
+  const fetchDealReviews = async (dealId) => {
+    try {
+      const data = await getDealReviews(dealId);
+      setDealReviews(data);
+    } catch (err) {
+      console.error('Error fetching reviews:', err);
+    }
+  };
+
   const handleDealClick = (deal) => {
     setSelectedDeal(deal);
-    // Reset review form
     setRating(0);
     setReviewName('');
     setReviewComment('');
@@ -45,14 +85,27 @@ function Discounts() {
     setSelectedDeal(null);
   };
 
-  const handleReviewSubmit = (e) => {
+  const handleReviewSubmit = async (e) => {
     e.preventDefault();
-    // Here you would typically submit the review to a backend
-    console.log('Review submitted:', { name: reviewName, rating, comment: reviewComment });
-    // Clear form
-    setRating(0);
-    setReviewName('');
-    setReviewComment('');
+    try {
+      const reviewData = {
+        deal: selectedDeal._id,
+        name: reviewName,
+        rating,
+        comment: reviewComment
+      };
+      
+      await createReview(reviewData);
+      await fetchDealReviews(selectedDeal._id);
+      await fetchDeals(); // Refresh deals to get updated ratings
+      
+      // Clear form
+      setRating(0);
+      setReviewName('');
+      setReviewComment('');
+    } catch (err) {
+      console.error('Error submitting review:', err);
+    }
   };
 
   // Get unique locations for filter
@@ -90,6 +143,26 @@ function Discounts() {
 
     return matchesSearch && matchesLocation && matchesPriceRange() && matchesDiscount();
   });
+
+  if (loading) {
+    return (
+      <div className="loading-container">
+        <div className="spinner-border text-primary" role="status">
+          <span className="visually-hidden">Loading...</span>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="error-container">
+        <div className="alert alert-danger" role="alert">
+          {error}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="discounts-page">
@@ -179,7 +252,7 @@ function Discounts() {
         <div className="container">
           <div className="row">
             {filteredDeals.map((deal, index) => (
-              <div className="col-lg-3 col-md-6 mb-4" key={index} data-aos="fade-up" data-aos-delay={index * 100}>
+              <div className="col-lg-3 col-md-6 mb-4" key={deal._id} data-aos="fade-up" data-aos-delay={index * 100}>
                 <div className="deal-card" onClick={() => handleDealClick(deal)}>
                   <div className="deal-image">
                     <img src={deal.image} alt={deal.title} />
@@ -227,9 +300,10 @@ function Discounts() {
         </div>
       </footer>
 
-      {/* Expanded Deal Modal */}
+      {/* Deal Modal */}
       {selectedDeal && (
         <div className="modal show d-block" tabIndex="-1">
+          <div className="modal-backdrop show" onClick={closeModal}></div>
           <div className="modal-dialog modal-xl">
             <div className="modal-content">
               <div className="expanded-card bg-white rounded-lg shadow-lg">
@@ -257,10 +331,10 @@ function Discounts() {
                   </div>
 
                   <div className="flex flex-wrap gap-2 mb-4">
-                    <span className="category-badge">{selectedDeal.category}</span>
+                    <span className="category-badge">{selectedDeal.category?.name || 'Uncategorized'}</span>
                     <span className="location-badge">{selectedDeal.location}</span>
                     <span className="text-gray-500 text-sm py-1 px-2 bg-gray-100 rounded-md">
-                      Expires on {selectedDeal.validUntil}
+                      Expires on {new Date(selectedDeal.validUntil).toLocaleDateString()}
                     </span>
                   </div>
 
@@ -276,11 +350,13 @@ function Discounts() {
                   <div className="border-t border-gray-200 pt-6 mb-6">
                     <h3 className="text-lg font-semibold mb-4">Reviews & Feedback</h3>
                     <div className="feedback-list mb-6">
-                      {selectedDeal.reviews?.map((review, index) => (
-                        <div key={index} className="review-item p-3 bg-gray-50 rounded-lg mb-3">
+                      {dealReviews.map((review, index) => (
+                        <div key={review._id} className="review-item p-3 bg-gray-50 rounded-lg mb-3">
                           <div className="flex justify-between items-start">
                             <div className="font-medium">{review.name}</div>
-                            <div className="text-gray-500 text-sm">{review.date}</div>
+                            <div className="text-gray-500 text-sm">
+                              {new Date(review.date).toLocaleDateString()}
+                            </div>
                           </div>
                           <div className="my-1">
                             <div className="star-rating">
@@ -340,190 +416,10 @@ function Discounts() {
               </div>
             </div>
           </div>
-          <div className="modal-backdrop show" onClick={closeModal}></div>
         </div>
       )}
     </div>
   );
 }
-
-const deals = [
-  {
-    title: "Adventure Gear",
-    location: "Amman, Jordan",
-    originalPrice: 100,
-    currentPrice: 50,
-    discount: "50%",
-    image: "/Media/camping.png",
-    validUntil: "2025-12-31",
-    category: "Outdoor",
-    rating: 4.5,
-    isNew: true,
-    description: "Get the best deals on camping and hiking gear. Perfect for your next outdoor adventure.",
-    address: "King Hussein Business Park, Amman",
-    reviews: [
-      {
-        name: "Ahmad Ibrahim",
-        date: "Apr 15, 2025",
-        rating: 5,
-        comment: "Great quality gear at an amazing price!"
-      },
-      {
-        name: "Layla Hassan",
-        date: "Mar 22, 2025",
-        rating: 4,
-        comment: "Good selection and helpful staff."
-      }
-    ]
-  },
-  {
-    title: "Business Attire",
-    location: "Irbid, Jordan",
-    originalPrice: 200,
-    currentPrice: 140,
-    discount: "30%",
-    image: "/Media/businessman-1026415_640.jpg",
-    validUntil: "2025-12-31",
-    category: "Fashion",
-    rating: 4.2,
-    description: "Professional business wear for men and women. Suits, shirts, and accessories.",
-    address: "University Street, Irbid",
-    reviews: [
-      {
-        name: "Omar Khalil",
-        date: "Apr 10, 2025",
-        rating: 4,
-        comment: "Great quality suits at reasonable prices"
-      }
-    ]
-  },
-  {
-    title: "Team Activities",
-    location: "Aqaba, Jordan",
-    originalPrice: 80,
-    currentPrice: 60,
-    discount: "25%",
-    image: "/Media/teamwork-7423959_640.jpg",
-    validUntil: "2025-12-31",
-    category: "Activities",
-    rating: 4.8,
-    description: "Team building activities and water sports in Aqaba.",
-    address: "South Beach, Aqaba",
-    reviews: [
-      {
-        name: "Sarah Ahmed",
-        date: "Apr 5, 2025",
-        rating: 5,
-        comment: "Amazing experience for our team!"
-      }
-    ]
-  },
-  {
-    title: "Electronics",
-    location: "Zarqa, Jordan",
-    originalPrice: 500,
-    currentPrice: 300,
-    discount: "40%",
-    image: "/Media/disc.png",
-    validUntil: "2025-12-31",
-    category: "Technology",
-    rating: 4.3,
-    isNew: true,
-    description: "Latest electronics and gadgets at discounted prices.",
-    address: "New Zarqa, Main Street",
-    reviews: [
-      {
-        name: "Mohammed Ali",
-        date: "Apr 1, 2025",
-        rating: 4,
-        comment: "Good deals on smartphones and laptops"
-      }
-    ]
-  },
-  {
-    title: "Outdoor Adventures",
-    location: "Petra, Jordan",
-    originalPrice: 150,
-    currentPrice: 90,
-    discount: "40%",
-    image: "/Media/Untitled design(1).png",
-    validUntil: "2025-12-31",
-    category: "Activities",
-    rating: 4.7,
-    description: "Guided tours and adventures in Petra.",
-    address: "Petra Visitor Center",
-    reviews: [
-      {
-        name: "John Smith",
-        date: "Mar 28, 2025",
-        rating: 5,
-        comment: "Unforgettable experience in Petra!"
-      }
-    ]
-  },
-  {
-    title: "Family Fun",
-    location: "Dead Sea, Jordan",
-    originalPrice: 120,
-    currentPrice: 84,
-    discount: "30%",
-    image: "/Media/Untitled design(3).png",
-    validUntil: "2025-12-31",
-    category: "Activities",
-    rating: 4.6,
-    description: "Family activities and resort access at the Dead Sea.",
-    address: "Dead Sea Tourist Beach",
-    reviews: [
-      {
-        name: "Rania Mahmoud",
-        date: "Mar 25, 2025",
-        rating: 5,
-        comment: "Perfect family day out"
-      }
-    ]
-  },
-  {
-    title: "Wellness & Spa",
-    location: "Amman, Jordan",
-    originalPrice: 200,
-    currentPrice: 140,
-    discount: "30%",
-    image: "/Media/Untitled design(4).png",
-    validUntil: "2025-12-31",
-    category: "Wellness",
-    rating: 4.4,
-    description: "Luxury spa treatments and wellness packages.",
-    address: "Rainbow Street, Amman",
-    reviews: [
-      {
-        name: "Lina Kamal",
-        date: "Mar 20, 2025",
-        rating: 4,
-        comment: "Relaxing spa experience"
-      }
-    ]
-  },
-  {
-    title: "Cultural Tours",
-    location: "Jerash, Jordan",
-    originalPrice: 90,
-    currentPrice: 63,
-    discount: "30%",
-    image: "/Media/Untitled design(5).png",
-    validUntil: "2025-12-31",
-    category: "Culture",
-    rating: 4.9,
-    description: "Guided tours of ancient Jerash with expert historians.",
-    address: "Jerash Archaeological Site",
-    reviews: [
-      {
-        name: "David Wilson",
-        date: "Mar 15, 2025",
-        rating: 5,
-        comment: "Fascinating historical tour"
-      }
-    ]
-  }
-];
 
 export default Discounts;
