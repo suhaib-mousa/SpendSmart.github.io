@@ -1,0 +1,132 @@
+:root {
+  --primary-blue: #0056b3;
+  --secondary-blue: #007bff;
+  --light-blue: #e6f2ff;
+  --dark-blue: #004085;
+  --accent-blue: #00a0e9;
+}
+
+.tips-container {
+  height: 100vh;
+  overflow: hidden;
+  transition: background-image 0.6s ease-in-out;
+  background-size: cover;
+  background-position: center;
+}
+
+.hero {
+  height: 100%;
+  width: 100%;
+  position: relative;
+  padding: 2rem;
+  color: #fdfbf5;
+  text-shadow: 0 1px 5px rgba(80, 3, 3, 0.8);
+}
+
+.hero-content {
+  max-width: 600px;
+}
+
+.hero h1 {
+  font-size: 4rem;
+  font-weight: bold;
+}
+
+.swiper-container {
+  position: absolute;
+  bottom: 15%;
+  right: 2rem;
+  width: 80%;
+}
+
+.swiper-slide {
+  background-size: cover;
+  background-position: center;
+  border-radius: 1rem;
+  height: 20rem;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  transition: transform 0.4s ease;
+}
+
+.tip-link {
+  text-decoration: none;
+  padding: 0.75rem 1.5rem;
+  font-weight: bold;
+  border: none;
+  border-radius: 2rem;
+  background-color: #7AB2D3;
+  color: #fffdfd;
+  transition: background 0.3s ease;
+}
+
+.tip-link:hover {
+  background-color: #4A628A;
+  color: #fffdfd;
+}
+
+.swiper-button-prev,
+.swiper-button-next {
+  transform: translateY(-10px);
+  color: #e2e5e8;
+  background-color: #7AB2D3;
+  border: 1px solid;
+  border-radius: 100%;
+  width: 50px;
+  height: 50px;
+}
+
+.swiper-slide.hidden-slide {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.navigation {
+  position: absolute;
+  display: flex;
+  bottom: 10%;
+  left: 50%;
+}
+
+.swiper-button-next,
+.swiper-rtl .swiper-button-prev {
+  right: auto;
+  left: 50px;
+}
+
+.swiper-button-prev,
+.swiper-rtl .swiper-button-next {
+  left: -10px;
+  right: auto;
+}
+
+.swiper-button-next:after,
+.swiper-button-prev:after {
+  font-size: 16px;
+}
+
+.text-left {
+  animation: slide-in-left .4s;
+}
+
+.text-right {
+  animation: slide-in-right .4s;
+}
+
+@keyframes slide-in-left {
+  0% {
+    transform: translateX(-20%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slide-in-right {
+  0% {
+    transform: translateX(20%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
