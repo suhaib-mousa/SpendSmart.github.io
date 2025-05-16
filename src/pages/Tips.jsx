@@ -55,14 +55,23 @@ const Tips = () => {
   };
 
   useEffect(() => {
-    document.body.style.backgroundImage = `url('${currentTip.bg}')`;
+    const root = document.getElementById('root');
+    if (root) {
+      root.style.backgroundImage = `url('${currentTip.bg}')`;
+      root.style.backgroundSize = 'cover';
+      root.style.backgroundPosition = 'center';
+    }
     return () => {
-      document.body.style.backgroundImage = 'none';
+      if (root) {
+        root.style.backgroundImage = 'none';
+        root.style.backgroundSize = 'auto';
+        root.style.backgroundPosition = 'initial';
+      }
     };
   }, [currentTip]);
 
   return (
-    <div className="tips-container" style={{ backgroundImage: `url('${currentTip.bg}')` }}>
+    <div className="tips-wrapper">
       <div className="hero d-flex align-items-end">
         <div className="hero-content mb-5">
           <h1 className="tip-title text-right">{currentTip.title}</h1>
