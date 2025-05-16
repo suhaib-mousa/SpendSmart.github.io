@@ -6,6 +6,10 @@ import '../styles/Discounts.css';
 
 function Discounts() {
   const [selectedDeal, setSelectedDeal] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedLocation, setSelectedLocation] = useState('');
+  const [selectedPriceRange, setPriceRange] = useState('');
+  const [selectedDiscount, setDiscount] = useState('');
 
   useEffect(() => {
     AOS.init({
@@ -22,6 +26,42 @@ function Discounts() {
     setSelectedDeal(null);
   };
 
+  // Get unique locations for filter
+  const locations = [...new Set(deals.map(deal => deal.location))];
+
+  // Filter deals based on search and filters
+  const filteredDeals = deals.filter(deal => {
+    const matchesSearch = deal.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         deal.location.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    const matchesLocation = !selectedLocation || deal.location === selectedLocation;
+    
+    const matchesPriceRange = () => {
+      if (!selectedPriceRange) return true;
+      const price = deal.currentPrice;
+      switch(selectedPriceRange) {
+        case 'under50': return price < 50;
+        case '50to100': return price >= 50 && price <= 100;
+        case '100to200': return price > 100 && price <= 200;
+        case 'over200': return price > 200;
+        default: return true;
+      }
+    };
+
+    const matchesDiscount = () => {
+      if (!selectedDiscount) return true;
+      const discountPercent = parseInt(deal.discount);
+      switch(selectedDiscount) {
+        case 'under25': return discountPercent < 25;
+        case '25to50': return discountPercent >= 25 && discountPercent <= 50;
+        case 'over50': return discountPercent > 50;
+        default: return true;
+      }
+    };
+
+    return matchesSearch && matchesLocation && matchesPriceRange() && matchesDiscount();
+  });
+
   return (
     <div className="discounts-page">
       {/* Hero Section */}
@@ -32,14 +72,12 @@ function Discounts() {
               <h1>Find the Best Deals</h1>
               <p>Discover amazing discounts and offers across Jordan</p>
               <div className="search-box">
-                <input type="text" placeholder="Search for stores, categories, or locations..." />
-                <button type="submit">Search</button>
-              </div>
-              <div className="popular-searches">
-                <span>Popular:</span>
-                <Link to="/category/restaurants">Restaurants</Link>
-                <Link to="/category/fashion">Fashion</Link>
-                <Link to="/category/electronics">Electronics</Link>
+                <input 
+                  type="text" 
+                  placeholder="Search for deals, locations, or categories..." 
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
               </div>
             </div>
             <div className="col-lg-6" data-aos="fade-left">
@@ -49,16 +87,70 @@ function Discounts() {
         </div>
       </section>
 
-      {/* Trending Deals */}
-      <section className="trending-deals">
+      {/* Filters Section */}
+      <section className="filters-section">
         <div className="container">
-          <div className="section-header">
-            <h2>Trending Deals</h2>
-            <Link to="/all-deals" className="view-all">View All</Link>
+          <div className="row g-3">
+            <div className="col-md-3">
+              <select 
+                className="form-select" 
+                value={selectedLocation} 
+                onChange={(e) => setSelectedLocation(e.target.value)}
+              >
+                <option value="">All Locations</option>
+                {locations.map(location => (
+                  <option key={location} value={location}>{location}</option>
+                ))}
+              </select>
+            </div>
+            <div className="col-md-3">
+              <select 
+                className="form-select" 
+                value={selectedPriceRange} 
+                onChange={(e) => setPriceRange(e.target.value)}
+              >
+                <option value="">Price Range</option>
+                <option value="under50">Under 50 JD</option>
+                <option value="50to100">50-100 JD</option>
+                <option value="100to200">100-200 JD</option>
+                <option value="over200">Over 200 JD</option>
+              </select>
+            </div>
+            <div className="col-md-3">
+              <select 
+                className="form-select" 
+                value={selectedDiscount} 
+                onChange={(e) => setDiscount(e.target.value)}
+              >
+                <option value="">Discount Range</option>
+                <option value="under25">Under 25%</option>
+                <option value="25to50">25-50%</option>
+                <option value="over50">Over 50%</option>
+              </select>
+            </div>
+            <div className="col-md-3">
+              <button 
+                className="btn btn-outline-primary w-100"
+                onClick={() => {
+                  setSearchTerm('');
+                  setSelectedLocation('');
+                  setPriceRange('');
+                  setDiscount('');
+                }}
+              >
+                Clear Filters
+              </button>
+            </div>
           </div>
+        </div>
+      </section>
+
+      {/* All Deals Section */}
+      <section className="all-deals-section">
+        <div className="container">
           <div className="row">
-            {deals.map((deal, index) => (
-              <div className="col-lg-3 col-md-6" key={index} data-aos="fade-up" data-aos-delay={index * 100}>
+            {filteredDeals.map((deal, index) => (
+              <div className="col-lg-3 col-md-6 mb-4" key={index} data-aos="fade-up" data-aos-delay={index * 100}>
                 <div className="deal-card" onClick={() => handleDealClick(deal)}>
                   <div className="deal-image">
                     <img src={deal.image} alt={deal.title} />
@@ -78,6 +170,13 @@ function Discounts() {
                 </div>
               </div>
             ))}
+            
+            {filteredDeals.length === 0 && (
+              <div className="col-12 text-center py-5">
+                <h3>No deals found matching your criteria</h3>
+                <p>Try adjusting your filters or search term</p>
+              </div>
+            )}
           </div>
         </div>
       </section>
