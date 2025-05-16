@@ -1,61 +1,8 @@
-:root {
-  --primary-blue: #0056b3;
-  --secondary-blue: #007bff;
-  --light-blue: #e6f2ff;
-  --dark-blue: #004085;
-  --accent-blue: #00a0e9;
-}
-
-body {
+.tips-container {
   height: 100vh;
-  overflow: hidden;
-  transition: background-image 0.6s ease-in-out;
   background-size: cover;
   background-position: center;
-}
-
-.tips-container {
-  height: calc(100vh - 70px);
-  margin-top: 70px;
-}
-
-.navbar {
-  background-color: transparent !important;
-  position: fixed;
-  width: 100%;
-  top: 0;
-  z-index: 1000;
-}
-
-.navbar .nav-link {
-  color: #fdfbf5 !important;
-}
-
-.navbar .navbar-brand,
-.navbar .navbar-brand i {
-  color: #fdfbf5 !important;
-}
-
-.navbar .btn-outline-primary {
-  border-color: #fdfbf5;
-  color: #fdfbf5;
-}
-
-.navbar .btn-outline-primary:hover {
-  background-color: #fdfbf5;
-  color: var(--primary-blue);
-}
-
-.navbar .btn-primary {
-  background-color: #fdfbf5;
-  border-color: #fdfbf5;
-  color: var(--primary-blue);
-}
-
-.navbar .btn-primary:hover {
-  background-color: var(--light-blue);
-  border-color: var(--light-blue);
-  color: var(--primary-blue);
+  overflow: hidden;
 }
 
 .hero {
@@ -75,6 +22,7 @@ body {
 .hero h1 {
   font-size: 4rem;
   font-weight: bold;
+  color: #fdfbf5;
 }
 
 .swiper-container {
@@ -102,14 +50,14 @@ body {
   border: none;
   border-radius: 2rem;
   background-color: #7AB2D3;
-  color: #fffdfd;
+  color: #fdfbf5;
   transition: background 0.3s ease;
   margin-top: 1rem;
 }
 
 .tip-link:hover {
   background-color: #4A628A;
-  color: #fffdfd;
+  color: #fdfbf5;
 }
 
 .swiper-button-prev,

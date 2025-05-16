@@ -1,9 +1,12 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 const Navbar = () => {
+  const location = useLocation();
+  const isTipsPage = location.pathname === '/tips';
+
   return (
-    <nav className="navbar navbar-expand-lg sticky-top">
+    <nav className={`navbar navbar-expand-lg sticky-top ${isTipsPage ? 'navbar-tips' : ''}`}>
       <div className="container">
         <Link className="navbar-brand" to="/">
           <i className="fas fa-wallet"> Spend Smart</i>
