@@ -1,16 +1,26 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import '../styles/Discounts.css';
 
 function Discounts() {
+  const [selectedDeal, setSelectedDeal] = useState(null);
+
   useEffect(() => {
     AOS.init({
       duration: 1000,
       once: true
     });
   }, []);
+
+  const handleDealClick = (deal) => {
+    setSelectedDeal(deal);
+  };
+
+  const closeModal = () => {
+    setSelectedDeal(null);
+  };
 
   return (
     <div className="discounts-page">
@@ -47,133 +57,117 @@ function Discounts() {
             <Link to="/all-deals" className="view-all">View All</Link>
           </div>
           <div className="row">
-            <div className="col-lg-3 col-md-6" data-aos="fade-up">
-              <div className="deal-card">
-                <div className="deal-image">
-                  <img src="/media/camping.png" alt="Camping Deal" />
-                  <div className="deal-tag">50% OFF</div>
-                </div>
-                <div className="deal-details">
-                  <h3>Adventure Gear</h3>
-                  <p className="location">Amman, Jordan</p>
-                  <div className="deal-meta">
-                    <span className="price">
-                      <span className="original">100 JD</span>
-                      <span className="current">50 JD</span>
-                    </span>
-                    <span className="saved">Save 50 JD</span>
+            {deals.map((deal, index) => (
+              <div className="col-lg-3 col-md-6" key={index} data-aos="fade-up" data-aos-delay={index * 100}>
+                <div className="deal-card" onClick={() => handleDealClick(deal)}>
+                  <div className="deal-image">
+                    <img src={deal.image} alt={deal.title} />
+                    <div className="deal-tag">{deal.discount} OFF</div>
+                  </div>
+                  <div className="deal-details">
+                    <h3>{deal.title}</h3>
+                    <p className="location">{deal.location}</p>
+                    <div className="deal-meta">
+                      <span className="price">
+                        <span className="original">{deal.originalPrice} JD</span>
+                        <span className="current">{deal.currentPrice} JD</span>
+                      </span>
+                      <span className="saved">Save {deal.originalPrice - deal.currentPrice} JD</span>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </div>
-            <div className="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="100">
-              <div className="deal-card">
-                <div className="deal-image">
-                  <img src="/media/businessman-1026415_640.jpg" alt="Fashion Deal" />
-                  <div className="deal-tag">30% OFF</div>
-                </div>
-                <div className="deal-details">
-                  <h3>Business Attire</h3>
-                  <p className="location">Irbid, Jordan</p>
-                  <div className="deal-meta">
-                    <span className="price">
-                      <span className="original">200 JD</span>
-                      <span className="current">140 JD</span>
-                    </span>
-                    <span className="saved">Save 60 JD</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="200">
-              <div className="deal-card">
-                <div className="deal-image">
-                  <img src="/media/teamwork-7423959_640.jpg" alt="Activities Deal" />
-                  <div className="deal-tag">25% OFF</div>
-                </div>
-                <div className="deal-details">
-                  <h3>Team Activities</h3>
-                  <p className="location">Aqaba, Jordan</p>
-                  <div className="deal-meta">
-                    <span className="price">
-                      <span className="original">80 JD</span>
-                      <span className="current">60 JD</span>
-                    </span>
-                    <span className="saved">Save 20 JD</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="300">
-              <div className="deal-card">
-                <div className="deal-image">
-                  <img src="/media/disc.png" alt="Electronics Deal" />
-                  <div className="deal-tag">40% OFF</div>
-                </div>
-                <div className="deal-details">
-                  <h3>Electronics</h3>
-                  <p className="location">Zarqa, Jordan</p>
-                  <div className="deal-meta">
-                    <span className="price">
-                      <span className="original">500 JD</span>
-                      <span className="current">300 JD</span>
-                    </span>
-                    <span className="saved">Save 200 JD</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Categories */}
-      <section className="categories">
-        <div className="container">
-          <h2>Browse Categories</h2>
-          <div className="row">
-            {['Restaurants', 'Fashion', 'Electronics', 'Beauty', 'Travel', 'Entertainment', 'Sports', 'Home'].map((category, index) => (
-              <div className="col-lg-3 col-md-4 col-6" key={index} data-aos="fade-up" data-aos-delay={index * 100}>
-                <Link to={`/category/${category.toLowerCase()}`} className="category-card">
-                  <i className={`fas fa-${getCategoryIcon(category)}`}></i>
-                  <h3>{category}</h3>
-                  <span>{Math.floor(Math.random() * 100) + 50}+ Deals</span>
-                </Link>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Newsletter */}
-      <section className="newsletter">
+      {/* Footer */}
+      <footer className="py-3 my-4">
         <div className="container">
-          <div className="newsletter-content" data-aos="fade-up">
-            <h2>Never Miss a Deal</h2>
-            <p>Subscribe to our newsletter and get the best deals delivered to your inbox</p>
-            <form className="newsletter-form">
-              <input type="email" placeholder="Enter your email address" />
-              <button type="submit">Subscribe</button>
-            </form>
-          </div>
+          <ul className="nav justify-content-center border-bottom pb-3 mb-3">
+            <li className="nav-item"><Link to="/" className="nav-link px-2 text-muted">Home</Link></li>
+            <li className="nav-item"><Link to="/discounts" className="nav-link px-2 text-muted">Discounts</Link></li>
+            <li className="nav-item"><Link to="/budget" className="nav-link px-2 text-muted">Budget Analysis</Link></li>
+            <li className="nav-item"><Link to="/planner" className="nav-link px-2 text-muted">Financial Planner</Link></li>
+            <li className="nav-item"><Link to="/tips" className="nav-link px-2 text-muted">Tips</Link></li>
+          </ul>
+          <p className="text-center text-muted">© 2025 University Of Jordan, SpendSmart</p>
         </div>
-      </section>
+      </footer>
+
+      {/* Deal Modal */}
+      {selectedDeal && (
+        <div className="modal show d-block" tabIndex="-1">
+          <div className="modal-dialog modal-lg">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">{selectedDeal.title}</h5>
+                <button type="button" className="btn-close" onClick={closeModal}></button>
+              </div>
+              <div className="modal-body">
+                <div className="row">
+                  <div className="col-md-6">
+                    <img src={selectedDeal.image} alt={selectedDeal.title} className="img-fluid rounded" />
+                  </div>
+                  <div className="col-md-6">
+                    <h4>Deal Details</h4>
+                    <p><strong>Location:</strong> {selectedDeal.location}</p>
+                    <p><strong>Original Price:</strong> {selectedDeal.originalPrice} JD</p>
+                    <p><strong>Discounted Price:</strong> {selectedDeal.currentPrice} JD</p>
+                    <p><strong>You Save:</strong> {selectedDeal.originalPrice - selectedDeal.currentPrice} JD</p>
+                    <p><strong>Discount:</strong> {selectedDeal.discount}</p>
+                    <p className="text-muted">Valid until: {selectedDeal.validUntil}</p>
+                    <button className="btn btn-primary w-100 mt-3">Get This Deal</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="modal-backdrop show" onClick={closeModal}></div>
+        </div>
+      )}
     </div>
   );
 }
 
-function getCategoryIcon(category) {
-  const icons = {
-    Restaurants: 'utensils',
-    Fashion: 'tshirt',
-    Electronics: 'mobile-alt',
-    Beauty: 'spa',
-    Travel: 'plane',
-    Entertainment: 'film',
-    Sports: 'basketball-ball',
-    Home: 'home'
-  };
-  return icons[category] || 'tag';
-}
+const deals = [
+  {
+    title: "Adventure Gear",
+    location: "Amman, Jordan",
+    originalPrice: 100,
+    currentPrice: 50,
+    discount: "50%",
+    image: "/media/camping.png",
+    validUntil: "2025-12-31"
+  },
+  {
+    title: "Business Attire",
+    location: "Irbid, Jordan",
+    originalPrice: 200,
+    currentPrice: 140,
+    discount: "30%",
+    image: "/media/businessman-1026415_640.jpg",
+    validUntil: "2025-12-31"
+  },
+  {
+    title: "Team Activities",
+    location: "Aqaba, Jordan",
+    originalPrice: 80,
+    currentPrice: 60,
+    discount: "25%",
+    image: "/media/teamwork-7423959_640.jpg",
+    validUntil: "2025-12-31"
+  },
+  {
+    title: "Electronics",
+    location: "Zarqa, Jordan",
+    originalPrice: 500,
+    currentPrice: 300,
+    discount: "40%",
+    image: "/media/disc.png",
+    validUntil: "2025-12-31"
+  }
+];
 
 export default Discounts;
