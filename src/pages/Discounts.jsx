@@ -19,110 +19,107 @@ function Discounts() {
         <div className="container">
           <div className="row align-items-center">
             <div className="col-lg-6" data-aos="fade-right">
-              <h1>Discover Amazing Deals</h1>
-              <p>Find the best discounts and offers in Jordan, all in one place.</p>
+              <h1>Find the Best Deals</h1>
+              <p>Discover amazing discounts and offers across Jordan</p>
               <div className="search-box">
-                <input type="text" placeholder="Search for discounts..." />
-                <button><i className="fas fa-search"></i></button>
+                <input type="text" placeholder="Search for stores, categories, or locations..." />
+                <button type="submit">Search</button>
+              </div>
+              <div className="popular-searches">
+                <span>Popular:</span>
+                <Link to="/category/restaurants">Restaurants</Link>
+                <Link to="/category/fashion">Fashion</Link>
+                <Link to="/category/electronics">Electronics</Link>
               </div>
             </div>
             <div className="col-lg-6" data-aos="fade-left">
-              <img src="/src/media/disc.png" alt="Discounts Hero" className="hero-image" />
+              <img src="/media/disc.png" alt="Discover Deals" className="hero-image" />
             </div>
           </div>
         </div>
       </section>
 
-      {/* Categories Section */}
-      <section className="categories-section">
+      {/* Trending Deals */}
+      <section className="trending-deals">
         <div className="container">
-          <h2 className="section-title" data-aos="fade-up">Browse by Category</h2>
-          <div className="row">
-            <div className="col-md-3 col-6" data-aos="fade-up" data-aos-delay="100">
-              <div className="category-card">
-                <i className="fas fa-utensils"></i>
-                <h3>Restaurants</h3>
-                <span>150+ Deals</span>
-              </div>
-            </div>
-            <div className="col-md-3 col-6" data-aos="fade-up" data-aos-delay="200">
-              <div className="category-card">
-                <i className="fas fa-tshirt"></i>
-                <h3>Fashion</h3>
-                <span>200+ Deals</span>
-              </div>
-            </div>
-            <div className="col-md-3 col-6" data-aos="fade-up" data-aos-delay="300">
-              <div className="category-card">
-                <i className="fas fa-mobile-alt"></i>
-                <h3>Electronics</h3>
-                <span>80+ Deals</span>
-              </div>
-            </div>
-            <div className="col-md-3 col-6" data-aos="fade-up" data-aos-delay="400">
-              <div className="category-card">
-                <i className="fas fa-spa"></i>
-                <h3>Beauty</h3>
-                <span>120+ Deals</span>
-              </div>
-            </div>
+          <div className="section-header">
+            <h2>Trending Deals</h2>
+            <Link to="/all-deals" className="view-all">View All</Link>
           </div>
-        </div>
-      </section>
-
-      {/* Featured Deals Section */}
-      <section className="featured-deals">
-        <div className="container">
-          <h2 className="section-title" data-aos="fade-up">Featured Deals</h2>
           <div className="row">
-            <div className="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
+            <div className="col-lg-3 col-md-6" data-aos="fade-up">
               <div className="deal-card">
                 <div className="deal-image">
-                  <img src="/src/media/camping.png" alt="Restaurant Deal" />
-                  <span className="discount-badge">-50%</span>
+                  <img src="/media/camping.png" alt="Camping Deal" />
+                  <div className="deal-tag">50% OFF</div>
                 </div>
-                <div className="deal-content">
-                  <h3>Camping Equipment</h3>
-                  <p>Get 50% off on all camping equipment</p>
+                <div className="deal-details">
+                  <h3>Adventure Gear</h3>
+                  <p className="location">Amman, Jordan</p>
                   <div className="deal-meta">
-                    <span className="location"><i className="fas fa-map-marker-alt"></i> Amman</span>
-                    <span className="expires">Expires in 3 days</span>
+                    <span className="price">
+                      <span className="original">100 JD</span>
+                      <span className="current">50 JD</span>
+                    </span>
+                    <span className="saved">Save 50 JD</span>
                   </div>
-                  <Link to="/deal/1" className="btn btn-primary">View Deal</Link>
                 </div>
               </div>
             </div>
-            <div className="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
+            <div className="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="100">
               <div className="deal-card">
                 <div className="deal-image">
-                  <img src="/src/media/businessman-1026415_640.jpg" alt="Fashion Deal" />
-                  <span className="discount-badge">-30%</span>
+                  <img src="/media/businessman-1026415_640.jpg" alt="Fashion Deal" />
+                  <div className="deal-tag">30% OFF</div>
                 </div>
-                <div className="deal-content">
+                <div className="deal-details">
                   <h3>Business Attire</h3>
-                  <p>30% off on all business wear</p>
+                  <p className="location">Irbid, Jordan</p>
                   <div className="deal-meta">
-                    <span className="location"><i className="fas fa-map-marker-alt"></i> Irbid</span>
-                    <span className="expires">Expires in 5 days</span>
+                    <span className="price">
+                      <span className="original">200 JD</span>
+                      <span className="current">140 JD</span>
+                    </span>
+                    <span className="saved">Save 60 JD</span>
                   </div>
-                  <Link to="/deal/2" className="btn btn-primary">View Deal</Link>
                 </div>
               </div>
             </div>
-            <div className="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
+            <div className="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="200">
               <div className="deal-card">
                 <div className="deal-image">
-                  <img src="/src/media/teamwork-7423959_640.jpg" alt="Electronics Deal" />
-                  <span className="discount-badge">-25%</span>
+                  <img src="/media/teamwork-7423959_640.jpg" alt="Activities Deal" />
+                  <div className="deal-tag">25% OFF</div>
                 </div>
-                <div className="deal-content">
-                  <h3>Team Building Activities</h3>
-                  <p>25% discount on group activities</p>
+                <div className="deal-details">
+                  <h3>Team Activities</h3>
+                  <p className="location">Aqaba, Jordan</p>
                   <div className="deal-meta">
-                    <span className="location"><i className="fas fa-map-marker-alt"></i> Aqaba</span>
-                    <span className="expires">Expires in 7 days</span>
+                    <span className="price">
+                      <span className="original">80 JD</span>
+                      <span className="current">60 JD</span>
+                    </span>
+                    <span className="saved">Save 20 JD</span>
                   </div>
-                  <Link to="/deal/3" className="btn btn-primary">View Deal</Link>
+                </div>
+              </div>
+            </div>
+            <div className="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="300">
+              <div className="deal-card">
+                <div className="deal-image">
+                  <img src="/media/disc.png" alt="Electronics Deal" />
+                  <div className="deal-tag">40% OFF</div>
+                </div>
+                <div className="deal-details">
+                  <h3>Electronics</h3>
+                  <p className="location">Zarqa, Jordan</p>
+                  <div className="deal-meta">
+                    <span className="price">
+                      <span className="original">500 JD</span>
+                      <span className="current">300 JD</span>
+                    </span>
+                    <span className="saved">Save 200 JD</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -130,21 +127,53 @@ function Discounts() {
         </div>
       </section>
 
-      {/* Newsletter Section */}
-      <section className="newsletter-section">
+      {/* Categories */}
+      <section className="categories">
+        <div className="container">
+          <h2>Browse Categories</h2>
+          <div className="row">
+            {['Restaurants', 'Fashion', 'Electronics', 'Beauty', 'Travel', 'Entertainment', 'Sports', 'Home'].map((category, index) => (
+              <div className="col-lg-3 col-md-4 col-6" key={index} data-aos="fade-up" data-aos-delay={index * 100}>
+                <Link to={`/category/${category.toLowerCase()}`} className="category-card">
+                  <i className={`fas fa-${getCategoryIcon(category)}`}></i>
+                  <h3>{category}</h3>
+                  <span>{Math.floor(Math.random() * 100) + 50}+ Deals</span>
+                </Link>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Newsletter */}
+      <section className="newsletter">
         <div className="container">
           <div className="newsletter-content" data-aos="fade-up">
-            <h2>Never Miss a Deal!</h2>
-            <p>Subscribe to our newsletter and get the best deals delivered to your inbox.</p>
+            <h2>Never Miss a Deal</h2>
+            <p>Subscribe to our newsletter and get the best deals delivered to your inbox</p>
             <form className="newsletter-form">
               <input type="email" placeholder="Enter your email address" />
-              <button type="submit" className="btn btn-primary">Subscribe</button>
+              <button type="submit">Subscribe</button>
             </form>
           </div>
         </div>
       </section>
     </div>
   );
+}
+
+function getCategoryIcon(category) {
+  const icons = {
+    Restaurants: 'utensils',
+    Fashion: 'tshirt',
+    Electronics: 'mobile-alt',
+    Beauty: 'spa',
+    Travel: 'plane',
+    Entertainment: 'film',
+    Sports: 'basketball-ball',
+    Home: 'home'
+  };
+  return icons[category] || 'tag';
 }
 
 export default Discounts;
