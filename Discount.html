@@ -1,304 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SpendSmart - Budget Analysis Assistant</title>
+    <title>SpendSmart - Discounts</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
-        rel="stylesheet">
-    <link rel="icon" href="Media/budg.png">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css">
+
     <style>
         :root {
             --primary-color: #1a73e8;
-            --primary-dark: #0d47a1;
-            --secondary-color: #f0f4f8;
-            --bot-message-bg: #e3f2fd;
-            --user-message-bg: #e8f5e9;
-            --error-color: #f44336;
-            --success-color: #4caf50;
-            --primary-blue: #0056b3;
-            --secondary-blue: #007bff;
-            --light-blue: #e6f2ff;
-            --dark-blue: #004085;
-            --accent-blue: #00a0e9;
-
+            --primary-dark: #367be2;
+            --primary-light: #e8f0fe;
+            --secondary-color: #f8f9fa;
+            --accent-color: #fbbc04;
+            --text-dark: #202124;
+            --text-light: #5f6368;
+            --white: #ffffff;
+            --primary-blue: #1a73e8;
+            --secondary-blue: #4285f4;
+            --dark-blue: #0d47a1;
         }
-
+        
         body {
-            font-family: 'Poppins', sans-serif;
-            background-color: #f8fafc;
-            height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f7fa;
+            color: var(--text-dark);
         }
-
-        .chatbot-container {
-            max-width: 800px;
-            height: 600px;
-            background: white;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            border-radius: 10px;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .chat-header {
-            background-color: var(--primary-color);
-            color: white;
-            padding: 1rem;
-            border-top-left-radius: 10px;
-            border-top-right-radius: 10px;
-        }
-
-        .chat-messages {
-            flex: 1;
-            overflow-y: auto;
-            padding: 1rem;
-            scroll-behavior: smooth;
-        }
-
-        .chat-input {
-            padding: 1rem;
-            border-top: 1px solid #e5e7eb;
-            display: flex;
-        }
-
-        .message {
-            max-width: 80%;
-            margin-bottom: 1rem;
-            padding: 0.75rem;
-            border-radius: 1rem;
-            position: relative;
-            line-height: 1.5;
-        }
-
-        .bot-message {
-            background-color: var(--bot-message-bg);
-            border-bottom-left-radius: 0.25rem;
-            align-self: flex-start;
-            margin-right: auto;
-        }
-
-        .user-message {
-            background-color: var(--user-message-bg);
-            border-bottom-right-radius: 0.25rem;
-            align-self: flex-end;
-            margin-left: auto;
-            text-align: right;
-        }
-
-        .typing-indicator {
-            display: inline-block;
-            padding: 0.75rem 1rem;
-            background-color: var(--bot-message-bg);
-            border-radius: 1rem;
-            border-bottom-left-radius: 0.25rem;
-            margin-bottom: 1rem;
-        }
-
-        .typing-indicator span {
-            height: 0.5rem;
-            width: 0.5rem;
-            float: left;
-            margin: 0 1px;
-            background-color: #9E9EA1;
-            display: block;
-            border-radius: 50%;
-            opacity: 0.4;
-        }
-
-        .typing-indicator span:nth-of-type(1) {
-            animation: 1s blink infinite 0.3333s;
-        }
-
-        .typing-indicator span:nth-of-type(2) {
-            animation: 1s blink infinite 0.6666s;
-        }
-
-        .typing-indicator span:nth-of-type(3) {
-            animation: 1s blink infinite 0.9999s;
-        }
-
-        @keyframes blink {
-            50% {
-                opacity: 1;
-            }
-        }
-
-        .input-error {
-            border-color: var(--error-color) !important;
-        }
-
-        .error-message {
-            color: var(--error-color);
-            font-size: 0.75rem;
-            margin-top: 0.25rem;
-        }
-
-        .language-switcher {
-            display: flex;
-            justify-content: flex-end;
-            padding: 0.5rem;
-        }
-
-        .language-switcher button {
-            background-color: transparent;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            padding: 0.25rem 0.5rem;
-            margin-left: 0.5rem;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .language-switcher button.active {
-            background-color: var(--primary-color);
-            color: white;
-            border-color: var(--primary-color);
-        }
-
-        .analysis-results {
-            background-color: white;
-            border-radius: 10px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            padding: 1rem;
-            margin: 1rem 0;
-        }
-
-        .analysis-stats {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-between;
-            margin: 1rem 0;
-        }
-
-        .stat {
-            width: calc(33.33% - 0.5rem);
-            background-color: #f8f9fa;
-            border-radius: 8px;
-            padding: 0.75rem;
-            margin-bottom: 0.5rem;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-        }
-
-        .stat-label {
-            color: #6c757d;
-            font-size: 0.875rem;
-            display: block;
-            margin-bottom: 0.25rem;
-        }
-
-        .stat-value {
-            font-size: 1.25rem;
-            font-weight: 600;
-        }
-
-        .positive {
-            color: var(--success-color);
-        }
-
-        .negative {
-            color: var(--error-color);
-        }
-
-        .savings-advice {
-            background-color: #f9fbe7;
-            border-left: 4px solid #cddc39;
-            padding: 1rem;
-            margin: 1rem 0;
-            border-radius: 4px;
-        }
-
-        .expense-chart-container {
-            height: 250px;
-            margin: 1rem 0;
-        }
-
-        .category-advice {
-            background-color: #e8f5e9;
-            border-radius: 8px;
-            padding: 1rem;
-            margin: 0.5rem 0;
-            border-left: 4px solid #4caf50;
-        }
-
-        .category-advice h4 {
-            margin-top: 0;
-            color: #2e7d32;
-        }
-
-        .goal-guidance {
-            background-color: #e3f2fd;
-            border-radius: 8px;
-            padding: 1rem;
-            margin-top: 1rem;
-            border-left: 4px solid #1976d2;
-        }
-
-        .recommendation-card {
-            background-color: #f5f5f5;
-            border-radius: 8px;
-            padding: 1rem;
-            margin: 1rem 0;
-            border: 1px solid #e0e0e0;
-        }
-
-        .recommendation-card h4 {
-            color: var(--primary-dark);
-            margin-top: 0;
-        }
-
-        @media (max-width: 640px) {
-            .chatbot-container {
-                height: 100vh;
-                max-width: 100%;
-                border-radius: 0;
-            }
-
-            .chat-header {
-                border-radius: 0;
-            }
-
-            .stat {
-                width: 100%;
-            }
-        }
-
-        [dir="rtl"] .bot-message {
-            border-bottom-left-radius: 1rem;
-            border-bottom-right-radius: 0.25rem;
-            align-self: flex-start;
-            margin-left: auto;
-            margin-right: 0;
-            text-align: right;
-        }
-
-        [dir="rtl"] .user-message {
-            border-bottom-right-radius: 1rem;
-            border-bottom-left-radius: 0.25rem;
-            align-self: flex-end;
-            margin-right: auto;
-            margin-left: 0;
-            text-align: left;
-        }
-
-        /* Chart tooltip styles */
-        .chartjs-tooltip {
-            background: rgba(0, 0, 0, 0.7);
-            color: white;
-            border-radius: 3px;
-            padding: 6px;
-            pointer-events: none;
-            position: absolute;
-            transform: translate(-50%, 0);
-            z-index: 10;
-        }
-
-        /* Navigation */
+             /* Navigation */
         .navbar {
             background-color: white;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
@@ -314,13 +46,13 @@
 
         .navbar-brand i {
             margin-right: 10px;
-            color: var(--primary-blue);
+            color: var(--secondary-blue);
         }
 
-        /* .navbar-brand:hover i {
+        .navbar-brand:hover i {
             transform: rotate(15deg);
             transition: transform 0.3s ease;
-        } */
+        }
 
         .nav-link {
             color: #333;
@@ -364,81 +96,192 @@
             background-color: var(--dark-blue);
             border-color: var(--dark-blue);
         }
-
-        .chatbot-container {
-            position: absolute;
-            top: 100px;
-            /* أعلى من 100px قليلاً حتى لا يتداخل مع النافبار */
+     
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            color: white;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            border-color: var(--primary-dark);
+        }
+        
+        .filter-active {
+            background-color: var(--primary-color) !important;
+            color: white !important;
+        }
+        
+        .card {
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+        }
+        
+        .discount-card {
+            cursor: pointer;
+        }
+        
+        .expanded-card {
+            position: fixed;
+            top: 50%;
             left: 50%;
-            transform: translateX(-50%);
-            width: 100%;
+            transform: translate(-50%, -50%);
+            width: 90%;
             max-width: 800px;
-            /* التحكم في عرض البوت */
-            height: 600px;
-            /* التحكم في ارتفاع البوت */
+            max-height: 90vh;
+            overflow-y: auto;
+            z-index: 1000;
+            animation: fadeIn 0.3s;
         }
-
-        @keyframes float {
-            0% {
-                transform: translateY(0px);
-            }
-
-            50% {
-                transform: translateY(-20px);
-            }
-
-            100% {
-                transform: translateY(0px);
-            }
+        
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 999;
         }
-
-        @media (max-width: 640px) {
-            .chatbot-container {
-                top: 80px;
-                /* adjust for mobile */
-                width: 90%;
-                /* smaller width on mobile */
-            }
+        
+        .star-rating {
+            color: #ddd;
+            font-size: 24px;
+            position: relative;
+            display: inline-block;
         }
-        @media (max-width: 576px) {
-            .navbar-brand {
-                font-size: 1.5rem;
-            }
-
-            .nav-link {
-                font-size: 0.9rem;
-            }
-
-            .btn-outline-primary,
-            .btn-primary {
-                font-size: 0.9rem;
-            }
+        
+        .star-rating .filled-stars {
+            color: var(--accent-color);
+            position: absolute;
+            top: 0;
+            left: 0;
+            white-space: nowrap;
+            overflow: hidden;
+            width: 0;
         }
-        @media (max-width: 768px) {
-            .navbar-brand {
-                font-size: 1.2rem;
-            }
-
-            .nav-link {
-                font-size: 0.9rem;
-            }
-
-            .btn-outline-primary,
-            .btn-primary {
-                font-size: 0.9rem;
-            }
+        
+        .review-form .star-input {
+            color: #ddd;
+            font-size: 24px;
+            cursor: pointer;
+            display: inline-block;
+        }
+        
+        .review-form .star-input.active {
+            color: var(--accent-color);
+        }
+        
+        .feedback-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .discount-badge {
+            background-color: var(--accent-color);
+            color: var(--text-dark);
+            font-weight: bold;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+        
+        .expires-badge {
+            color: white;
+            background-color: #ff5252;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+        }
+        
+        .category-badge {
+            background-color: var(--primary-light);
+            color: var(--primary-dark);
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 0.85rem;
+        }
+        
+        .location-badge {
+            background-color: #e0f2f1;
+            color: #00796b;
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 0.85rem;
+        }
+        
+        .filter-btn {
+            background-color: white;
+            color: var(--text-dark);
+            border: 1px solid #e0e0e0;
+            border-radius: 20px;
+            padding: 6px 15px;
+            margin: 5px;
+            transition: all 0.2s;
+            font-size: 0.9rem;
+        }
+        
+        .filter-btn:hover {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes slideUp {
+            from { transform: translate(-50%, 100%); }
+            to { transform: translate(-50%, -50%); }
+        }
+        
+        .review-item {
+            border-left: 3px solid var(--primary-light);
+            padding-left: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .review-item:hover {
+            border-left-color: var(--primary-color);
+        }
+        
+        .page-header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+            padding: 3rem 0;
+            color: white;
+        }
+        
+        .badge-new {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #4caf50;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: bold;
         }
     </style>
 </head>
-
 <body>
-  <!-- Navigation -->
+    <!-- Navigation -->
     <nav class="navbar navbar-expand-lg sticky-top">
         <div class="container">
             <!-- Icon bring from fontawesome -->
-            <a class="navbar-brand" href="index.html"> <i class="fas fa-wallet">SpendSmart</i>  </a>
+            <a class="navbar-brand" href="index.html"> <i class="fas fa-wallet">SpendSmart</i></a>
             <!--data-bs-toggle="collapse" mean that when the button is clicked the navbar will collapse  -->
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
@@ -461,7 +304,6 @@
                     <li class="nav-item">
                         <a class="nav-link" href="Tips.html">Tips</a>
                     </li>
-
                 </ul>
                 <div class="ms-lg-4 mt-3 mt-lg-0">
                     <a href="logIn.html" class="btn btn-outline-primary me-2">Log In</a>
@@ -471,727 +313,1293 @@
         </div>
     </nav>
 
-    <!-- Chatbot Container -->
-    <div class="chatbot-container w-full">
-        <div class="chat-header flex justify-between items-center">
-            <div>
-                <h1 class="text-xl font-bold">SpendSmart</h1>
-                <p class="text-sm" id="header-subtitle">Budget Analysis Assistant</p>
-            </div>
-            <div class="language-switcher">
-                <button id="en-btn" class="active">English</button>
-                <button id="ar-btn">العربية</button>
+    <!-- Page Header -->
+    <header class="page-header">
+        <div class="container mx-auto text-center px-4">
+            <h1 class="text-3xl md:text-4xl font-bold mb-3">Exclusive Discounts</h1>
+            <p class="text-lg md:text-xl mb-6">Save money with these special offers from our partners across Jordan</p>
+            <div class="flex justify-center">
+              
             </div>
         </div>
+    </header>
 
-        <div class="chat-messages flex flex-col" id="chat-messages"></div>
+    <!-- Main Content -->
+    <main class="container mx-auto py-8 px-4">
+        <!-- Filters Section -->
+        <section class="mb-8">
+            <div class="bg-white rounded-lg shadow-md p-4">
+                <h2 class="text-xl font-semibold mb-4">Filter Discounts</h2>
+                
+                <div class="mb-4">
+                    <h3 class="text-sm font-medium text-gray-600 mb-2">Categories:</h3>
+                    <div class="flex flex-wrap">
+                        <button class="filter-btn category-filter filter-active" data-category="all">All Categories</button>
+                        <button class="filter-btn category-filter" data-category="Restaurants">Restaurants</button>
+                        <button class="filter-btn category-filter" data-category="Healthcare">Healthcare</button>
+                        <button class="filter-btn category-filter" data-category="Education">Education</button>
+                        <button class="filter-btn category-filter" data-category="Shopping">Shopping</button>
+                        <button class="filter-btn category-filter" data-category="Entertainment">Entertainment</button>
+                        <button class="filter-btn category-filter" data-category="Travel">Travel</button>
+                        <button class="filter-btn category-filter" data-category="Beauty">Beauty</button>
+                    </div>
+                </div>
+                
+                <div class="mb-4">
+                    <h3 class="text-sm font-medium text-gray-600 mb-2">Location:</h3>
+                    <div class="flex flex-wrap">
+                        <button class="filter-btn location-filter filter-active" data-location="all">All Locations</button>
+                        <button class="filter-btn location-filter" data-location="Amman">Amman</button>
+                        <button class="filter-btn location-filter" data-location="Irbid">Irbid</button>
+                        <button class="filter-btn location-filter" data-location="Aqaba">Aqaba</button>
+                        <button class="filter-btn location-filter" data-location="Zarqa">Zarqa</button>
+                        <button class="filter-btn location-filter" data-location="Madaba">Madaba</button>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3 class="text-sm font-medium text-gray-600 mb-2">Sort By:</h3>
+                    <div class="flex flex-wrap">
+                        <button class="filter-btn sort-filter filter-active" data-sort="newest">Newest</button>
+                        <button class="filter-btn sort-filter" data-sort="rating">Highest Rated</button>
+                        <button class="filter-btn sort-filter" data-sort="expiring">Expiring Soon</button>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-        <div class="chat-input">
-            <input type="text" id="user-input"
-                class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Type your answer here...">
-            <button id="send-btn"
-                class="ml-2 bg-blue-500 text-white rounded-lg px-4 py-2 hover:bg-blue-600 focus:outline-none">
-                <i class="fas fa-paper-plane"></i>
-            </button>
+        <!-- Discounts Grid -->
+        <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="discounts-container">
+            <!-- Discount cards will be dynamically inserted here -->
+        </section>
+    </main>
+
+    <div id="card-expanded-container"></div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between">
+                <div class="mb-6 md:mb-0">
+                    <h3 class="text-xl font-bold mb-4">SpendSmart</h3>
+                    <p class="text-gray-400 max-w-sm">Help users manage their money better through budgeting tools, community support, discounts, and tips.</p>
+                </div>
+                <div class="mb-6 md:mb-0">
+                    <h4 class="text-lg font-semibold mb-4">Quick Links</h4>
+                    <ul>
+                        <li class="mb-2"><a href="index.html" class="text-gray-400 hover:text-white">Home</a></li>
+                        <li class="mb-2"><a href="chatbot.html" class="text-gray-400 hover:text-white">Budget Analysis</a></li>
+                        <li class="mb-2"><a href="discounts.html" class="text-gray-400 hover:text-white">Discounts</a></li>
+                        <li class="mb-2"><a href="tips.html" class="text-gray-400 hover:text-white">Tips</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Contact Us</h4>
+                    <p class="text-gray-400 mb-2"><i class="fas fa-envelope mr-2"></i> contact@spendsmart.jo</p>
+                    <p class="text-gray-400 mb-2"><i class="fas fa-phone mr-2"></i> +962 6 123 4567</p>
+                    <div class="flex mt-4">
+                        <a href="#" class="text-gray-400 hover:text-white mr-4"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white mr-4"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white mr-4"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-8 pt-6 text-center text-gray-400">
+                <p>&copy; 2025 SpendSmart. All rights reserved.</p>
+            </div>
         </div>
-    </div>
+    </footer>
 
-    <!-- Bootstrap JS Bundle (includes Popper) -->
+    <!-- Bootstrap JS (required for navbar collapse functionality) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.min.js"></script>
+
     <script>
-        // Global variables
-        let currentLanguage = 'en';
-        let currentQuestion = 0;
-        let isWaitingForAnswer = false;
-        let userResponses = {
-            totalIncome: 0,
-            savingsGoal: 0,
-            expenses: {}
-        };
-
-        // Standard expense percentages based on financial planning guidelines
-        const recommendedPercentages = {
-            housing: 30,
-            transportation: 15,
-            food: 15,
-            utilities: 10,
-            healthcare: 5,
-            education: 5,
-            entertainment: 5,
-            debt: 10,
-            savings: 10,
-            other: 5
-        };
-
-        // Questions to ask the user in both languages
-        const questions = [
+        // Sample discount data
+        const discounts = [
             {
-                en: "Hello! I'm the SpendSmart Budget Assistant. I'll help you analyze your finances and provide personalized advice. What's your name?",
-                ar: "مرحبا! أنا مساعد SpendSmart للميزانية. سأساعدك في تحليل أمورك المالية وتقديم نصائح مخصصة. ما هو اسمك؟",
-                validation: null
-            },
-            {
-                en: "Nice to meet you! What's your total monthly income in JOD?",
-                ar: "تشرفت بمعرفتك! ما هو إجمالي دخلك الشهري بالدينار الأردني؟",
-                validation: "number",
-                errorMsg: {
-                    en: "Please enter a valid number for your income in JOD.",
-                    ar: "الرجاء إدخال رقم صحيح لدخلك بالدينار الأردني."
-                }
-            },
-            {
-                en: "How much would you like to save each month (in JOD)?",
-                ar: "كم تود أن توفر كل شهر (بالدينار الأردني)؟",
-                validation: "number",
-                errorMsg: {
-                    en: "Please enter a valid number for your savings goal in JOD.",
-                    ar: "الرجاء إدخال رقم صحيح لهدف التوفير بالدينار الأردني."
-                }
-            },
-            {
-                en: "How much do you spend on housing per month (rent/mortgage) in JOD?",
-                ar: "كم تنفق على السكن شهريًا (إيجار/رهن عقاري) بالدينار الأردني؟",
-                validation: "number",
-                errorMsg: {
-                    en: "Please enter a valid number for your housing expenses in JOD.",
-                    ar: "الرجاء إدخال رقم صحيح لنفقات السكن بالدينار الأردني."
+                id: 1,
+                title: "Al-Mashrek International School",
+                description: "15% off on annual tuition fees for new students enrolling in the 2025-2024 academic year. Valid for all grade levels.",
+                longDescription: "Al-Mashrek International School is offering a special discount for new enrollments. Get 15% off on annual tuition fees when you register for the 2025-2024 academic year. This offer is valid for all grade levels from kindergarten to high school. Al-Mashrek provides high-quality education with international standards and certified teachers. The school features modern facilities, including science labs, sports fields, and art studios.",
+                category: "Education",
+                location: {
+                    city: "Amman",
+                    address: "Airport Road, Amman, Jordan"
                 },
-                category: "housing"
+                expirationDate: "2025-08-31",
+                discountPercentage: 15,
+                imageUrl: "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1122&q=80",
+                averageRating: 4.5,
+                isNew: true
             },
             {
-                en: "How much do you spend on transportation per month (car payments, gas, public transport) in JOD?",
-                ar: "كم تنفق على المواصلات شهريًا (دفعات السيارة، البنزين، المواصلات العامة) بالدينار الأردني؟",
-                validation: "number",
-                errorMsg: {
-                    en: "Please enter a valid number for your transportation expenses in JOD.",
-                    ar: "الرجاء إدخال رقم صحيح لنفقات المواصلات بالدينار الأردني."
+                id: 2,
+                title: "Roya Specialty Hospital",
+                description: "20% discount on comprehensive health checkups. Includes consultations with specialists, lab tests, and imaging studies.",
+                longDescription: "Roya Specialty Hospital is offering a special 20% discount on comprehensive health checkups. This package includes consultations with specialists in internal medicine, cardiology, and nutrition. You'll also receive complete lab tests including blood work, urine analysis, and cholesterol screening. The package also covers essential imaging studies such as chest X-ray and abdominal ultrasound. Roya Hospital features state-of-the-art medical equipment and a team of highly qualified healthcare professionals dedicated to providing excellent care.",
+                category: "Healthcare",
+                location: {
+                    city: "Amman",
+                    address: "Queen Rania Street, Amman, Jordan"
                 },
-                category: "transportation"
+                expirationDate: "2025-06-30",
+                discountPercentage: 20,
+                imageUrl: "https://images.unsplash.com/photo-1538108149393-fbbd81895907?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1028&q=80",
+                averageRating: 4.7
             },
             {
-                en: "How much do you spend on food per month (groceries, dining out) in JOD?",
-                ar: "كم تنفق على الطعام شهريًا (البقالة، تناول الطعام بالخارج) بالدينار الأردني؟",
-                validation: "number",
-                errorMsg: {
-                    en: "Please enter a valid number for your food expenses in JOD.",
-                    ar: "الرجاء إدخال رقم صحيح لنفقات الطعام بالدينار الأردني."
+                id: 3,
+                title: "Levant Restaurant",
+                description: "25% off on all main dishes from Sunday to Wednesday. Enjoy authentic Jordanian cuisine at discounted prices.",
+                longDescription: "Levant Restaurant invites you to experience authentic Jordanian and Levantine cuisine with a special 25% discount on all main dishes. This offer is valid from Sunday to Wednesday, making it perfect for family dinners or business lunches during the week. The restaurant specializes in traditional dishes like mansaf, maqluba, and grilled meats, all prepared with fresh, local ingredients. Enjoy your meal in a warm, welcoming atmosphere with traditional decorations and excellent service. Reservations are recommended but not required.",
+                category: "Restaurants",
+                location: {
+                    city: "Amman",
+                    address: "Rainbow Street, Jabal Amman, Jordan"
                 },
-                category: "food"
+                expirationDate: "2025-05-31",
+                discountPercentage: 25,
+                imageUrl: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1174&q=80",
+                averageRating: 4.3
             },
             {
-                en: "How much do you spend on utilities per month (electricity, water, internet) in JOD?",
-                ar: "كم تنفق على المرافق شهريًا (الكهرباء، الماء، الإنترنت) بالدينار الأردني؟",
-                validation: "number",
-                errorMsg: {
-                    en: "Please enter a valid number for your utilities expenses in JOD.",
-                    ar: "الرجاء إدخال رقم صحيح لنفقات المرافق بالدينار الأردني."
+                id: 4,
+                title: "Mecca Mall Shopping Spree",
+                description: "10% additional discount at participating stores when using SpendSmart card. Valid at over 30 retail shops.",
+                longDescription: "Get ready for an amazing shopping experience at Mecca Mall! Present your SpendSmart card at any of the 30+ participating stores and receive an additional 10% discount on your purchases. This special offer applies to clothing, electronics, home goods, and more. Participating brands include popular local and international retailers. This discount can be combined with existing store promotions and sales, allowing you to maximize your savings. The mall features convenient parking, numerous dining options, and entertainment facilities for the whole family.",
+                category: "Shopping",
+                location: {
+                    city: "Amman",
+                    address: "Mecca Street, Amman, Jordan"
                 },
-                category: "utilities"
+                expirationDate: "2025-07-15",
+                discountPercentage: 10,
+                imageUrl: "https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80",
+                averageRating: 4.1
             },
             {
-                en: "How much do you spend on healthcare per month (insurance, medications) in JOD?",
-                ar: "كم تنفق على الرعاية الصحية شهريًا (التأمين، الأدوية) بالدينار الأردني؟",
-                validation: "number",
-                errorMsg: {
-                    en: "Please enter a valid number for your healthcare expenses in JOD.",
-                    ar: "الرجاء إدخال رقم صحيح لنفقات الرعاية الصحية بالدينار الأردني."
+                id: 5,
+                title: "Royal Jordanian Cinema",
+                description: "Buy one ticket, get one free on all movies every Tuesday. Valid for standard and VIP seating.",
+                longDescription: "Royal Jordanian Cinema brings you an incredible deal for movie lovers! Every Tuesday, buy one ticket and get another ticket for free, valid for any movie showing that day. This offer applies to both standard and VIP seating options. Enjoy the latest international and Arabic films on state-of-the-art screens with immersive sound systems. The cinema complex features comfortable seating, a wide variety of concessions, and convenient parking. This offer cannot be combined with other promotions and is subject to availability. Advance booking is recommended, especially for new releases and popular showtimes.",
+                category: "Entertainment",
+                location: {
+                    city: "Amman",
+                    address: "City Mall, King Abdullah II Street, Amman, Jordan"
                 },
-                category: "healthcare"
+                expirationDate: "2025-12-31",
+                discountPercentage: 50,
+                imageUrl: "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80",
+                averageRating: 4.6
             },
             {
-                en: "How much do you spend on education per month (tuition, books, courses) in JOD?",
-                ar: "كم تنفق على التعليم شهريًا (الرسوم الدراسية، الكتب، الدورات) بالدينار الأردني؟",
-                validation: "number",
-                errorMsg: {
-                    en: "Please enter a valid number for your education expenses in JOD.",
-                    ar: "الرجاء إدخال رقم صحيح لنفقات التعليم بالدينار الأردني."
+                id: 6,
+                title: "Dead Sea Spa Hotel",
+                description: "30% discount on weekend stays, including access to mineral pools and mud facilities.",
+                longDescription: "Experience the healing properties of the Dead Sea with a special 30% discount on weekend stays at the renowned Dead Sea Spa Hotel. This exclusive offer includes deluxe accommodation with stunning sea views, complimentary breakfast and dinner buffets featuring local and international cuisine, and unlimited access to the hotel's mineral pools and mud facilities. Take advantage of the lowest point on Earth and enjoy the therapeutic benefits of the mineral-rich waters and mud. The hotel also features wellness services, multiple restaurants, and entertainment options. This discount is valid for Friday and Saturday night stays, subject to availability.",
+                category: "Travel",
+                location: {
+                    city: "Dead Sea",
+                    address: "Dead Sea Road, Sweimeh, Jordan"
                 },
-                category: "education"
+                expirationDate: "2025-09-30",
+                discountPercentage: 30,
+                imageUrl: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80",
+                averageRating: 4.8
             },
             {
-                en: "How much do you spend on entertainment per month (movies, hobbies, dining out) in JOD?",
-                ar: "كم تنفق على الترفيه شهريًا (الأفلام، الهوايات، الخروج) بالدينار الأردني؟",
-                validation: "number",
-                errorMsg: {
-                    en: "Please enter a valid number for your entertainment expenses in JOD.",
-                    ar: "الرجاء إدخال رقم صحيح لنفقات الترفيه بالدينار الأردني."
+                id: 7,
+                title: "Rosemary Salon & Spa",
+                description: "15% off on all beauty services including haircuts, styling, facials, and massages.",
+                longDescription: "Treat yourself to a day of pampering at Rosemary Salon & Spa with a special 15% discount on all beauty services. This offer includes professional haircuts and styling, revitalizing facials, relaxing massages, manicures, pedicures, and more. Rosemary's team of certified beauty therapists and stylists use premium products to ensure excellent results. The salon features a tranquil atmosphere, modern equipment, and strict hygiene standards. This discount is available Monday through Thursday and requires advance booking. Perfect for self-care days or preparing for special occasions.",
+                category: "Beauty",
+                location: {
+                    city: "Amman",
+                    address: "Sweifieh, Amman, Jordan"
                 },
-                category: "entertainment"
+                expirationDate: "2025-08-15",
+                discountPercentage: 15,
+                imageUrl: "https://images.unsplash.com/photo-1560750588-73207b1ef5b8?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1073&q=80",
+                averageRating: 4.4
             },
             {
-                en: "How much do you spend on debt repayment per month (credit cards, loans) in JOD?",
-                ar: "كم تنفق على سداد الديون شهريًا (بطاقات الائتمان، القروض) بالدينار الأردني؟",
-                validation: "number",
-                errorMsg: {
-                    en: "Please enter a valid number for your debt repayment in JOD.",
-                    ar: "الرجاء إدخال رقم صحيح لسداد الديون بالدينار الأردني."
+                id: 8,
+                title: "Princess Basma Teaching Hospital",
+                description: "Free dental checkup and 25% discount on dental treatments for SpendSmart members.",
+                longDescription: "Take care of your dental health with Princess Basma Teaching Hospital's special offer for SpendSmart members. Enjoy a free comprehensive dental checkup including examination and X-rays, plus receive a 25% discount on any recommended dental treatments. This offer covers a wide range of dental services including cleanings, fillings, root canals, crowns, and cosmetic procedures. The hospital's dental department features modern equipment and highly qualified dentists committed to providing comfortable, high-quality care. This offer requires advance appointment and presenting your SpendSmart membership card.",
+                category: "Healthcare",
+                location: {
+                    city: "Irbid",
+                    address: "University Street, Irbid, Jordan"
                 },
-                category: "debt"
+                expirationDate: "2025-10-31",
+                discountPercentage: 25,
+                imageUrl: "https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80",
+                averageRating: 4.2
             },
             {
-                en: "How much do you spend on other expenses per month in JOD? (clothing, gifts, subscriptions, etc.)",
-                ar: "كم تنفق على النفقات الأخرى شهريًا بالدينار الأردني؟ (الملابس، الهدايا، الاشتراكات، إلخ)",
-                validation: "number",
-                errorMsg: {
-                    en: "Please enter a valid number for your other expenses in JOD.",
-                    ar: "الرجاء إدخال رقم صحيح للنفقات الأخرى بالدينار الأردني."
+                id: 9,
+                title: "Petra University",
+                description: "20% scholarship on first semester tuition for new students in business and IT programs.",
+                longDescription: "Petra University is offering a special 20% scholarship on first semester tuition fees for new students enrolling in business administration and information technology programs. This scholarship applies to both undergraduate and graduate levels and is based on academic merit. Petra University is known for its quality education, experienced faculty, and modern campus facilities. The university offers a vibrant student life with numerous clubs and activities. To qualify, students must meet the standard admission requirements and submit their applications before the deadline. This scholarship can be extended for subsequent semesters based on academic performance.",
+                category: "Education",
+                location: {
+                    city: "Amman",
+                    address: "Airport Road, Amman, Jordan"
                 },
-                category: "other"
+                expirationDate: "2025-08-15",
+                discountPercentage: 20,
+                imageUrl: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80",
+                averageRating: 4.5
             },
             {
-                en: "That's all I need! I'll analyze your budget now and provide personalized recommendations.",
-                ar: "هذا كل ما أحتاجه! سأقوم بتحليل ميزانيتك الآن وتقديم توصيات مخصصة."
+                id: 10,
+                title: "Ayla Resort Aqaba",
+                description: "25% off on water sports activities and boat tours for hotel guests and SpendSmart users.",
+                longDescription: "Experience the beauty of the Red Sea with Ayla Resort Aqaba's special offer of 25% discount on a variety of water sports activities and boat tours. Choose from snorkeling, diving, jet skiing, parasailing, glass-bottom boat tours, and more. Ayla Resort is located on one of Aqaba's most beautiful beaches with clear waters and vibrant coral reefs. All activities are conducted by certified instructors using high-quality equipment with strict safety standards. This discount is available for hotel guests and SpendSmart users upon presenting valid identification. Advance booking is recommended, especially during peak seasons and weekends.",
+                category: "Entertainment",
+                location: {
+                    city: "Aqaba",
+                    address: "Southern Beach, Aqaba, Jordan"
+                },
+                expirationDate: "2025-09-15",
+                discountPercentage: 25,
+                imageUrl: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80",
+                averageRating: 4.7,
+                isNew: true
+            },
+            {
+                id: 11,
+                title: "Falafel Al-Quds",
+                description: "Buy one sandwich combo, get a second sandwich free every Wednesday and Thursday.",
+                longDescription: "Enjoy authentic Jordanian street food at Falafel Al-Quds with their special buy-one-get-one-free offer on sandwich combos every Wednesday and Thursday. This deal includes a falafel or hummus sandwich, a side of french fries, and a soft drink. Falafel Al-Quds is known for using traditional recipes with the freshest ingredients, making their falafel crispy on the outside and perfectly seasoned inside. Their hummus is creamy and rich, topped with olive oil and special spices. This family-owned restaurant has been serving satisfied customers for over 25 years. The offer is valid for dine-in and takeaway orders.",
+                category: "Restaurants",
+                location: {
+                    city: "Zarqa",
+                    address: "Downtown, Zarqa, Jordan"
+                },
+                expirationDate: "2025-12-31",
+                discountPercentage: 50,
+                imageUrl: "https://images.unsplash.com/photo-1561758033-d89a9ad46330?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80",
+                averageRating: 4.6
+            },
+            {
+                id: 12,
+                title: "Carrefour Hypermarket",
+                description: "5% additional discount on total purchase for SpendSmart members, including sale items.",
+                longDescription: "Save more on your grocery and household shopping with Carrefour Hypermarket's exclusive offer for SpendSmart members. Receive an additional 5% discount on your total purchase, including items already on sale. This discount applies to all departments including groceries, fresh produce, bakery, meat and fish, household items, electronics, clothing, and more. Carrefour is committed to providing high-quality products at competitive prices, with a wide selection of both local and international brands. This offer is valid at all Carrefour locations in Jordan. To receive the discount, simply present your SpendSmart card at checkout.",
+                category: "Shopping",
+                location: {
+                    city: "Multiple Locations",
+                    address: "City Mall, Mecca Mall, Taj Mall, and more"
+                },
+                expirationDate: "2025-12-31",
+                discountPercentage: 5,
+                imageUrl: "https://images.unsplash.com/photo-1542838132-92c53300491e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1074&q=80",
+                averageRating: 4.3
+            },
+            {
+                id: 13,
+                title: "Mount Nebo Tours",
+                description: "30% discount on guided tours to Mount Nebo, Madaba mosaics, and baptism site.",
+                longDescription: "Discover Jordan's rich religious and historical heritage with Mount Nebo Tours' special 30% discount on guided tours. This comprehensive tour package includes visits to Mount Nebo, where Moses saw the Promised Land, the famous Byzantine mosaics in Madaba including the oldest map of Palestine, and the Baptism Site of Jesus Christ at Bethany Beyond the Jordan. Tours are conducted by knowledgeable guides fluent in multiple languages who provide fascinating insights into the historical and religious significance of these sites. Transportation is provided in comfortable, air-conditioned vehicles. The tour package includes entrance fees, bottled water, and a traditional Jordanian lunch. Advance booking is required.",
+                category: "Travel",
+                location: {
+                    city: "Madaba",
+                    address: "Tourist Street, Madaba, Jordan"
+                },
+                expirationDate: "2025-11-30",
+                discountPercentage: 30,
+                imageUrl: "https://images.unsplash.com/photo-1455587734955-081b22074882?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80",
+                averageRating: 4.8
+            },
+            {
+                id: 14,
+                title: "Al-Hikma Bookstore",
+                description: "20% off on all books and stationery items for students with valid ID.",
+                longDescription: "Al-Hikma Bookstore is supporting education with a special 20% discount on all books and stationery items for students. This offer covers textbooks, reference materials, fiction and non-fiction books, notebooks, writing instruments, art supplies, and more. Al-Hikma offers a wide selection of materials in both Arabic and English, catering to students of all ages and educational levels. The bookstore features a comfortable reading area where customers can browse books before purchasing. To qualify for the discount, simply present a valid student ID at checkout. This offer is perfect for stocking up on educational materials and supplies for the school year.",
+                category: "Education",
+                location: {
+                    city: "Irbid",
+                    address: "University Street, Irbid, Jordan"
+                },
+                expirationDate: "2025-10-15",
+                discountPercentage: 20,
+                imageUrl: "https://images.unsplash.com/photo-1507842217343-583bb7270b66?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80",
+                averageRating: 4.4
+            },
+            {
+                id: 15,
+                title: "Natural Glow Beauty Center",
+                description: "30% discount on first visit for all skincare treatments and consultations.",
+                longDescription: "Start your journey to radiant skin with Natural Glow Beauty Center's special offer for new clients. Receive a 30% discount on your first visit for any skincare treatment or consultation. Natural Glow specializes in personalized skincare solutions using organic and medical-grade products. Services include facial treatments, chemical peels, microdermabrasion, LED therapy, and more, all tailored to your specific skin concerns. The center features a team of certified dermatologists and skin therapists who provide detailed consultations and customized treatment plans. The facility is equipped with the latest skincare technology in a relaxing, spa-like environment. Appointments are required and can be booked online or by phone.",
+                category: "Beauty",
+                location: {
+                    city: "Amman",
+                    address: "Abdoun Circle, Amman, Jordan"
+                },
+                expirationDate: "2025-07-31",
+                discountPercentage: 30,
+                imageUrl: "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80",
+                averageRating: 4.7,
+                isNew: true
+            },
+            {
+                id: 16,
+                title: "Zarb Restaurant",
+                description: "15% discount on traditional Bedouin dining experience for groups of four or more.",
+                longDescription: "Experience authentic Bedouin cuisine at Zarb Restaurant with a special 15% discount for groups of four or more people. Zarb is a traditional Bedouin cooking method where meat and vegetables are roasted in an underground oven. The restaurant offers a complete cultural experience with traditional seating arrangements, decor, and occasionally live Arabic music. The meal includes a variety of mezze (appetizers), freshly baked bread, the signature zarb main course, and traditional desserts like knafeh. The restaurant uses recipes passed down through generations and sources ingredients from local farmers. This dining experience takes approximately 2-3 hours, so please plan accordingly. Reservations are required at least one day in advance.",
+                category: "Restaurants",
+                location: {
+                    city: "Aqaba",
+                    address: "King Hussein Street, Aqaba, Jordan"
+                },
+                expirationDate: "2025-09-30",
+                discountPercentage: 15,
+                imageUrl: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80",
+                averageRating: 4.5
+            },
+            {
+                id: 17,
+                title: "Jordan Medical Center",
+                description: "Free follow-up consultations and 20% off on all medical services for three months.",
+                longDescription: "Jordan Medical Center is offering a comprehensive healthcare package that includes free follow-up consultations and a 20% discount on all medical services for a period of three months. This offer covers consultations with specialists in various fields including cardiology, orthopedics, pediatrics, obstetrics and gynecology, dermatology, and more. The discount also applies to diagnostic services such as laboratory tests, X-rays, ultrasounds, and other imaging studies. Jordan Medical Center features state-of-the-art facilities, the latest medical equipment, and a team of highly qualified physicians and healthcare professionals. The center operates seven days a week with extended hours for your convenience. To take advantage of this offer, patients need to register for the program at their first visit.",
+                category: "Healthcare",
+                location: {
+                    city: "Amman",
+                    address: "Jordan Street, Shmeisani, Amman, Jordan"
+                },
+                expirationDate: "2025-08-31",
+                discountPercentage: 20,
+                imageUrl: "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1153&q=80",
+                averageRating: 4.6
+            },
+            {
+                id: 18,
+                title: "Petra Adventure Tours",
+                description: "25% discount on guided tours to Petra, including transportation, meals, and entrance fees.",
+                longDescription: "Explore the magnificent ancient city of Petra with a special 25% discount on full-day guided tours with Petra Adventure Tours. This comprehensive package includes round-trip transportation in comfortable vehicles from major cities in Jordan, entrance fees to the Petra Archaeological Park, a professional English-speaking guide, a traditional Jordanian lunch, bottled water, and a detailed tour of the main attractions including the Siq, Treasury, Royal Tombs, Monastery, and more. The tours are conducted in small groups for a more personalized experience. Petra Adventure Tours employs guides with extensive knowledge of the history, architecture, and cultural significance of Petra. This is a full-day tour lasting approximately 8-10 hours, with moderate walking required. Comfortable walking shoes and sun protection are recommended.",
+                category: "Travel",
+                location: {
+                    city: "Wadi Musa",
+                    address: "Tourism Street, Wadi Musa, Jordan"
+                },
+                expirationDate: "2025-10-31",
+                discountPercentage: 25,
+                imageUrl: "https://images.unsplash.com/photo-1580834341580-8c17a3a630ca?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1076&q=80",
+                averageRating: 4.9
+            },
+            // NEW ENTRIES - Shopping Category
+            {
+                id: 19,
+                title: "Taj Lifestyle Center",
+                description: "Up to 25% off at select luxury boutiques with SpendSmart membership. Valid on clothing, accessories, and jewelry.",
+                longDescription: "Elevate your shopping experience at Taj Lifestyle Center with exclusive SpendSmart member discounts of up to 25% at select luxury boutiques. This premier shopping destination in Amman features high-end local and international brands offering the latest in fashion, accessories, jewelry, and home goods. This special offer applies to both regular-priced items and seasonal collections at participating stores. The modern, sophisticated mall environment provides a pleasant shopping atmosphere with amenities including valet parking, personal shopping assistants, and a VIP lounge. To receive the discount, simply present your SpendSmart membership card at the time of purchase. Some exclusions may apply to limited-edition items.",
+                category: "Shopping",
+                location: {
+                    city: "Amman",
+                    address: "Prince Hashem Street, Abdoun, Amman, Jordan"
+                },
+                expirationDate: "2025-09-30",
+                discountPercentage: 25,
+                imageUrl: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80",
+                averageRating: 4.7,
+                isNew: true
+            },
+            {
+                id: 20,
+                title: "The Boulevard Amman",
+                description: "15% discount at all fashion and accessory stores plus complimentary valet parking with minimum purchase.",
+                longDescription: "Experience upscale shopping at The Boulevard Amman with a special 15% discount at all fashion and accessory stores. This modern outdoor shopping destination combines high-end retail with a pleasant walking experience, featuring beautiful architecture and landscaping. The discount applies to a wide range of local and international fashion brands, footwear, accessories, and specialty stores. As an added benefit, enjoy complimentary valet parking with a minimum purchase of 50 JOD. The Boulevard also features a variety of dining options where you can relax after your shopping spree. To receive the discount, simply mention the SpendSmart offer before checkout and present your membership card.",
+                category: "Shopping",
+                location: {
+                    city: "Amman",
+                    address: "Abdali, Amman, Jordan"
+                },
+                expirationDate: "2025-11-15",
+                discountPercentage: 15,
+                imageUrl: "https://images.unsplash.com/photo-1555529669-e69e7aa0ba9a?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80",
+                averageRating: 4.6
+            },
+            {
+                id: 21,
+                title: "Galleria Mall Jordan",
+                description: "20% off at electronics stores and 10% off at department stores every Monday and Tuesday.",
+                longDescription: "Make the most of your shopping budget at The Galleria Mall with special discounts every Monday and Tuesday. Enjoy 20% off at participating electronics stores including major brands and local retailers offering the latest gadgets, computers, smartphones, and home appliances. Additionally, receive 10% off at department stores featuring clothing, cosmetics, housewares, and more. The Galleria Mall is one of the largest shopping centers in Jordan with over 200 stores across multiple floors. The mall features family-friendly amenities including a food court, children's play area, and convenient parking. This offer is exclusive to SpendSmart members and requires presenting your membership card at checkout.",
+                category: "Shopping",
+                location: {
+                    city: "Amman",
+                    address: "Suleiman Al Nabulsi Street, Amman, Jordan"
+                },
+                expirationDate: "2025-10-31",
+                discountPercentage: 20,
+                imageUrl: "https://images.unsplash.com/photo-1567401893414-76b7b1e5a7a5?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80",
+                averageRating: 4.4
+            },
+            {
+                id: 22,
+                title: "Abdali Mall",
+                description: "15% discount on home furnishings and decor at all participating stores plus free delivery.",
+                longDescription: "Refresh your living space with Abdali Mall's special offer of 15% discount on home furnishings and decor at all participating stores. This promotion includes furniture, lighting, textiles, kitchenware, and decorative items for every room in your home. Participating retailers include both international brands and local artisanal shops offering unique pieces with Jordanian flair. As an added bonus, enjoy free delivery within Amman for purchases over 100 JOD. Abdali Mall features a modern, spacious design with plenty of natural light, making it an ideal environment for selecting home goods. Design consultants are available at many participating stores to help you make the perfect selections for your space. This offer is valid for SpendSmart members presenting their cards at checkout.",
+                category: "Shopping",
+                location: {
+                    city: "Amman",
+                    address: "Abdali Project, Amman, Jordan"
+                },
+                expirationDate: "2025-08-31",
+                discountPercentage: 15,
+                imageUrl: "https://images.unsplash.com/photo-1555529669-e69e7aa0ba9a?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80",
+                averageRating: 4.5
+            },
+            {
+                id: 23,
+                title: "City Mall Sporting Goods",
+                description: "20% off on all athletic wear, equipment, and fitness accessories at multiple sports retailers.",
+                longDescription: "Get fit for less with City Mall's special 20% discount on all athletic wear, equipment, and fitness accessories at multiple sports retailers. This comprehensive offer includes running shoes, workout apparel, fitness equipment, sports gear, and accessories from top global brands. Whether you're a serious athlete or just starting your fitness journey, you'll find everything you need to support your active lifestyle. The discount applies at participating stores including major sports retailers and specialty fitness shops throughout City Mall. Knowledgeable staff can help you select the right gear and equipment for your specific needs. This exclusive offer is available to SpendSmart members who present their cards at checkout. Some high-end professional equipment may be excluded from the promotion.",
+                category: "Shopping",
+                location: {
+                    city: "Amman",
+                    address: "King Abdullah II Street, Amman, Jordan"
+                },
+                expirationDate: "2025-07-31",
+                discountPercentage: 20,
+                imageUrl: "https://images.unsplash.com/photo-1571902943202-507ec2618e8f?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1075&q=80",
+                averageRating: 4.3
+            },
+            {
+                id: 24,
+                title: "Irbid City Center Mall",
+                description: "10% discount storewide at all retailers plus extra 5% on purchases over 100 JOD.",
+                longDescription: "Enjoy significant savings at Irbid City Center Mall with a special 10% discount storewide at all participating retailers, plus an extra 5% on purchases over 100 JOD. This extensive shopping center features over 150 stores offering clothing, electronics, home goods, toys, books, and much more. The discount applies to both local and international brands, giving you access to a wide variety of quality products at reduced prices. This family-friendly mall also includes entertainment options, a children's play area, and various dining choices where you can relax during your shopping day. To take advantage of this exclusive offer, simply present your SpendSmart member card at any participating store. Some luxury items and already discounted products may be excluded.",
+                category: "Shopping",
+                location: {
+                    city: "Irbid",
+                    address: "University Street, Irbid, Jordan"
+                },
+                expirationDate: "2025-12-15",
+                discountPercentage: 15,
+                imageUrl: "https://images.unsplash.com/photo-1481437156560-3205f6a55735?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80",
+                averageRating: 4.2
+            },
+            {
+                id: 25,
+                title: "Aqaba Gateway Mall",
+                description: "15% off at beachwear shops and souvenir stores throughout the mall for SpendSmart users.",
+                longDescription: "Prepare for your Red Sea adventure with Aqaba Gateway Mall's special 15% discount at beachwear shops and souvenir stores throughout the mall. This offer covers swimwear, beach accessories, sun protection products, towels, casual summer clothing, and locally-made souvenirs to remember your Jordan trip. The mall is conveniently located near Aqaba's popular beaches and features a relaxed, vacation-friendly atmosphere with air-conditioned comfort. Many stores carry unique items crafted by local artisans, including jewelry, textiles, and decorative pieces that make perfect gifts or mementos. The discount is available to all SpendSmart members who present their cards at checkout. Some limited edition or collector's items may be excluded from the promotion.",
+                category: "Shopping",
+                location: {
+                    city: "Aqaba",
+                    address: "King Hussein Street, Aqaba, Jordan"
+                },
+                expirationDate: "2025-09-30",
+                discountPercentage: 15,
+                imageUrl: "https://images.unsplash.com/photo-1445019980597-93fa8acb246c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1174&q=80",
+                averageRating: 4.4,
+                isNew: true
+            },
+            {
+                id: 26,
+                title: "Zarqa Grand Shopping Center",
+                description: "25% off on children's clothing, toys, and school supplies at all participating stores.",
+                longDescription: "Make family shopping more affordable with Zarqa Grand Shopping Center's special 25% discount on children's clothing, toys, and school supplies at all participating stores. This family-focused offer includes casual wear, formal clothing, shoes, educational toys, games, art supplies, backpacks, stationery, and more. The shopping center features a wide selection of both local and international brands catering to children of all ages from infants to teenagers. The mall's child-friendly layout includes play areas where kids can take a break during shopping trips. This generous discount is available exclusively to SpendSmart members upon presenting their cards at checkout. For added convenience, free gift wrapping is available for purchases over 50 JOD, making this perfect for birthday or holiday shopping.",
+                category: "Shopping",
+                location: {
+                    city: "Zarqa",
+                    address: "King Abdullah II Street, Zarqa, Jordan"
+                },
+                expirationDate: "2025-08-20",
+                discountPercentage: 25,
+                imageUrl: "https://images.unsplash.com/photo-1472851294608-062f824d29cc?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80",
+                averageRating: 4.3
+            },
+            // NEW ENTRIES - Entertainment Category
+            {
+                id: 27,
+                title: "Jordan Virtual Reality Park",
+                description: "20% off on all VR experiences and gaming sessions, plus free membership upgrade.",
+                longDescription: "Step into the future of entertainment at Jordan Virtual Reality Park with a special 20% discount on all VR experiences and gaming sessions. This cutting-edge entertainment center features the latest virtual reality technology with dozens of immersive experiences including adventure games, simulated sports, educational content, and virtual travel. The facility includes both individual VR stations and multiplayer areas where friends and family can enjoy shared experiences. This offer also includes a free membership upgrade that provides priority booking and additional playtime. The park's knowledgeable staff provides full orientation for first-time users to ensure a comfortable and enjoyable experience. This discount is exclusive to SpendSmart members who present their cards at the reception desk. Age restrictions apply for certain VR experiences.",
+                category: "Entertainment",
+                location: {
+                    city: "Amman",
+                    address: "Gardens Street, Amman, Jordan"
+                },
+                expirationDate: "2025-11-30",
+                discountPercentage: 20,
+                imageUrl: "https://images.unsplash.com/photo-1576633587774-6af7252025c3?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1172&q=80",
+                averageRating: 4.8,
+                isNew: true
+            },
+            {
+                id: 28,
+                title: "Amman Karting Zone",
+                description: "Buy one race session, get one free plus 15% off on food and beverages.",
+                longDescription: "Experience the thrill of speed at Amman Karting Zone with their special buy-one-get-one-free offer on race sessions. This professional go-kart facility features a professionally designed track with challenging curves and straightaways suitable for both beginners and experienced drivers. The track uses modern, well-maintained karts with safety features that ensure a fun yet secure racing experience. This offer also includes a 15% discount on all food and beverages at the trackside café, making it perfect for a full day of entertainment. Safety equipment including helmets is provided, and all drivers receive a comprehensive briefing before racing. The facility offers separate sessions for adults and children with age-appropriate karts. To redeem this exclusive offer, present your SpendSmart member card at registration.",
+                category: "Entertainment",
+                location: {
+                    city: "Amman",
+                    address: "Airport Road, Amman, Jordan"
+                },
+                expirationDate: "2025-10-15",
+                discountPercentage: 50,
+                imageUrl: "https://images.unsplash.com/photo-1547222246-63d2b2714ecc?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80",
+                averageRating: 4.7
+            },
+            {
+                id: 29,
+                title: "Aqaba Marine Park Snorkeling",
+                description: "30% discount on guided snorkeling tours including equipment rental and marine life guide.",
+                longDescription: "Explore the underwater wonders of the Red Sea with a special 30% discount on guided snorkeling tours at Aqaba Marine Park. This comprehensive package includes professional-quality snorkeling equipment rental (mask, snorkel, fins), a knowledgeable marine guide who helps you spot and identify colorful fish and coral species, and transportation to the best snorkeling spots along Aqaba's coast. The tour is suitable for all skill levels, including beginners, with basic instruction provided. Aqaba Marine Park is known for its exceptional biodiversity with over 500 species of fish and 127 types of hard and soft corals. Tours operate daily in the morning and afternoon, with each session lasting approximately 3 hours. This exclusive offer is available to SpendSmart members upon presenting their cards at booking.",
+                category: "Entertainment",
+                location: {
+                    city: "Aqaba",
+                    address: "South Beach, Aqaba, Jordan"
+                },
+                expirationDate: "2025-09-30",
+                discountPercentage: 30,
+                imageUrl: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80",
+                averageRating: 4.9
+            },
+            {
+                id: 30,
+                title: "Jordan Adventure Park",
+                description: "25% off on all adventure activities including zip-lining, climbing walls, and obstacle courses.",
+                longDescription: "Challenge yourself at Jordan Adventure Park with a special 25% discount on all activities including zip-lining across dramatic valleys, scaling climbing walls of varying difficulty levels, navigating suspended obstacle courses, and testing your skills on the challenging ropes course. The park features both beginner-friendly options and advanced challenges that will push even experienced adventurers. All activities are supervised by certified instructors who prioritize safety while ensuring guests have an exciting experience. Safety equipment and a comprehensive briefing are provided before each activity. The park's hilltop location offers spectacular views of the surrounding landscape, making it a perfect destination for thrill-seekers who also appreciate natural beauty. This exclusive discount is available to SpendSmart members who present their cards at the ticket office.",
+                category: "Entertainment",
+                location: {
+                    city: "Salt",
+                    address: "Mountain Road, Salt, Jordan"
+                },
+                expirationDate: "2025-10-31",
+                discountPercentage: 25,
+                imageUrl: "https://images.unsplash.com/photo-1504564321107-4ce34a41352e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1074&q=80",
+                averageRating: 4.6
+            },
+            {
+                id: 31,
+                title: "Amman Paintball Arena",
+                description: "20% discount on group packages including equipment, protective gear, and 200 paintballs per player.",
+                longDescription: "Experience the ultimate team-building adventure at Amman Paintball Arena with a special 20% discount on group packages. This offer includes high-quality paintball markers (guns), protective gear (masks, vests, gloves), 200 paintballs per player, and access to multiple playing fields with different themes and obstacles. The arena features both outdoor and indoor fields, allowing play in any weather condition. Professional referees supervise all games to ensure safety and fair play while maximizing fun. The facility includes comfortable viewing areas where non-players can watch the action, as well as a café serving refreshments and snacks. This discount applies to groups of 6 or more players and is exclusive to SpendSmart members who present their cards at booking. Additional paintballs can be purchased at a 10% discount if needed during play.",
+                category: "Entertainment",
+                location: {
+                    city: "Amman",
+                    address: "Sports City, Amman, Jordan"
+                },
+                expirationDate: "2025-12-15",
+                discountPercentage: 20,
+                imageUrl: "https://images.unsplash.com/photo-1551316679-9c6ae9dec224?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1074&q=80",
+                averageRating: 4.5
+            },
+            {
+                id: 32,
+                title: "Petra Night Show",
+                description: "15% discount on tickets to the magical Petra By Night experience with candlelit Treasury.",
+                longDescription: "Witness the magic of Petra By Night with a special 15% discount on this unforgettable experience. Walk through the Siq to the Treasury following a path illuminated by over 1,500 candles, creating a mystical atmosphere in this ancient wonder. The experience culminates at the Treasury (Al-Khazneh), where you'll sit on mats while enjoying Bedouin music and listening to stories about Petra and its people under a star-filled sky. This unique perspective on the famous archaeological site offers photographic opportunities that are impossible during daylight hours. The tour lasts approximately two hours and operates three nights per week. Comfortable walking shoes are recommended as the path involves walking on uneven terrain in low light. This exclusive discount is available to SpendSmart members upon presenting their cards at the ticket office.",
+                category: "Entertainment",
+                location: {
+                    city: "Wadi Musa",
+                    address: "Petra Visitor Center, Wadi Musa, Jordan"
+                },
+                expirationDate: "2025-11-30",
+                discountPercentage: 15,
+                imageUrl: "https://images.unsplash.com/photo-1580834341580-8c17a3a630ca?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1076&q=80",
+                averageRating: 4.9,
+                isNew: true
+            },
+            {
+                id: 33,
+                title: "Irbid Entertainment City",
+                description: "25% off on unlimited ride passes and arcade games with free cotton candy for children.",
+                longDescription: "Enjoy a day of family fun at Irbid Entertainment City with a special 25% discount on unlimited ride passes and arcade games. This modern amusement park features a variety of attractions suitable for all ages, including thrilling rides for teenagers and adults as well as gentler options for younger children. The facility includes a large arcade with the latest video games, prize games, and traditional favorites. This special offer also includes free cotton candy for children under 12 years of age. The park's clean, safe environment includes shaded rest areas, dining options, and professional staff trained to ensure visitor safety and enjoyment. Located in a convenient area with ample parking, it's perfect for family outings, birthday celebrations, or school trips. This exclusive discount is available to SpendSmart members who present their cards at the ticket booth.",
+                category: "Entertainment",
+                location: {
+                    city: "Irbid",
+                    address: "Jordan Street, Irbid, Jordan"
+                },
+                expirationDate: "2025-08-31",
+                discountPercentage: 25,
+                imageUrl: "https://images.unsplash.com/photo-1513889961551-628c1e5e2ee9?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80",
+                averageRating: 4.4
+            },
+            {
+                id: 34,
+                title: "Royal Star Cinema",
+                description: "30% discount on premium seating plus free popcorn and soft drink every Thursday.",
+                longDescription: "Enhance your movie experience at Royal Star Cinema with a special 30% discount on premium seating plus a free regular popcorn and soft drink every Thursday. This modern cinema complex features the latest Hollywood blockbusters, Arabic films, and international releases across multiple screens with state-of-the-art projection and sound systems. The premium seating area offers extra-comfortable reclining seats with more legroom and optional in-seat service. The cinema's convenient location includes easy parking access and is surrounded by dining options for before or after your movie. Advanced booking is available through the cinema's website or mobile app to secure your preferred showtime and seats. This exclusive offer is available to SpendSmart members who present their cards at the ticket counter or when booking online using their member code.",
+                category: "Entertainment",
+                location: {
+                    city: "Amman",
+                    address: "The Boulevard, Abdali, Amman, Jordan"
+                },
+                expirationDate: "2025-12-31",
+                discountPercentage: 30,
+                imageUrl: "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80",
+                averageRating: 4.7
+            },
+            // NEW ENTRIES - Beauty Category
+            {
+                id: 35,
+                title: "Elegance Beauty Lounge",
+                description: "25% off on hair coloring services and complimentary hair treatment with any color service.",
+                longDescription: "Transform your look at Elegance Beauty Lounge with a special 25% discount on all hair coloring services. This offer includes single-process color, highlights, balayage, ombre, and creative color techniques performed by highly trained colorists who stay current with the latest trends and techniques. As an added bonus, receive a complimentary deep conditioning treatment with any color service to ensure your hair remains healthy and vibrant. Elegance Beauty Lounge uses premium hair color products that provide excellent coverage, vibrant results, and minimal damage. The salon's elegant atmosphere includes comfortable seating, refreshments, and a relaxing hair wash experience with massage chairs. Consultations are provided before all color services to determine the best approach for your hair type and desired results. This exclusive offer is available to SpendSmart members who present their cards when booking.",
+                category: "Beauty",
+                location: {
+                    city: "Amman",
+                    address: "Rainbow Street, Jabal Amman, Jordan"
+                },
+                expirationDate: "2025-07-31",
+                discountPercentage: 25,
+                imageUrl: "https://images.unsplash.com/photo-1560750588-73207b1ef5b8?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1073&q=80",
+                averageRating: 4.8,
+                isNew: true
+            },
+            {
+                id: 36,
+                title: "Amman Spa & Wellness Center",
+                description: "30% off on all facial treatments plus complimentary hand massage with any facial booking.",
+                longDescription: "Rejuvenate your skin at Amman Spa & Wellness Center with a special 30% discount on all facial treatments. Choose from a variety of specialized facials including hydrating, anti-aging, brightening, acne treatment, and sensitive skin options, all performed by licensed estheticians using premium skincare products. Each facial is customized to address your specific skin concerns and includes cleansing, exfoliation, extraction if needed, mask, and moisturizing. As an added bonus, enjoy a complimentary relaxing hand massage during your facial treatment. The spa's tranquil environment features soothing music, aromatherapy, and comfortable treatment rooms designed for complete relaxation. A detailed skin analysis is provided before treatment to ensure the most effective approach for your skin type. This exclusive offer is available to SpendSmart members who present their cards when booking.",
+                category: "Beauty",
+                location: {
+                    city: "Amman",
+                    address: "Sweifieh, Amman, Jordan"
+                },
+                expirationDate: "2025-08-31",
+                discountPercentage: 30,
+                imageUrl: "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80",
+                averageRating: 4.9
+            },
+            {
+                id: 37,
+                title: "Luminous Skin Clinic",
+                description: "20% discount on laser hair removal packages and free consultation with skin analysis.",
+                longDescription: "Achieve smooth, hair-free skin with Luminous Skin Clinic's special 20% discount on laser hair removal packages. This offer applies to packages for all body areas including face, underarms, arms, legs, bikini area, chest, and back. The clinic uses advanced laser technology suitable for all skin types, providing effective results with minimal discomfort. Each package includes multiple sessions to ensure optimal hair reduction. As part of this offer, receive a free comprehensive consultation with detailed skin analysis to determine the best treatment approach for your specific needs. The clinic's professional staff includes certified laser technicians and a supervising dermatologist who ensure safe, effective treatments. The facility maintains strict hygiene standards and provides a private, comfortable environment. This exclusive offer is available to SpendSmart members who present their cards when booking.",
+                category: "Beauty",
+                location: {
+                    city: "Amman",
+                    address: "Medical City Street, Amman, Jordan"
+                },
+                expirationDate: "2025-09-30",
+                discountPercentage: 20,
+                imageUrl: "https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1171&q=80",
+                averageRating: 4.7
+            },
+            {
+                id: 38,
+                title: "Royal Nail Studio",
+                description: "Buy one gel manicure, get one pedicure free plus 15% off nail art and extensions.",
+                longDescription: "Pamper your hands and feet at Royal Nail Studio with a special buy-one-get-one deal: purchase a gel manicure and receive a classic pedicure for free. This offer also includes a 15% discount on nail art designs and nail extensions. The studio uses premium gel polish brands known for their durability and shine, lasting up to three weeks without chipping. All services are performed by experienced nail technicians in a clean, modern environment using sterilized tools and new disposable items for each client. The gel manicure includes nail shaping, cuticle care, hand massage, and gel polish application with LED curing. The complimentary pedicure includes foot soak, exfoliation, nail care, and regular polish application. Appointments include refreshments and access to free Wi-Fi. This exclusive offer is available to SpendSmart members who present their cards when booking.",
+                category: "Beauty",
+                location: {
+                    city: "Amman",
+                    address: "Abdoun Circle, Amman, Jordan"
+                },
+                expirationDate: "2025-10-15",
+                discountPercentage: 50,
+                imageUrl: "https://images.unsplash.com/photo-1610992015732-2449b76344bc?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80",
+                averageRating: 4.6,
+                isNew: true
+            },
+            {
+                id: 39,
+                title: "Zen Massage & Day Spa",
+                description: "25% off on all massage treatments and complimentary aromatherapy upgrade.",
+                longDescription: "Experience deep relaxation at Zen Massage & Day Spa with a special 25% discount on all massage treatments including Swedish, deep tissue, hot stone, aromatherapy, Thai, and specialty massages. This offer also includes a complimentary aromatherapy upgrade with your choice of essential oil blends to enhance your massage benefits. The spa's peaceful atmosphere features private treatment rooms, soothing music, and comfortable massage tables with high-quality linens. All massages are performed by licensed massage therapists with extensive training who can customize pressure and techniques to your preferences. The facility offers shower facilities and relaxation areas where you can unwind before and after your treatment. Guests receive herbal tea and fresh fruit after their service. This exclusive offer is available to SpendSmart members who present their cards when booking.",
+                category: "Beauty",
+                location: {
+                    city: "Amman",
+                    address: "Mecca Street, Amman, Jordan"
+                },
+                expirationDate: "2025-11-30",
+                discountPercentage: 25,
+                imageUrl: "https://images.unsplash.com/photo-1600334129128-685c5582fd35?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80",
+                averageRating: 4.8
+            },
+            {
+                id: 40,
+                title: "Diamond Brows & Lashes",
+                description: "30% off on eyebrow microblading and eyelash extensions with free touch-up session.",
+                longDescription: "Enhance your natural beauty at Diamond Brows & Lashes with a special 30% discount on eyebrow microblading and eyelash extension services. This offer includes premium microblading using the latest techniques to create natural-looking, semi-permanent eyebrows that complement your face shape. The eyelash extension services feature high-quality synthetic or silk lashes applied individually to create customized volume and length. As an added value, this offer includes a free touch-up session for microblading (within 6 weeks) or a lash fill (within 3 weeks) to maintain perfect results. All services are performed by certified technicians in a sterile environment using medical-grade tools and hypoallergenic products. Consultations are provided to determine the best shape, color, and style for your features. This exclusive offer is available to SpendSmart members who present their cards when booking.",
+                category: "Beauty",
+                location: {
+                    city: "Amman",
+                    address: "The Boulevard, Abdali, Amman, Jordan"
+                },
+                expirationDate: "2025-09-15",
+                discountPercentage: 30,
+                imageUrl: "https://images.unsplash.com/photo-1589710751893-f9bd67021936?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80",
+                averageRating: 4.9
+            },
+            {
+                id: 41,
+                title: "Irbid Beauty Center",
+                description: "20% off on bridal packages including hair styling, makeup, and nail services.",
+                longDescription: "Prepare for your special day with Irbid Beauty Center's special 20% discount on comprehensive bridal packages. This all-inclusive service features professional bridal makeup application using premium cosmetics, elaborate hair styling including trials to perfect your look, manicure and pedicure services, and facial treatments to ensure glowing skin. The center's experienced bridal team specializes in both traditional and modern bridal looks, customized to complement your features and wedding theme. The package includes a pre-wedding consultation to plan every detail of your beauty preparations. On your wedding day, enjoy private service in a dedicated bridal suite with refreshments for you and your bridal party. Photos of the styling process are provided as a special memento. This exclusive offer is available to SpendSmart members who present their cards when booking.",
+                category: "Beauty",
+                location: {
+                    city: "Irbid",
+                    address: "University Street, Irbid, Jordan"
+                },
+                expirationDate: "2025-12-31",
+                discountPercentage: 20,
+                imageUrl: "https://images.unsplash.com/photo-1596704017254-9759879607a0?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1074&q=80",
+                averageRating: 4.7
+            },
+            {
+                id: 42,
+                title: "Zarqa Modern Beauty Salon",
+                description: "25% discount on hair styling services and free hair treatment with any coloring service.",
+                longDescription: "Refresh your look at Zarqa Modern Beauty Salon with a special 25% discount on all hair styling services including haircuts, blowouts, updos, keratin treatments, and specialized styling for special occasions. This offer also includes a complimentary hair treatment when you book any coloring service, helping to maintain hair health and vibrancy. The salon features an experienced team of stylists who regularly update their skills through professional training programs. All services use high-quality hair products from recognized international brands. The comfortable salon environment includes modern styling stations, massage shampoo chairs, and a welcoming atmosphere. Clients receive personalized consultations to determine the best styles for their face shape, hair texture, and lifestyle needs. This exclusive offer is available to SpendSmart members who present their cards when booking.",
+                category: "Beauty",
+                location: {
+                    city: "Zarqa",
+                    address: "King Abdullah II Street, Zarqa, Jordan"
+                },
+                expirationDate: "2025-08-31",
+                discountPercentage: 25,
+                imageUrl: "https://images.unsplash.com/photo-1562322140-8baeececf3df?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1169&q=80",
+                averageRating: 4.5
+            },
+            {
+                id: 43,
+                title: "Aqaba Beachside Spa",
+                description: "30% off on all body treatments and wraps plus complimentary access to spa facilities.",
+                longDescription: "Indulge in luxurious body treatments at Aqaba Beachside Spa with a special 30% discount on all body scrubs, wraps, and specialized treatments. Choose from a variety of options including Dead Sea mud wraps, salt scrubs, detoxifying seaweed treatments, slimming wraps, and moisturizing body masks. This offer also includes complimentary access to the spa's facilities including sauna, steam room, jacuzzi, and relaxation areas with stunning Red Sea views. All treatments use premium products featuring natural ingredients, many sourced from Jordan's unique natural resources including Dead Sea minerals. The spa's beachfront location creates a serene atmosphere with the sound of waves enhancing your relaxation experience. Experienced therapists customize each treatment to address your specific skin concerns and wellness goals. This exclusive offer is available to SpendSmart members who present their cards when booking.",
+                category: "Beauty",
+                location: {
+                    city: "Aqaba",
+                    address: "Beach Road, Aqaba, Jordan"
+                },
+                expirationDate: "2025-10-31",
+                discountPercentage: 30,
+                imageUrl: "https://images.unsplash.com/photo-1544161515-4ab6ce6db874?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80",
+                averageRating: 4.9,
+                isNew: true
+            },
+            {
+                id: 44,
+                title: "Madaba Lavender Day Spa",
+                description: "Buy any 60-minute service, get a 30-minute service free plus 20% off spa products.",
+                longDescription: "Experience complete relaxation at Madaba Lavender Day Spa with a special offer: purchase any 60-minute service and receive a complimentary 30-minute service of your choice. Select from a menu of rejuvenating treatments including massages, facials, body scrubs, manicures, pedicures, and more. This offer also includes a 20% discount on the spa's exclusive line of natural skincare and body products featuring locally-sourced ingredients including Jordanian lavender. The spa's tranquil setting incorporates traditional Madaba mosaic designs with modern comfort, creating a unique atmosphere that celebrates local heritage. All treatments are performed by certified therapists who specialize in various wellness techniques. Guests enjoy herbal tea and healthy snacks in the relaxation lounge before and after treatments. This exclusive offer is available to SpendSmart members who present their cards when booking.",
+                category: "Beauty",
+                location: {
+                    city: "Madaba",
+                    address: "Tourist Street, Madaba, Jordan"
+                },
+                expirationDate: "2025-09-30",
+                discountPercentage: 50,
+                imageUrl: "https://images.unsplash.com/photo-1540555700478-4be289fbecef?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80",
+                averageRating: 4.7
+            },
+            {
+                id: 45,
+                title: "Dead Sea Wellness Retreat",
+                description: "25% off on Dead Sea mineral treatments and mud wraps plus free pool access.",
+                longDescription: "Harness the healing power of the Dead Sea at the Dead Sea Wellness Retreat with a special 25% discount on mineral treatments and mud wraps. These specialized treatments utilize the unique mineral-rich mud and water from the Dead Sea, known for therapeutic benefits for skin conditions, joint pain, and overall wellness. The signature mud wrap detoxifies and nourishes the skin while mineral salt scrubs exfoliate and revitalize. This offer includes complimentary access to the retreat's mineral pools where you can float effortlessly in the highly saline waters. The facility's location at the lowest point on Earth provides a unique wellness experience with oxygen-rich air and naturally filtered sunlight. All treatments are performed by therapists trained in Dead Sea therapy techniques. After your treatment, relax on the private beach with stunning views of the sea and surrounding mountains. This exclusive offer is available to SpendSmart members who present their cards when booking.",
+                category: "Beauty",
+                location: {
+                    city: "Dead Sea",
+                    address: "Dead Sea Road, Jordan"
+                },
+                expirationDate: "2025-11-15",
+                discountPercentage: 25,
+                imageUrl: "https://images.unsplash.com/photo-1544161515-4ab6ce6db874?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80",
+                averageRating: 4.8
+            },
+            {
+                id: 46,
+                title: "Men's Grooming Lounge",
+                description: "30% off premium haircuts and traditional hot towel shaves with complimentary beverage.",
+                longDescription: "Experience luxury grooming at Men's Grooming Lounge with a special 30% discount on premium haircuts and traditional hot towel shaves. This upscale barbershop combines time-honored techniques with modern styling expertise to provide exceptional men's grooming services. The premium haircut includes consultation, precision cutting, styling, and finishing touches including neck shave and product application. The traditional hot towel shave features pre-shave preparation, hot towel application, precision straight razor shaving, and after-shave treatment. Both services include a complimentary beverage of your choice from the lounge's selection of coffee, tea, soft drinks, or bottled water. The sophisticated yet comfortable atmosphere features leather barber chairs, classic décor, and sports channels on discrete screens. All services are performed by master barbers with specialized training in men's grooming. This exclusive offer is available to SpendSmart members who present their cards when booking.",
+                category: "Beauty",
+                location: {
+                    city: "Amman",
+                    address: "Rainbow Street, Jabal Amman, Jordan"
+                },
+                expirationDate: "2025-08-15",
+                discountPercentage: 30,
+                imageUrl: "https://images.unsplash.com/photo-1503951914875-452162b0f3f1?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80",
+                averageRating: 4.8,
+                isNew: true
+            },
+            {
+                id: 47,
+                title: "Ayurvedic Wellness Clinic",
+                description: "25% off on Ayurvedic treatments and consultations with personalized wellness plan.",
+                longDescription: "Discover the ancient wisdom of Ayurveda at Ayurvedic Wellness Clinic with a special 25% discount on all treatments and consultations. This holistic health center offers traditional Ayurvedic therapies performed by practitioners trained in India, bringing authentic techniques to Jordan. Services include Abhyanga (oil massage), Shirodhara (forehead oil flow), Udvartana (herbal powder massage), and more. Each visit begins with a comprehensive consultation to determine your dosha (body type) and specific health needs. This offer includes a personalized wellness plan with dietary and lifestyle recommendations to continue benefits at home. All treatments use premium-quality organic herbs and oils imported directly from certified suppliers in India. The serene clinic environment incorporates elements of nature and traditional Ayurvedic design to create a calming atmosphere. This exclusive offer is available to SpendSmart members who present their cards when booking.",
+                category: "Beauty",
+                location: {
+                    city: "Amman",
+                    address: "Jordan Street, Shmeisani, Amman, Jordan"
+                },
+                expirationDate: "2025-10-31",
+                discountPercentage: 25,
+                imageUrl: "https://images.unsplash.com/photo-1584094521949-9b50a0ee6249?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80",
+                averageRating: 4.6
+            },
+            {
+                id: 48,
+                title: "Petra Hair & Makeup Studio",
+                description: "20% discount on wedding and special occasion packages with free trial session.",
+                longDescription: "Look your absolute best for special occasions with Petra Hair & Makeup Studio's 20% discount on wedding and event packages. This comprehensive service includes professional makeup application using high-end cosmetics that photograph beautifully and last throughout your event. Hair styling options range from elegant updos to glamorous waves or sleek, modern styles tailored to complement your outfit and the event type. As an added value, this offer includes a free trial session to perfect your look before the big day. The studio's team specializes in both Arabic and Western styling techniques, catering to diverse preferences and cultural traditions. Services can be provided at the studio or as on-location styling at your venue. High-definition makeup techniques ensure you look flawless both in person and in photographs. This exclusive offer is available to SpendSmart members who present their cards when booking.",
+                category: "Beauty",
+                location: {
+                    city: "Wadi Musa",
+                    address: "Tourism Street, Wadi Musa, Jordan"
+                },
+                expirationDate: "2025-12-15",
+                discountPercentage: 20,
+                imageUrl: "https://images.unsplash.com/photo-1562322140-8baeececf3df?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1169&q=80",
+                averageRating: 4.7
             }
         ];
-
-        // DOM elements
-        const chatMessages = document.getElementById('chat-messages');
-        const userInput = document.getElementById('user-input');
-        const sendBtn = document.getElementById('send-btn');
-        const engBtn = document.getElementById('en-btn');
-        const arBtn = document.getElementById('ar-btn');
-        const headerSubtitle = document.getElementById('header-subtitle');
-
-        // Initialize the chat
-        document.addEventListener('DOMContentLoaded', function () {
-            // Set language from localStorage or default to English
-            currentLanguage = localStorage.getItem('preferredLanguage') || 'en';
-            updateLanguageUI();
-
-            // Start the conversation
-            setTimeout(() => {
-                askQuestion();
-            }, 500);
-
-            // Event listeners
-            sendBtn.addEventListener('click', handleUserInput);
-            userInput.addEventListener('keypress', function (e) {
-                if (e.key === 'Enter') {
-                    handleUserInput();
-                }
-            });
-
-            engBtn.addEventListener('click', function () {
-                setLanguage('en');
-            });
-
-            arBtn.addEventListener('click', function () {
-                setLanguage('ar');
-            });
-
-            // Add input validation for numerical fields
-            userInput.addEventListener('input', function () {
-                const currentQ = questions[currentQuestion];
-                if (currentQ && currentQ.validation === 'number') {
-                    validateNumberInput(userInput);
-                }
-            });
-        });
-
-        // Function to validate numerical input
-        function validateNumberInput(inputElement) {
-            const value = inputElement.value;
-            const numberPattern = /^[0-9]*\.?[0-9]*$/;
-
-            // Remove error styling first
-            inputElement.classList.remove('input-error');
-            const errorElement = document.querySelector('.error-message');
-            if (errorElement) {
-                errorElement.remove();
-            }
-
-            // Check if input matches number pattern
-            if (value !== '' && !numberPattern.test(value)) {
-                inputElement.classList.add('input-error');
-
-                // Add error message
-                const errorMsg = document.createElement('div');
-                errorMsg.className = 'error-message';
-                errorMsg.textContent = questions[currentQuestion].errorMsg[currentLanguage];
-                inputElement.parentNode.appendChild(errorMsg);
-
-                return false;
-            }
-
-            return true;
-        }
-
-        // Function to add message to chat
-        function addMessage(text, isUser = false) {
-            const messageDiv = document.createElement('div');
-            messageDiv.className = `message ${isUser ? 'user-message' : 'bot-message'} ${currentLanguage === 'ar' ? 'text-right' : ''}`;
-            messageDiv.innerHTML = text;
-            chatMessages.appendChild(messageDiv);
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-        }
-
-        // Function to show bot is typing
-        function showTyping() {
-            const typingDiv = document.createElement('div');
-            typingDiv.className = 'typing-indicator';
-            typingDiv.id = 'typing-indicator';
-            typingDiv.innerHTML = '<span></span><span></span><span></span>';
-            chatMessages.appendChild(typingDiv);
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-        }
-
-        // Function to hide typing indicator
-        function hideTyping() {
-            const typingDiv = document.getElementById('typing-indicator');
-            if (typingDiv) {
-                typingDiv.remove();
-            }
-        }
-
-        // Function to ask the next question
-        function askQuestion() {
-            if (currentQuestion < questions.length) {
-                isWaitingForAnswer = true;
-                showTyping();
-
-                setTimeout(() => {
-                    hideTyping();
-                    const questionText = questions[currentQuestion][currentLanguage];
-                    addMessage(questionText);
-
-                    if (currentQuestion === questions.length - 1) {
-                        // Last question - show the analysis after a delay
-                        isWaitingForAnswer = false;
-                        setTimeout(() => {
-                            analyzeAndDisplayResults();
-                        }, 1500);
-                    } else {
-                        // Focus on input for next answer
-                        userInput.focus();
+        
+        // Initialize reviews in localStorage if not exist
+        if (!localStorage.getItem('discountReviews')) {
+            const initialReviews = {
+                1: [
+                    {
+                        name: "Ahmad Ibrahim",
+                        rating: 5,
+                        comment: "Great discount! My daughter loves the school and we saved a lot on tuition.",
+                        date: "2025-04-15"
+                    },
+                    {
+                        name: "Layla Hassan",
+                        rating: 4,
+                        comment: "Good school with excellent facilities. The discount helped us a lot.",
+                        date: "2025-03-22"
                     }
-                }, 800);
+                ],
+                2: [
+                    {
+                        name: "Omar Khalid",
+                        rating: 5,
+                        comment: "Very comprehensive checkup. The doctors were professional and I saved 20%!",
+                        date: "2025-04-10"
+                    }
+                ],
+                3: [
+                    {
+                        name: "Nour Ahmed",
+                        rating: 4,
+                        comment: "Delicious food and great service. The discount made it even better!",
+                        date: "2025-04-05"
+                    },
+                    {
+                        name: "Mohammed Ali",
+                        rating: 5,
+                        comment: "Best mansaf in Amman! Will definitely come back for more.",
+                        date: "2025-03-18"
+                    },
+                    {
+                        name: "Sara Mahmoud",
+                        rating: 4,
+                        comment: "Lovely atmosphere and tasty food. Good value with the discount.",
+                        date: "2025-02-27"
+                    }
+                ]
+            };
+            localStorage.setItem('discountReviews', JSON.stringify(initialReviews));
+        }
+        
+        // Get reviews from localStorage
+        const getReviews = (discountId) => {
+            const allReviews = JSON.parse(localStorage.getItem('discountReviews')) || {};
+            return allReviews[discountId] || [];
+        };
+        
+        // Save a new review
+        const saveReview = (discountId, review) => {
+            const allReviews = JSON.parse(localStorage.getItem('discountReviews')) || {};
+            if (!allReviews[discountId]) {
+                allReviews[discountId] = [];
             }
-        }
-
-        // Function to handle user input
-        function handleUserInput() {
-            if (!isWaitingForAnswer) return;
-
-            const userAnswer = userInput.value.trim();
-            if (!userAnswer) return;
-
-            // Validate input if needed
-            const currentQ = questions[currentQuestion];
-            if (currentQ.validation === 'number') {
-                if (!validateNumberInput(userInput)) {
-                    return;
-                }
+            allReviews[discountId].push(review);
+            localStorage.setItem('discountReviews', JSON.stringify(allReviews));
+            
+            // Update average rating in discounts array
+            const discount = discounts.find(d => d.id === parseInt(discountId));
+            if (discount) {
+                const reviews = allReviews[discountId];
+                const totalRating = reviews.reduce((sum, r) => sum + r.rating, 0);
+                discount.averageRating = totalRating / reviews.length;
             }
-
-            // Add user message to chat
-            addMessage(userAnswer, true);
-
-            // Process the answer
-            processAnswer(userAnswer);
-
-            // Clear input
-            userInput.value = '';
-        }
-
-        // Function to process user answers
-        function processAnswer(answer) {
-            isWaitingForAnswer = false;
-
-            // Store the answer based on current question
-            if (currentQuestion === 0) {
-                userResponses.name = answer;
-            } else if (currentQuestion === 1) {
-                userResponses.totalIncome = parseFloat(answer);
-            } else if (currentQuestion === 2) {
-                userResponses.savingsGoal = parseFloat(answer);
-            } else if (currentQuestion >= 3 && currentQuestion <= 11) {
-                const category = questions[currentQuestion].category;
-                userResponses.expenses[category] = parseFloat(answer);
-            }
-
-            // Move to next question
-            currentQuestion++;
-            setTimeout(() => {
-                askQuestion();
-            }, 500);
-        }
-
-        // Function to set language
-        function setLanguage(lang) {
-            currentLanguage = lang;
-            localStorage.setItem('preferredLanguage', lang);
-            updateLanguageUI();
-        }
-
-        // Function to update UI based on language
-        function updateLanguageUI() {
-            document.body.setAttribute('dir', currentLanguage === 'ar' ? 'rtl' : 'ltr');
-
-            // Update header text
-            headerSubtitle.textContent = currentLanguage === 'ar' ? 'مساعد تحليل الميزانية' : 'Budget Analysis Assistant';
-
-            // Update input placeholder
-            userInput.placeholder = currentLanguage === 'ar' ? 'اكتب إجابتك هنا...' : 'Type your answer here...';
-
-            // Update language buttons
-            engBtn.classList.toggle('active', currentLanguage === 'en');
-            arBtn.classList.toggle('active', currentLanguage === 'ar');
-        }
-
-        // Function to analyze budget data and display results
-        function analyzeAndDisplayResults() {
-            // Calculate total expenses
-            let totalExpenses = 0;
-            for (const category in userResponses.expenses) {
-                totalExpenses += userResponses.expenses[category] || 0;
-            }
-
-            // Calculate remaining money
-            const remainingMoney = userResponses.totalIncome - totalExpenses;
-
-            // Calculate savings shortfall/surplus
-            const savingsComparison = remainingMoney - userResponses.savingsGoal;
-
-            // Generate overall advice
-            let overallAdvice = '';
-            if (savingsComparison >= 0) {
-                overallAdvice = currentLanguage === 'ar'
-                    ? `مبروك! أنت توفر ${remainingMoney.toFixed(2)} دينار أردني شهريًا، وهذا يتجاوز هدفك البالغ ${userResponses.savingsGoal.toFixed(2)} دينار أردني بمقدار ${savingsComparison.toFixed(2)} دينار أردني. استمر في العمل الجيد!`
-                    : `Congratulations! You're saving ${remainingMoney.toFixed(2)} JOD monthly, which exceeds your goal of ${userResponses.savingsGoal.toFixed(2)} JOD by ${savingsComparison.toFixed(2)} JOD. Keep up the good work!`;
+        };
+        
+        // Format date to display
+        const formatDate = (dateString) => {
+            const options = { year: 'numeric', month: 'short', day: 'numeric' };
+            return new Date(dateString).toLocaleDateString('en-US', options);
+        };
+        
+        // Format expiration date to show days remaining
+        const formatExpirationDate = (dateString) => {
+            const expirationDate = new Date(dateString);
+            const today = new Date();
+            const diffTime = expirationDate - today;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            
+            if (diffDays < 0) {
+                return 'Expired';
+            } else if (diffDays === 0) {
+                return 'Expires today';
+            } else if (diffDays === 1) {
+                return 'Expires tomorrow';
+            } else if (diffDays <= 10) {
+                return `Expires in ${diffDays} days`;
             } else {
-                overallAdvice = currentLanguage === 'ar'
-                    ? `أنت تحتاج إلى تعديل ميزانيتك للوصول إلى هدف التوفير البالغ ${userResponses.savingsGoal.toFixed(2)} دينار أردني. حاليًا، أنت بحاجة إلى توفير ${Math.abs(savingsComparison).toFixed(2)} دينار أردني إضافي شهريًا.`
-                    : `You need to adjust your budget to reach your savings goal of ${userResponses.savingsGoal.toFixed(2)} JOD. Currently, you need to save an additional ${Math.abs(savingsComparison).toFixed(2)} JOD monthly.`;
+                return `Expires on ${formatDate(dateString)}`;
             }
-
-            // Analyze spending by category compared to recommended percentages
-            const spendingAnalysis = [];
-            for (const category in userResponses.expenses) {
-                const actualAmount = userResponses.expenses[category] || 0;
-                const actualPercentage = (actualAmount / userResponses.totalIncome) * 100;
-                const recommendedPercentage = recommendedPercentages[category];
-                const recommendedAmount = (recommendedPercentage / 100) * userResponses.totalIncome;
-                const difference = actualAmount - recommendedAmount;
-
-                spendingAnalysis.push({
-                    category,
-                    actualAmount,
-                    actualPercentage,
-                    recommendedPercentage,
-                    recommendedAmount,
-                    difference
-                });
-            }
-
-            // Sort by highest overspending
-            spendingAnalysis.sort((a, b) => b.difference - a.difference);
-
-            // Create category-specific advice for top 3 problem areas
-            const categoryAdvice = [];
-            let totalPotentialSavings = 0;
-
-            const problemCategories = spendingAnalysis.filter(item => item.difference > 0).slice(0, 3);
-            problemCategories.forEach(item => {
-                const advice = {
-                    category: item.category,
-                    advice: '',
-                    savings: item.difference
-                };
-
-                totalPotentialSavings += item.difference;
-
-                if (currentLanguage === 'ar') {
-                    const categoryTranslations = {
-                        housing: 'السكن',
-                        transportation: 'المواصلات',
-                        food: 'الطعام',
-                        utilities: 'المرافق',
-                        healthcare: 'الرعاية الصحية',
-                        education: 'التعليم',
-                        entertainment: 'الترفيه',
-                        debt: 'الديون',
-                        other: 'نفقات أخرى'
-                    };
-
-                    advice.advice = `أنت تنفق ${item.actualAmount.toFixed(2)} دينار أردني (${item.actualPercentage.toFixed(1)}% من دخلك) على ${categoryTranslations[item.category]}. الإنفاق الموصى به هو ${item.recommendedAmount.toFixed(2)} دينار أردني (${item.recommendedPercentage}%). يمكنك توفير ${item.difference.toFixed(2)} دينار أردني شهريًا بتخفيض هذه الفئة.`;
-                } else {
-                    advice.advice = `You're spending ${item.actualAmount.toFixed(2)} JOD (${item.actualPercentage.toFixed(1)}% of your income) on ${item.category}. Recommended spending is ${item.recommendedAmount.toFixed(2)} JOD (${item.recommendedPercentage}%). You could save ${item.difference.toFixed(2)} JOD monthly by reducing this category.`;
-                }
-
-                categoryAdvice.push(advice);
-            });
-
-            // Goal-oriented guidance
-            let goalGuidance = '';
-
-            if (savingsComparison < 0) {
-                if (totalPotentialSavings >= Math.abs(savingsComparison)) {
-                    goalGuidance = currentLanguage === 'ar'
-                        ? `لتحقيق هدفك في التوفير البالغ ${userResponses.savingsGoal.toFixed(2)} دينار أردني شهريًا، يمكنك تعديل الفئات المذكورة أعلاه للتوفير ${totalPotentialSavings.toFixed(2)} دينار أردني إضافي، وهو أكثر من ${Math.abs(savingsComparison).toFixed(2)} دينار أردني الذي تحتاجه.`
-                        : `To achieve your savings goal of ${userResponses.savingsGoal.toFixed(2)} JOD monthly, you can adjust the categories mentioned above to save an additional ${totalPotentialSavings.toFixed(2)} JOD, which is more than the ${Math.abs(savingsComparison).toFixed(2)} JOD you need.`;
-                } else {
-                    goalGuidance = currentLanguage === 'ar'
-                        ? `لتحقيق هدفك في التوفير، ستحتاج إلى تخفيضات أكبر في نفقاتك. فكر في مراجعة بنود الميزانية الأخرى أو زيادة دخلك.`
-                        : `To achieve your savings goal, you'll need larger reductions in your expenses. Consider reviewing other budget items or increasing your income.`;
-                }
-            } else {
-                goalGuidance = currentLanguage === 'ar'
-                    ? `أنت بالفعل تحقق هدف التوفير الخاص بك! يمكنك الاستمرار في توفير ${savingsComparison.toFixed(2)} دينار أردني إضافي شهريًا أو استخدامه للاستثمار أو سداد الديون.`
-                    : `You are already meeting your savings goal! You can continue saving the extra ${savingsComparison.toFixed(2)} JOD monthly or use it for investments or debt repayment.`;
-            }
-
-            // Specific actionable tips
-            const actionableTips = getActionableTips(spendingAnalysis);
-
-            // Create analysis HTML
-            showTyping();
-            setTimeout(() => {
-                hideTyping();
-
-                // Generate the analysis results HTML
-                const resultsHTML = `
-                    <div class="analysis-results">
-                        <h3 class="text-xl font-bold text-blue-700 mb-3">${currentLanguage === 'ar' ? 'تحليل الميزانية الشخصي' : 'Personal Budget Analysis'}</h3>
-                        
-                        <div class="analysis-stats">
-                            <div class="stat">
-                                <span class="stat-label">${currentLanguage === 'ar' ? 'إجمالي الدخل:' : 'Total Income:'}</span>
-                                <span class="stat-value">${userResponses.totalIncome.toFixed(2)} JOD</span>
-                            </div>
-                            <div class="stat">
-                                <span class="stat-label">${currentLanguage === 'ar' ? 'إجمالي النفقات:' : 'Total Expenses:'}</span>
-                                <span class="stat-value">${totalExpenses.toFixed(2)} JOD</span>
-                            </div>
-                            <div class="stat ${remainingMoney >= 0 ? 'positive' : 'negative'}">
-                                <span class="stat-label">${currentLanguage === 'ar' ? 'المال المتبقي:' : 'Remaining Money:'}</span>
-                                <span class="stat-value">${remainingMoney.toFixed(2)} JOD</span>
+        };
+        
+        // Create star rating display
+        const createStarRating = (rating) => {
+            return `
+                <div class="star-rating">
+                    <div class="empty-stars">★★★★★</div>
+                    <div class="filled-stars" style="width:${rating * 20}%">★★★★★</div>
+                </div>
+            `;
+        };
+        
+        // Create discount card
+        const createDiscountCard = (discount) => {
+            const expirationText = formatExpirationDate(discount.expirationDate);
+            const isExpiringSoon = expirationText.includes('Expires in') && !expirationText.includes('Expired');
+            
+            return `
+                <div class="discount-card card shadow-sm" data-id="${discount.id}" data-category="${discount.category}" data-location="${discount.location.city}">
+                    <div class="relative overflow-hidden">
+                        <img src="${discount.imageUrl}" alt="${discount.title}" class="w-full h-48 object-cover">
+                        <div class="absolute top-0 right-0 p-2">
+                            <span class="discount-badge">${discount.discountPercentage}% OFF</span>
+                        </div>
+                        ${discount.isNew ? '<div class="badge-new">NEW</div>' : ''}
+                    </div>
+                    <div class="p-4">
+                        <div class="flex justify-between items-start">
+                            <h3 class="text-xl font-semibold mb-2">${discount.title}</h3>
+                            <div class="text-sm">
+                                ${createStarRating(discount.averageRating)}
+                                <span class="ml-1">(${discount.averageRating.toFixed(1)})</span>
                             </div>
                         </div>
-                        
-                        <div class="savings-advice">
-                            <p class="text-base">${overallAdvice}</p>
+                        <p class="text-gray-600 mb-3">${discount.description}</p>
+                        <div class="flex flex-wrap gap-2 mb-3">
+                            <span class="category-badge">${discount.category}</span>
+                            <span class="location-badge">${discount.location.city}</span>
                         </div>
-                        
-                        <div class="expense-chart-container">
-                            <canvas id="expenseChart"></canvas>
-                        </div>
-                        
-                        <h4 class="mt-4 mb-2 font-semibold text-lg text-blue-800">${currentLanguage === 'ar' ? 'توصيات محددة:' : 'Specific Recommendations:'}</h4>
-                        
-                        ${categoryAdvice.map(item => `
-                            <div class="category-advice">
-                                <h4 class="font-semibold">${currentLanguage === 'ar' ? getCategoryNameArabic(item.category) : getCategoryNameEnglish(item.category)}</h4>
-                                <p>${item.advice}</p>
-                            </div>
-                        `).join('')}
-                        
-                        <div class="goal-guidance mt-4">
-                            <h4 class="font-semibold mb-2 text-blue-800">${currentLanguage === 'ar' ? 'خطة الوصول للهدف:' : 'Goal Achievement Plan:'}</h4>
-                            <p>${goalGuidance}</p>
-                        </div>
-                        
-                        <div class="recommendation-card mt-4">
-                            <h4 class="font-semibold mb-2">${currentLanguage === 'ar' ? 'نصائح عملية:' : 'Actionable Tips:'}</h4>
-                            <ul class="list-disc pl-5">
-                                ${actionableTips.map(tip => `<li class="mb-2">${tip}</li>`).join('')}
-                            </ul>
+                        <div class="flex justify-between items-center">
+                            <span class="${isExpiringSoon ? 'expires-badge' : 'text-gray-500 text-sm'}">${expirationText}</span>
+                            <button class="view-details-btn btn-primary px-4 py-2 rounded-md text-sm">View Details</button>
                         </div>
                     </div>
+                </div>
+            `;
+        };
+        
+        // Create expanded card with reviews
+        const createExpandedCard = (discount) => {
+            const reviews = getReviews(discount.id);
+            const expirationText = formatExpirationDate(discount.expirationDate);
+            const isExpiringSoon = expirationText.includes('Expires in') && !expirationText.includes('Expired');
+            
+            let reviewsHTML = '';
+            if (reviews.length > 0) {
+                reviewsHTML = reviews.map(review => `
+                    <div class="review-item p-3 bg-gray-50 rounded-lg mb-3">
+                        <div class="flex justify-between items-start">
+                            <div class="font-medium">${review.name}</div>
+                            <div class="text-gray-500 text-sm">${formatDate(review.date)}</div>
+                        </div>
+                        <div class="my-1">
+                            ${createStarRating(review.rating)}
+                        </div>
+                        <p class="text-gray-700 mt-2">${review.comment}</p>
+                    </div>
+                `).join('');
+            } else {
+                reviewsHTML = '<p class="text-gray-500 italic">No reviews yet. Be the first to review this discount!</p>';
+            }
+            
+            return `
+                <div class="overlay" id="overlay"></div>
+                <div class="expanded-card bg-white rounded-lg shadow-lg">
+                    <div class="relative overflow-hidden">
+                        <img src="${discount.imageUrl}" alt="${discount.title}" class="w-full h-64 object-cover">
+                        <div class="absolute top-0 right-0 p-4">
+                            <span class="discount-badge text-lg">${discount.discountPercentage}% OFF</span>
+                        </div>
+                        <button id="close-card" class="absolute top-4 left-4 bg-white rounded-full w-8 h-8 flex items-center justify-center shadow-md">
+                            <i class="fas fa-times"></i>
+                        </button>
+                        ${discount.isNew ? '<div class="badge-new">NEW</div>' : ''}
+                    </div>
+                    
+                    <div class="p-6">
+                        <div class="flex justify-between items-start mb-4">
+                            <h2 class="text-2xl font-bold">${discount.title}</h2>
+                            <div>
+                                ${createStarRating(discount.averageRating)}
+                                <span class="ml-1">(${discount.averageRating.toFixed(1)})</span>
+                            </div>
+                        </div>
+                        
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span class="category-badge">${discount.category}</span>
+                            <span class="location-badge">${discount.location.city}</span>
+                            <span class="${isExpiringSoon ? 'expires-badge' : 'text-gray-500 text-sm py-1 px-2 bg-gray-100 rounded-md'}">${expirationText}</span>
+                        </div>
+                        
+                        <div class="mb-6">
+                            <h3 class="text-lg font-semibold mb-2">About This Discount</h3>
+                            <p class="text-gray-700 mb-4">${discount.longDescription}</p>
+                            <div class="flex items-center text-gray-700">
+                                <i class="fas fa-map-marker-alt mr-2 text-red-500"></i>
+                                <span>${discount.location.address}</span>
+                            </div>
+                        </div>
+                        
+                        <div class="border-t border-gray-200 pt-6 mb-6">
+                            <h3 class="text-lg font-semibold mb-4">Reviews & Feedback</h3>
+                            <div class="feedback-list mb-6">
+                                ${reviewsHTML}
+                            </div>
+                            
+                            <div class="review-form bg-gray-50 p-4 rounded-lg">
+                                <h4 class="font-medium mb-3">Add Your Review</h4>
+                                <form id="review-form-${discount.id}">
+                                    <div class="mb-3">
+                                        <label class="block text-gray-700 text-sm font-medium mb-1">Your Name</label>
+                                        <input type="text" class="name-input w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="block text-gray-700 text-sm font-medium mb-1">Rating</label>
+                                        <div class="star-input-container flex">
+                                            <span class="star-input" data-rating="1">★</span>
+                                            <span class="star-input" data-rating="2">★</span>
+                                            <span class="star-input" data-rating="3">★</span>
+                                            <span class="star-input" data-rating="4">★</span>
+                                            <span class="star-input" data-rating="5">★</span>
+                                            <input type="hidden" class="rating-input" value="0" required>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="block text-gray-700 text-sm font-medium mb-1">Your Review</label>
+                                        <textarea class="comment-input w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" rows="3" required></textarea>
+                                    </div>
+                                    <button type="submit" class="submit-review btn-primary w-full py-2 rounded-md">Submit Review</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        };
+        
+        // Render all discount cards
+        const renderDiscountCards = (discountsToRender = discounts) => {
+            const container = document.getElementById('discounts-container');
+            container.innerHTML = '';
+            
+            if (discountsToRender.length === 0) {
+                container.innerHTML = `
+                    <div class="col-span-full text-center py-10">
+                        <i class="fas fa-search text-5xl text-gray-300 mb-3"></i>
+                        <h3 class="text-xl font-medium text-gray-500">No discounts found matching your filters</h3>
+                        <p class="text-gray-500 mt-2">Try adjusting your search criteria</p>
+                        <button id="reset-filters" class="mt-4 btn-primary px-5 py-2 rounded-md">Reset Filters</button>
+                    </div>
                 `;
-
-                addMessage(resultsHTML);
-
-                // Create chart
-                setTimeout(() => {
-                    createExpensesChart();
-                }, 100);
-
-                // Add restart option
-                setTimeout(() => {
-                    const restartMsg = currentLanguage === 'ar'
-                        ? 'هل تريد إعادة تحليل ميزانيتك مع أرقام مختلفة؟ اكتب "إعادة" أو قم بتحديث الصفحة.'
-                        : 'Would you like to analyze your budget again with different numbers? Type "restart" or refresh the page.';
-
-                    addMessage(restartMsg);
-                    isWaitingForAnswer = true;
-                    userInput.addEventListener('keypress', function restartHandler(e) {
-                        if (e.key === 'Enter') {
-                            const input = userInput.value.trim().toLowerCase();
-                            if (input === 'restart' || input === 'إعادة') {
-                                window.location.reload();
-                            }
+                
+                document.getElementById('reset-filters').addEventListener('click', () => {
+                    resetFilters();
+                    renderDiscountCards();
+                });
+                return;
+            }
+            
+            discountsToRender.forEach(discount => {
+                container.innerHTML += createDiscountCard(discount);
+            });
+            
+            // Add event listeners to view details buttons
+            document.querySelectorAll('.view-details-btn, .discount-card').forEach(item => {
+                item.addEventListener('click', (e) => {
+                    if (e.target.classList.contains('view-details-btn')) {
+                        // If the button was clicked, get the parent card's ID
+                        const card = e.target.closest('.discount-card');
+                        const discountId = parseInt(card.dataset.id);
+                        expandCard(discountId);
+                    } else if (e.target.classList.contains('discount-card') || e.target.parentElement.classList.contains('discount-card')) {
+                        // If the card was clicked, get its ID
+                        const card = e.target.classList.contains('discount-card') ? e.target : e.target.closest('.discount-card');
+                        const discountId = parseInt(card.dataset.id);
+                        expandCard(discountId);
+                    }
+                });
+            });
+        };
+        
+        // Expand card to show details and reviews
+        const expandCard = (discountId) => {
+            const discount = discounts.find(d => d.id === discountId);
+            if (!discount) return;
+            
+            const expandedContainer = document.getElementById('card-expanded-container');
+            expandedContainer.innerHTML = createExpandedCard(discount);
+            
+            // Add event listeners for the expanded card
+            document.getElementById('close-card').addEventListener('click', closeExpandedCard);
+            document.getElementById('overlay').addEventListener('click', closeExpandedCard);
+            
+            // Add event listeners for the star rating
+            document.querySelectorAll('.star-input').forEach(star => {
+                star.addEventListener('click', (e) => {
+                    const rating = parseInt(e.target.dataset.rating);
+                    const form = e.target.closest('form');
+                    const ratingInput = form.querySelector('.rating-input');
+                    ratingInput.value = rating;
+                    
+                    // Update stars appearance
+                    form.querySelectorAll('.star-input').forEach(s => {
+                        if (parseInt(s.dataset.rating) <= rating) {
+                            s.classList.add('active');
+                        } else {
+                            s.classList.remove('active');
                         }
                     });
-                }, 2000);
-            }, 1500);
-        }
-
-        // Helper function to get category name in Arabic
-        function getCategoryNameArabic(category) {
-            const translations = {
-                housing: 'السكن',
-                transportation: 'المواصلات',
-                food: 'الطعام',
-                utilities: 'المرافق',
-                healthcare: 'الرعاية الصحية',
-                education: 'التعليم',
-                entertainment: 'الترفيه',
-                debt: 'الديون',
-                other: 'نفقات أخرى'
-            };
-            return translations[category] || category;
-        }
-
-        // Helper function to get category name in English
-        function getCategoryNameEnglish(category) {
-            const names = {
-                housing: 'Housing',
-                transportation: 'Transportation',
-                food: 'Food',
-                utilities: 'Utilities',
-                healthcare: 'Healthcare',
-                education: 'Education',
-                entertainment: 'Entertainment',
-                debt: 'Debt Repayment',
-                other: 'Other Expenses'
-            };
-            return names[category] || category;
-        }
-
-        // Function to get actionable tips based on spending analysis
-        function getActionableTips(analysis) {
-            const tips = [];
-            const highestCategories = analysis.filter(item => item.difference > 0).slice(0, 3);
-
-            highestCategories.forEach(item => {
-                if (currentLanguage === 'ar') {
-                    switch (item.category) {
-                        case 'housing':
-                            tips.push(`السكن: فكر في مشاركة السكن مع آخرين أو البحث عن شقة أقل تكلفة. يمكنك توفير حوالي ${(item.difference * 0.7).toFixed(2)} دينار أردني شهريًا.`);
-                            break;
-                        case 'transportation':
-                            tips.push(`المواصلات: استخدم وسائل النقل العام أو مشاركة الركوب. يمكنك توفير حوالي ${(item.difference * 0.6).toFixed(2)} دينار أردني شهريًا.`);
-                            break;
-                        case 'food':
-                            tips.push(`الطعام: قم بإعداد وجبات في المنزل بدلاً من تناول الطعام بالخارج. خطط لوجباتك أسبوعيًا. يمكنك توفير حوالي ${(item.difference * 0.8).toFixed(2)} دينار أردني شهريًا.`);
-                            break;
-                        case 'entertainment':
-                            tips.push(`الترفيه: ابحث عن أنشطة مجانية أو منخفضة التكلفة. حدد ميزانية أسبوعية للترفيه وهي ${(item.recommendedAmount / 4).toFixed(2)} دينار أردني.`);
-                            break;
-                        case 'utilities':
-                            tips.push(`المرافق: قم بتثبيت أجهزة موفرة للطاقة وقلل من استخدام المياه. يمكنك توفير حوالي ${(item.difference * 0.5).toFixed(2)} دينار أردني شهريًا.`);
-                            break;
-                        default:
-                            tips.push(`${getCategoryNameArabic(item.category)}: قلل الإنفاق بنسبة ${Math.min(50, Math.round((item.difference / item.actualAmount) * 100))}% للوصول إلى الميزانية الموصى بها وهي ${item.recommendedAmount.toFixed(2)} دينار أردني شهريًا.`);
-                    }
-                } else {
-                    switch (item.category) {
-                        case 'housing':
-                            tips.push(`Housing: Consider getting a roommate or looking for a less expensive apartment. You could save approximately ${(item.difference * 0.7).toFixed(2)} JOD monthly.`);
-                            break;
-                        case 'transportation':
-                            tips.push(`Transportation: Use public transport or carpooling. You could save approximately ${(item.difference * 0.6).toFixed(2)} JOD monthly.`);
-                            break;
-                        case 'food':
-                            tips.push(`Food: Prepare meals at home instead of eating out. Plan your meals weekly. You could save approximately ${(item.difference * 0.8).toFixed(2)} JOD monthly.`);
-                            break;
-                        case 'entertainment':
-                            tips.push(`Entertainment: Look for free or low-cost activities. Set a weekly entertainment budget of ${(item.recommendedAmount / 4).toFixed(2)} JOD.`);
-                            break;
-                        case 'utilities':
-                            tips.push(`Utilities: Install energy-efficient devices and reduce water usage. You could save approximately ${(item.difference * 0.5).toFixed(2)} JOD monthly.`);
-                            break;
-                        default:
-                            tips.push(`${getCategoryNameEnglish(item.category)}: Reduce spending by ${Math.min(50, Math.round((item.difference / item.actualAmount) * 100))}% to reach the recommended budget of ${item.recommendedAmount.toFixed(2)} JOD monthly.`);
-                    }
-                }
+                });
             });
-
-            // Add general tips
-            if (currentLanguage === 'ar') {
-                tips.push(`تتبع نفقاتك اليومية لمدة شهر كامل لتحديد مجالات التوفير الإضافية.`);
-                tips.push(`قم بتحديد "يوم بدون إنفاق" مرة واحدة في الأسبوع حيث تتجنب أي مشتريات غير ضرورية.`);
-            } else {
-                tips.push(`Track your daily expenses for a full month to identify additional savings areas.`);
-                tips.push(`Designate one "no-spend day" per week where you avoid any non-essential purchases.`);
+            
+            // Add event listener for the review form
+            document.getElementById(`review-form-${discountId}`).addEventListener('submit', (e) => {
+                e.preventDefault();
+                const form = e.target;
+                const nameInput = form.querySelector('.name-input');
+                const ratingInput = form.querySelector('.rating-input');
+                const commentInput = form.querySelector('.comment-input');
+                
+                // Validate inputs
+                if (!nameInput.value || parseInt(ratingInput.value) === 0 || !commentInput.value) {
+                    alert('Please fill in all fields and select a rating');
+                    return;
+                }
+                
+                // Create new review
+                const newReview = {
+                    name: nameInput.value,
+                    rating: parseInt(ratingInput.value),
+                    comment: commentInput.value,
+                    date: new Date().toISOString().split('T')[0]
+                };
+                
+                // Save review
+                saveReview(discountId, newReview);
+                
+                // Re-expand the card to show the new review
+                expandCard(discountId);
+            });
+        };
+        
+        // Close expanded card
+        const closeExpandedCard = () => {
+            document.getElementById('card-expanded-container').innerHTML = '';
+        };
+        
+        // Filter discounts by category and location
+        const filterDiscounts = () => {
+            const activeCategory = document.querySelector('.category-filter.filter-active').dataset.category;
+            const activeLocation = document.querySelector('.location-filter.filter-active').dataset.location;
+            const activeSort = document.querySelector('.sort-filter.filter-active').dataset.sort;
+            
+            let filteredDiscounts = [...discounts];
+            
+            // Apply category filter
+            if (activeCategory !== 'all') {
+                filteredDiscounts = filteredDiscounts.filter(d => d.category === activeCategory);
             }
-
-            return tips;
-        }
-
-        // Function to create expenses chart
-        function createExpensesChart() {
-            const ctx = document.getElementById('expenseChart').getContext('2d');
-
-            // Prepare data
-            const categories = Object.keys(userResponses.expenses);
-            const values = Object.values(userResponses.expenses);
-
-            // Translate categories if needed
-            const translatedCategories = categories.map(category => {
-                return currentLanguage === 'ar' ? getCategoryNameArabic(category) : getCategoryNameEnglish(category);
+            
+            // Apply location filter
+            if (activeLocation !== 'all') {
+                filteredDiscounts = filteredDiscounts.filter(d => d.location.city === activeLocation);
+            }
+            
+            // Apply sorting
+            if (activeSort === 'rating') {
+                filteredDiscounts.sort((a, b) => b.averageRating - a.averageRating);
+            } else if (activeSort === 'expiring') {
+                filteredDiscounts.sort((a, b) => new Date(a.expirationDate) - new Date(b.expirationDate));
+            } else {
+                // Default sort by newest (using ID as proxy for simplicity)
+                filteredDiscounts.sort((a, b) => b.id - a.id);
+            }
+            
+            renderDiscountCards(filteredDiscounts);
+        };
+        
+        // Reset all filters
+        const resetFilters = () => {
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('filter-active');
             });
-
-            // Create chart
-            new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: translatedCategories,
-                    datasets: [
-                        {
-                            label: currentLanguage === 'ar' ? 'النفقات الفعلية (دينار أردني)' : 'Actual Expenses (JOD)',
-                            data: values,
-                            backgroundColor: 'rgba(54, 162, 235, 0.7)',
-                            borderColor: 'rgba(54, 162, 235, 1)',
-                            borderWidth: 1
-                        },
-                        {
-                            label: currentLanguage === 'ar' ? 'النفقات الموصى بها (دينار أردني)' : 'Recommended Expenses (JOD)',
-                            data: categories.map(category => (recommendedPercentages[category] / 100) * userResponses.totalIncome),
-                            backgroundColor: 'rgba(255, 99, 132, 0.5)',
-                            borderColor: 'rgba(255, 99, 132, 1)',
-                            borderWidth: 1,
-                            type: 'bar'
-                        }
-                    ]
+            document.querySelector('.category-filter[data-category="all"]').classList.add('filter-active');
+            document.querySelector('.location-filter[data-location="all"]').classList.add('filter-active');
+            document.querySelector('.sort-filter[data-sort="newest"]').classList.add('filter-active');
+        };
+        
+        // Find nearby discounts using geolocation
+        const findNearbyDiscounts = () => {
+            if (!navigator.geolocation) {
+                alert('Geolocation is not supported by your browser');
+                return;
+            }
+            
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    alert('Feature coming soon! We\'ll show discounts near your location.');
+                    // In a real implementation, you would:
+                    // 1. Get the user's coordinates
+                    // 2. Calculate distance to each discount location
+                    // 3. Sort by distance
+                    // 4. Update the UI to show nearby discounts
                 },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            title: {
-                                display: true,
-                                text: currentLanguage === 'ar' ? 'المبلغ (دينار أردني)' : 'Amount (JOD)'
-                            }
-                        }
-                    },
-                    plugins: {
-                        tooltip: {
-                            callbacks: {
-                                label: function (context) {
-                                    let label = context.dataset.label || '';
-                                    if (label) {
-                                        label += ': ';
-                                    }
-                                    label += parseFloat(context.raw).toFixed(2) + ' JOD';
-
-                                    // Add percentage of income
-                                    const percentage = (context.raw / userResponses.totalIncome * 100).toFixed(1);
-                                    label += ` (${percentage}% of income)`;
-
-                                    return label;
-                                }
-                            }
-                        }
-                    }
+                () => {
+                    alert('Unable to access your location. Please allow location access to use this feature.');
                 }
+            );
+        };
+        
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', () => {
+            // Render initial discount cards
+            renderDiscountCards();
+            
+            // Add event listeners to filter buttons
+            document.querySelectorAll('.category-filter').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    document.querySelectorAll('.category-filter').forEach(b => b.classList.remove('filter-active'));
+                    e.target.classList.add('filter-active');
+                    filterDiscounts();
+                });
             });
-        }
+            
+            document.querySelectorAll('.location-filter').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    document.querySelectorAll('.location-filter').forEach(b => b.classList.remove('filter-active'));
+                    e.target.classList.add('filter-active');
+                    filterDiscounts();
+                });
+            });
+            
+            document.querySelectorAll('.sort-filter').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    document.querySelectorAll('.sort-filter').forEach(b => b.classList.remove('filter-active'));
+                    e.target.classList.add('filter-active');
+                    filterDiscounts();
+                });
+            });
+        });
     </script>
 </body>
-
 </html>
