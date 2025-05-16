@@ -43,7 +43,7 @@ function Discounts() {
               </div>
             </div>
             <div className="col-lg-6" data-aos="fade-left">
-              <img src="/src/Media/disc.png" alt="Discover Deals" className="hero-image" />
+              <img src="/Media/disc.png" alt="Discover Deals" className="hero-image" />
             </div>
           </div>
         </div>
@@ -140,7 +140,7 @@ const deals = [
     originalPrice: 100,
     currentPrice: 50,
     discount: "50%",
-    image: "/src/Media/camping.png",
+    image: "/Media/camping.png",
     validUntil: "2025-12-31"
   },
   {
@@ -149,7 +149,7 @@ const deals = [
     originalPrice: 200,
     currentPrice: 140,
     discount: "30%",
-    image: "/src/Media/businessman-1026415_640.jpg",
+    image: "/Media/businessman-1026415_640.jpg",
     validUntil: "2025-12-31"
   },
   {
@@ -158,7 +158,7 @@ const deals = [
     originalPrice: 80,
     currentPrice: 60,
     discount: "25%",
-    image: "/src/Media/teamwork-7423959_640.jpg",
+    image: "/Media/teamwork-7423959_640.jpg",
     validUntil: "2025-12-31"
   },
   {
@@ -167,7 +167,7 @@ const deals = [
     originalPrice: 500,
     currentPrice: 300,
     discount: "40%",
-    image: "/src/Media/disc.png",
+    image: "/Media/disc.png",
     validUntil: "2025-12-31"
   },
   {
@@ -176,7 +176,7 @@ const deals = [
     originalPrice: 150,
     currentPrice: 90,
     discount: "40%",
-    image: "/src/Media/Untitled design(1).png",
+    image: "/Media/Untitled design(1).png",
     validUntil: "2025-12-31"
   },
   {
@@ -185,7 +185,7 @@ const deals = [
     originalPrice: 120,
     currentPrice: 84,
     discount: "30%",
-    image: "/src/Media/Untitled design(3).png",
+    image: "/Media/Untitled design(3).png",
     validUntil: "2025-12-31"
   },
   {
@@ -194,7 +194,7 @@ const deals = [
     originalPrice: 200,
     currentPrice: 140,
     discount: "30%",
-    image: "/src/Media/Untitled design(4).png",
+    image: "/Media/Untitled design(4).png",
     validUntil: "2025-12-31"
   },
   {
@@ -203,7 +203,7 @@ const deals = [
     originalPrice: 90,
     currentPrice: 63,
     discount: "30%",
-    image: "/src/Media/Untitled design(5).png",
+    image: "/Media/Untitled design(5).png",
     validUntil: "2025-12-31"
   }
 ];
