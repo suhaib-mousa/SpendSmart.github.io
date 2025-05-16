@@ -210,30 +210,26 @@
   width: 100%;
   height: 100%;
   z-index: 1050;
-  overflow-x: hidden;
-  overflow-y: auto;
-  outline: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
 }
 
 .modal-dialog {
   position: relative;
-  width: auto;
-  margin: 1.75rem;
-  pointer-events: none;
+  width: 100%;
   max-width: 800px;
-  margin: 30px auto;
+  margin: auto;
+  pointer-events: auto;
 }
 
 .modal-content {
   position: relative;
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  pointer-events: auto;
   background-color: #fff;
-  border: none;
   border-radius: 15px;
-  outline: 0;
+  max-height: calc(100vh - 2rem);
+  overflow-y: auto;
   box-shadow: 0 15px 35px rgba(0,0,0,0.2);
 }
 
@@ -241,46 +237,28 @@
   position: fixed;
   top: 0;
   left: 0;
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  height: 100%;
   background-color: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(4px);
-}
-
-.modal-header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  padding: 1.5rem;
-  border-bottom: 1px solid #e9ecef;
-  border-top-left-radius: 15px;
-  border-top-right-radius: 15px;
-  position: relative;
-}
-
-.modal-title {
-  margin: 0;
-  font-size: 1.5rem;
-  font-weight: 600;
-  color: var(--dark-blue);
+  z-index: 1040;
 }
 
 .btn-close {
   position: absolute;
   top: 1rem;
   right: 1rem;
-  padding: 0.5rem;
+  width: 32px;
+  height: 32px;
   background: white;
   border: none;
   border-radius: 50%;
-  width: 32px;
-  height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   transition: all 0.2s ease;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  z-index: 1060;
 }
 
 .btn-close:hover {
@@ -386,21 +364,22 @@
 
 /* Responsive Adjustments */
 @media (max-width: 768px) {
+  .modal {
+    padding: 0;
+  }
+  
   .modal-dialog {
-    margin: 0.5rem;
+    margin: 0;
+    height: 100%;
+  }
+  
+  .modal-content {
+    height: 100%;
+    border-radius: 0;
   }
   
   .expanded-card img {
     height: 200px;
-  }
-  
-  .modal-header {
-    padding: 1rem;
-  }
-  
-  .btn-close {
-    top: 0.75rem;
-    right: 0.75rem;
   }
 }
 
@@ -412,12 +391,9 @@
   .deal-card {
     margin-bottom: 1rem;
   }
-  
-  .modal-dialog {
-    margin: 0;
-  }
-  
-  .modal-content {
-    border-radius: 0;
-  }
+}
+
+/* Prevent body scroll when modal is open */
+body.modal-open {
+  overflow: hidden;
 }
