@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation } from 'swiper/modules';
 import 'swiper/css';
@@ -6,12 +6,16 @@ import 'swiper/css/navigation';
 import '../styles/Tips.css';
 
 const Tips = () => {
-  const [currentTip, setCurrentTip] = useState({
+  const prevRef = useRef(null);
+  const nextRef = useRef(null);
+  const swiperRef = useRef(null);
+
+  const mainTip = {
     bg: '/Media/Untitled design(8).png',
     title: 'Ways to make money from the Internet',
     text: 'A video from the Online Lessons channel discusses ways to make money online and increase your sources of income..',
     link: 'https://youtu.be/wAIIct0rNZU?si=duAyUiHhcqcePIbT'
-  });
+  };
 
   const tips = [
     {
@@ -35,44 +39,46 @@ const Tips = () => {
     {
       bg: '/Media/Untitled design(12).png',
       title: 'financial freedom',
-      text: 'YouTube clip from the show \'Seen\' talking about financial freedom.',
+      text: 'YouTube clip from the show \"Seen\" talking about financial freedom.',
       link: 'https://youtu.be/kZTSzFfMFjY?si=yGGtVtRu5M5NTLLw'
     }
   ];
 
+  const [currentTip, setCurrentTip] = useState(mainTip);
+  const [hiddenSlides, setHiddenSlides] = useState([]);
+
   const handleSlideChange = (swiper) => {
     const realIndex = swiper.realIndex;
-    if (realIndex === 0) {
-      setCurrentTip({
-        bg: '/Media/Untitled design(8).png',
-        title: 'Ways to make money from the Internet',
-        text: 'A video from the Online Lessons channel discusses ways to make money online and increase your sources of income..',
-        link: 'https://youtu.be/wAIIct0rNZU?si=duAyUiHhcqcePIbT'
-      });
-    } else {
-      setCurrentTip(tips[realIndex - 1]);
+    console.log('Current slide index:', realIndex);
+    
+    // Set the current tip based on the active slide
+    const newTip = realIndex - 1 === -1 ? mainTip : tips[realIndex - 1];
+    setCurrentTip(newTip);
+    
+    // Create an array of indices for slides that should be hidden
+    const newHiddenSlides = [];
+    for (let i = 0; i < swiper.slides.length; i++) {
+      if (i < realIndex) {
+        newHiddenSlides.push(i);
+      }
     }
+    
+    setHiddenSlides(newHiddenSlides);
+    console.log('Hidden slides:', newHiddenSlides);
   };
 
   useEffect(() => {
-    const root = document.getElementById('root');
+    const root = document.getElementById('hero');
     if (root) {
       root.style.backgroundImage = `url('${currentTip.bg}')`;
       root.style.backgroundSize = 'cover';
       root.style.backgroundPosition = 'center';
     }
-    return () => {
-      if (root) {
-        root.style.backgroundImage = 'none';
-        root.style.backgroundSize = 'auto';
-        root.style.backgroundPosition = 'initial';
-      }
-    };
   }, [currentTip]);
 
   return (
     <div className="tips-wrapper">
-      <div className="hero d-flex align-items-end">
+      <div id="hero" className="hero d-flex justify-content-between align-items-end">
         <div className="hero-content mb-5">
           <h1 className="tip-title text-right">{currentTip.title}</h1>
           <p className="tip-text text-left">{currentTip.text}</p>
@@ -81,42 +87,41 @@ const Tips = () => {
           </a>
         </div>
 
-        <div className="d-flex flex-column">
-          <div className="swiper-container">
-            <Swiper
-              modules={[Navigation]}
-              slidesPerView={5}
-              spaceBetween={20}
-              centeredSlides={true}
-              navigation={true}
-              onSlideChange={handleSlideChange}
-              breakpoints={{
-                320: {
-                  slidesPerView: 1,
-                  spaceBetween: 10
-                },
-                480: {
-                  slidesPerView: 2,
-                  spaceBetween: 15
-                },
-                768: {
-                  slidesPerView: 3,
-                  spaceBetween: 15
-                },
-                1024: {
-                  slidesPerView: 5,
-                  spaceBetween: 20
-                }
-              }}
-            >
-              {tips.map((tip, index) => (
-                <SwiperSlide
-                  key={index}
-                  style={{ backgroundImage: `url('${tip.bg}')` }}
-                ></SwiperSlide>
-              ))}
-              <SwiperSlide style={{ opacity: 0 }}></SwiperSlide>
-            </Swiper>
+        <div className="swiper-block">
+          <Swiper
+            modules={[Navigation]}
+            slidesPerView={5}
+            spaceBetween={20}
+            centeredSlides={true}
+            loop={false}
+            navigation={{
+              prevEl: prevRef.current,
+              nextEl: nextRef.current
+            }}
+            onBeforeInit={(swiper) => {
+              swiper.params.navigation.prevEl = prevRef.current;
+              swiper.params.navigation.nextEl = nextRef.current;
+              swiperRef.current = swiper;
+            }}
+            onSlideChange={handleSlideChange}
+            initialSlide={0}
+          >
+            {tips.map((tip, index) => (
+              <SwiperSlide
+                key={index}
+                className={`tip-slide ${hiddenSlides.includes(index) ? 'hidden-slide' : ''}`}
+                style={{ 
+                  backgroundImage: `url('${tip.bg}')`,
+                  opacity: hiddenSlides.includes(index) ? 0.3 : 1,
+                  transform: hiddenSlides.includes(index) ? 'scale(0.9)' : 'scale(1)'
+                }}
+              ></SwiperSlide>
+            ))}
+            <SwiperSlide style={{ opacity: 0 }}></SwiperSlide>
+          </Swiper>
+          <div className="swiper-nav">
+            <div ref={prevRef} className="swiper-button-prev visible-button"></div>
+            <div ref={nextRef} className="swiper-button-next visible-button"></div>
           </div>
         </div>
       </div>

@@ -27,39 +27,6 @@
   z-index: 1000;
 }
 
-.navbar-tips {
-  background-color: transparent !important;
-  box-shadow: none;
-}
-
-.navbar-tips .nav-link,
-.navbar-tips .navbar-brand,
-.navbar-tips .navbar-brand i {
-  color: #fdfbf5 !important;
-}
-
-.navbar-tips .btn-outline-primary {
-  border-color: #fdfbf5;
-  color: #fdfbf5;
-}
-
-.navbar-tips .btn-outline-primary:hover {
-  background-color: #fdfbf5;
-  color: var(--primary-blue);
-}
-
-.navbar-tips .btn-primary {
-  background-color: #fdfbf5;
-  border-color: #fdfbf5;
-  color: var(--primary-blue);
-}
-
-.navbar-tips .btn-primary:hover {
-  background-color: var(--light-blue);
-  border-color: var(--light-blue);
-  color: var(--primary-blue);
-}
-
 .navbar-brand {
   font-weight: 700;
   color: var(--primary-blue);

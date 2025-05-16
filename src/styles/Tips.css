@@ -1,116 +1,122 @@
+body {
+  position: relative;
+  overflow: hidden;
+}
+
 .tips-wrapper {
   min-height: 100vh;
-  width: 100%;
-  position: relative;
-  z-index: 1;
 }
 
 .hero {
   min-height: 100vh;
-  width: 100%;
-  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
   padding: 2rem;
   color: #fdfbf5;
   text-shadow: 0 1px 5px rgba(80, 3, 3, 0.8);
+  background-size: cover;
+  background-position: center;
 }
 
 .hero-content {
   max-width: 600px;
-  margin-bottom: 5rem;
-  position: relative;
-  z-index: 2;
 }
 
 .hero h1 {
   font-size: 4rem;
   font-weight: bold;
-  color: #fdfbf5;
+  color: white;
 }
-
-.swiper-container {
-  position: absolute;
-  bottom: 15%;
-  right: 2rem;
-  width: 80%;
-  z-index: 2;
+.hero p {
+  color: white;
 }
-
-.swiper-slide {
-  background-size: cover;
-  background-position: center;
-  border-radius: 1rem;
-  height: 20rem;
-  cursor: pointer;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-  transition: transform 0.4s ease;
-}
-
 .tip-link {
   display: inline-block;
   text-decoration: none;
   padding: 0.75rem 1.5rem;
   font-weight: bold;
-  border: none;
   border-radius: 2rem;
   background-color: #7AB2D3;
-  color: #fdfbf5;
+  color: #fffdfd;
   transition: background 0.3s ease;
   margin-top: 1rem;
 }
 
 .tip-link:hover {
   background-color: #4A628A;
-  color: #fdfbf5;
+}
+
+.swiper-block {
+  position: absolute;
+  right: 2rem;
+  bottom: 15%;
+      width: 70%;
+
+}
+
+.swiper {
+  width: 100%;
+  height: 20rem;
+}
+
+.tip-slide {
+  background-size: cover;
+  background-position: center;
+  border-radius: 1rem;
+  height: 100%;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  transition: transform 0.4s ease;
+}
+
+.swiper-slide-active {
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.7);
+  transform: scale(1.05);
+}
+
+.hidden-slide {
+  opacity: 0.3;
+  pointer-events: none;
+  transform: scale(0.9);
+}
+
+.swiper-nav {
+  position: absolute;
+    bottom: 69px;
+    left: 30%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 1rem;
+    z-index: 1000;
 }
 
 .swiper-button-prev,
 .swiper-button-next {
-  transform: translateY(-10px);
   color: #e2e5e8;
   background-color: #7AB2D3;
   border: 1px solid;
   border-radius: 100%;
   width: 50px;
   height: 50px;
-  z-index: 3;
+  display: flex !important;
+  justify-content: center;
+  align-items: center;
 }
 
-.swiper-slide.hidden-slide {
-  opacity: 0;
-  pointer-events: none;
-}
-
-.navigation {
-  position: absolute;
-  display: flex;
-  bottom: 10%;
-  left: 50%;
-  z-index: 3;
-}
-
-.swiper-button-next,
-.swiper-rtl .swiper-button-prev {
-  right: auto;
-  left: 50px;
-}
-
-.swiper-button-prev,
-.swiper-rtl .swiper-button-next {
-  left: -10px;
-  right: auto;
-}
-
-.swiper-button-next:after,
-.swiper-button-prev:after {
+.swiper-button-prev::after,
+.swiper-button-next::after {
   font-size: 16px;
 }
 
+/* Animations */
 .text-left {
-  animation: slide-in-left .4s;
+  animation: slide-in-left 0.4s;
 }
 
 .text-right {
-  animation: slide-in-right .4s;
+  animation: slide-in-right 0.4s;
 }
 
 @keyframes slide-in-left {
@@ -131,22 +137,42 @@
   }
 }
 
-.dropdown-menu {
-  background-color: #7AB2D3;
+@media (max-width: 768px) {
+  .hero {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .swiper-block {
+    width: 90%;
+    position: static;
+    margin-top: 2rem;
+  }
+
+  .swiper-nav {
+    bottom: -40px;
+    position: static;
+    transform: none;
+    justify-content: center;
+  }
+}
+.swiper-button-prev, .swiper-rtl .swiper-button-next {
+    left: var(--swiper-navigation-sides-offset, -60px);
+    right: auto;
+}
+.swiper-button-next, .swiper-rtl .swiper-button-prev {
+    right: var(--swiper-navigation-sides-offset, -60px);
+    left: auto;
+}
+/* Add this to your Tips.css file if not present */
+.hidden-slide {
+  opacity: 0 !important; /* Use !important to ensure it's not overridden */
+  /* Or another visible change like: */
+  /* transform: scale(0.8) !important; */
+  /* filter: grayscale(100%) !important; */
 }
 
-.dropdown-menu li :hover {
-  background-color: #e2e5e8;
-  color: #333;
-}
-
-@media (max-width: 576px) {
-  .hero h1 {
-    font-size: 2.5rem;
-  }
-  
-  .swiper-container {
-    width: 95%;
-    right: 1rem;
-  }
+.navbar-tips {
+  background-color: transparent !important;
+  box-shadow: none;
 }
