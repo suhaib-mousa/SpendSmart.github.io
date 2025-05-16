@@ -114,6 +114,40 @@ function Home() {
             </div>
           </div>
 
+          {/* Discount Database */}
+          <div className="feature-item">
+            <div className="row align-items-center">
+              <div className="col-lg-6" data-aos="fade-right" data-aos-duration="1000">
+                <div className="feature-badge">
+                  <i className="fas fa-tag"></i> Discount Database
+                </div>
+                <h3>Comprehensive Discount Database</h3>
+                <p>Browse and filter discounts by category, location, and expiration date. Find the best deals in Jordan for restaurants, retail, services, and more. Save your favorite deals and get notified when similar offers become available.</p>
+                <Link to="/discounts" className="btn btn-outline-primary">Learn More <i className="fas fa-chevron-right ms-1"></i></Link>
+              </div>
+              <div className="col-lg-6" data-aos="fade-left" data-aos-duration="1000">
+                <img src="/Media/disc.png" alt="Discount Database" className="img-fluid feature-img" />
+              </div>
+            </div>
+          </div>
+
+          {/* Community & Reviews */}
+          <div className="feature-item" id="community">
+            <div className="row align-items-center flex-lg-row-reverse">
+              <div className="col-lg-6" data-aos="fade-left" data-aos-duration="1000">
+                <div className="feature-badge">
+                  <i className="fas fa-users"></i> Community
+                </div>
+                <h3>Community & Reviews</h3>
+                <p>Connect with other budget-conscious individuals in Jordan. Share your experiences, tips, and reviews of local businesses. Learn from others' financial journeys and contribute your own insights to help the community.</p>
+                <Link to="/discounts" className="btn btn-outline-primary">Learn More <i className="fas fa-chevron-right ms-1"></i></Link>
+              </div>
+              <div className="col-lg-6" data-aos="fade-right" data-aos-duration="1000">
+                <img src="https://placehold.co/600x400/e6f2ff/0056b3?text=Community+%26+Reviews" alt="Community & Reviews" className="img-fluid feature-img" />
+              </div>
+            </div>
+          </div>
+
           {/* Educational Resources */}
           <div className="feature-item" id="education">
             <div className="row align-items-center">
