@@ -209,31 +209,19 @@
   left: 0;
   width: 100%;
   height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   z-index: 1050;
-  padding: 1rem;
-}
-
-.modal-backdrop {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.75);
-  backdrop-filter: blur(4px);
-  z-index: 1040;
+  overflow-x: hidden;
+  overflow-y: auto;
+  outline: 0;
 }
 
 .modal-dialog {
   position: relative;
-  width: 100%;
-  max-width: 1000px;
-  margin: 1.75rem auto;
+  width: auto;
+  margin: 1.75rem;
   pointer-events: none;
-  z-index: 1050;
+  max-width: 800px;
+  margin: 30px auto;
 }
 
 .modal-content {
@@ -243,272 +231,166 @@
   width: 100%;
   pointer-events: auto;
   background-color: #fff;
-  border-radius: 24px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
-  overflow: hidden;
-  max-height: calc(100vh - 3.5rem);
-  overflow-y: auto;
+  border: none;
+  border-radius: 15px;
+  outline: 0;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.2);
 }
 
-/* Close button styling */
-.modal-close-btn {
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+}
+
+.modal-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 1.5rem;
+  border-bottom: 1px solid #e9ecef;
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
+  position: relative;
+}
+
+.modal-title {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--dark-blue);
+}
+
+.btn-close {
   position: absolute;
-  top: 1.5rem;
-  right: 1.5rem;
-  width: 2.5rem;
-  height: 2.5rem;
+  top: 1rem;
+  right: 1rem;
+  padding: 0.5rem;
   background: white;
   border: none;
   border-radius: 50%;
+  width: 32px;
+  height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  z-index: 10;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
-.modal-close-btn:hover {
+.btn-close:hover {
+  background: var(--light-blue);
   transform: rotate(90deg);
-  background: var(--primary-blue);
-  color: white;
 }
 
-.modal-close-btn i {
+.btn-close i {
   font-size: 1.2rem;
-}
-
-/* Modal Content Styles */
-.modal-header {
-  padding: 1.5rem;
-  border-bottom: 1px solid #e5e7eb;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+  color: #666;
 }
 
 .modal-body {
-  padding: 1.5rem;
-  overflow-y: auto;
-}
-
-.modal-title {
-  font-size: 1.5rem;
-  font-weight: 600;
-  color: var(--dark-blue);
-  margin: 0;
-}
-
-/* Deal Image Container */
-.deal-image-container {
   position: relative;
-  width: 100%;
-  height: 400px;
-  overflow: hidden;
-  border-radius: 12px;
-  margin-bottom: 1.5rem;
+  flex: 1 1 auto;
+  padding: 1.5rem;
 }
 
-.deal-image-container img {
+.expanded-card {
+  border-radius: 15px;
+  overflow: hidden;
+}
+
+.expanded-card img {
   width: 100%;
-  height: 100%;
+  height: 300px;
   object-fit: cover;
 }
 
-/* Deal Info Styles */
-.deal-info {
-  padding: 1.5rem;
-  background: #f8fafc;
-  border-radius: 12px;
-  margin-bottom: 1.5rem;
-}
-
-.deal-info h3 {
-  font-size: 1.25rem;
+.discount-badge {
+  background: var(--primary-blue);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 25px;
   font-weight: 600;
-  color: var(--dark-blue);
-  margin-bottom: 1rem;
 }
 
-.deal-info-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1rem;
-}
-
-.info-item {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
-
-.info-item i {
-  width: 2rem;
-  height: 2rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.category-badge,
+.location-badge {
   background: var(--light-blue);
   color: var(--primary-blue);
-  border-radius: 50%;
-}
-
-/* Reviews Section */
-.reviews-section {
-  padding: 1.5rem;
-  background: #fff;
-  border-radius: 12px;
-}
-
-.reviews-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 1.5rem;
-}
-
-.review-card {
-  padding: 1.5rem;
-  background: #f8fafc;
-  border-radius: 12px;
-  margin-bottom: 1rem;
-}
-
-.review-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 1rem;
-}
-
-.reviewer-name {
-  font-weight: 600;
-  color: var(--dark-blue);
-}
-
-.review-date {
-  color: #666;
-  font-size: 0.875rem;
+  padding: 0.5rem 1rem;
+  border-radius: 25px;
+  font-size: 0.9rem;
+  font-weight: 500;
 }
 
 .star-rating {
-  color: #f6ad55;
-  margin-bottom: 0.5rem;
+  position: relative;
+  display: inline-block;
+  color: #ffd700;
+  font-size: 1.25rem;
 }
 
-.review-content {
-  color: #4a5568;
-  line-height: 1.5;
+.empty-stars {
+  position: relative;
+  color: #ddd;
 }
 
-/* Review Form */
-.review-form {
-  padding: 1.5rem;
-  background: #f8fafc;
-  border-radius: 12px;
-  margin-top: 2rem;
-}
-
-.form-group {
-  margin-bottom: 1rem;
-}
-
-.form-group label {
-  display: block;
-  margin-bottom: 0.5rem;
-  font-weight: 500;
-  color: var(--dark-blue);
-}
-
-.form-control {
-  width: 100%;
-  padding: 0.75rem;
-  border: 2px solid #e2e8f0;
-  border-radius: 8px;
-  transition: all 0.3s ease;
-}
-
-.form-control:focus {
-  border-color: var(--primary-blue);
-  box-shadow: 0 0 0 3px rgba(0, 86, 179, 0.1);
-  outline: none;
+.filled-stars {
+  position: absolute;
+  top: 0;
+  left: 0;
+  color: #ffd700;
+  overflow: hidden;
+  white-space: nowrap;
 }
 
 .star-input {
-  display: flex;
-  gap: 0.5rem;
-}
-
-.star-input button {
-  background: none;
-  border: none;
-  font-size: 1.5rem;
-  color: #e2e8f0;
+  font-size: 2rem;
+  color: #ddd;
   cursor: pointer;
   transition: color 0.2s ease;
 }
 
-.star-input button.active {
-  color: #f6ad55;
+.star-input.active {
+  color: #ffd700;
 }
 
-.submit-review-btn {
+.review-form input,
+.review-form textarea {
   width: 100%;
   padding: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+.submit-review {
   background: var(--primary-blue);
   color: white;
   border: none;
+  padding: 0.75rem 1.5rem;
   border-radius: 8px;
   font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: background 0.2s ease;
 }
 
-.submit-review-btn:hover {
+.submit-review:hover {
   background: var(--dark-blue);
 }
 
-/* Responsive Styles */
-@media (max-width: 991px) {
+/* Responsive Adjustments */
+@media (max-width: 768px) {
   .modal-dialog {
-    max-width: 90%;
+    margin: 0.5rem;
   }
   
-  .deal-image-container {
-    height: 300px;
-  }
-}
-
-@media (max-width: 767px) {
-  .modal-dialog {
-    max-width: 95%;
-    margin: 1rem auto;
-  }
-  
-  .deal-image-container {
-    height: 250px;
-  }
-  
-  .modal-body {
-    padding: 1rem;
-  }
-  
-  .deal-info-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 576px) {
-  .modal {
-    padding: 0.5rem;
-  }
-  
-  .modal-dialog {
-    margin: 0.5rem auto;
-  }
-  
-  .deal-image-container {
+  .expanded-card img {
     height: 200px;
   }
   
@@ -516,12 +398,26 @@
     padding: 1rem;
   }
   
-  .modal-title {
-    font-size: 1.25rem;
+  .btn-close {
+    top: 0.75rem;
+    right: 0.75rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .hero-section h1 {
+    font-size: 2.5rem;
   }
   
-  .modal-close-btn {
-    width: 2rem;
-    height: 2rem;
+  .deal-card {
+    margin-bottom: 1rem;
+  }
+  
+  .modal-dialog {
+    margin: 0;
+  }
+  
+  .modal-content {
+    border-radius: 0;
   }
 }
