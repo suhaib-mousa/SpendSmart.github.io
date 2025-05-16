@@ -238,7 +238,7 @@ function Discounts() {
                   <div className="absolute top-0 right-0 p-4">
                     <span className="discount-badge">{selectedDeal.discount} OFF</span>
                   </div>
-                  <button onClick={closeModal} className="absolute top-4 left-4 bg-white rounded-full w-8 h-8 flex items-center justify-center shadow-md">
+                  <button id='close-modal' onClick={closeModal} className="absolute top-4 left-4 bg-white rounded-full w-8 h-8 flex items-center justify-center shadow-md">
                     <i className="fas fa-times"></i>
                   </button>
                   {selectedDeal.isNew && <div className="badge-new">NEW</div>}

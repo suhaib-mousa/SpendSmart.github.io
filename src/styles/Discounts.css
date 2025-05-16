@@ -367,3 +367,39 @@ body.modal-open {
   overflow: hidden;
   padding-right: 15px; /* Prevent layout shift */
 }
+#close-modal {
+  position: absolute;
+  top: 16px;
+  right: 23px;
+}
+.submit-review{
+  
+    background: #6f69cf;
+    width: auto;
+    color: white;
+    border-radius: 5px;
+
+}
+
+.review-form,
+.review-item{
+      border: 1px solid #bebebe;
+    border-radius: 9px;
+}
+
+.category-badge {
+    background-color: #e8f0fe;
+    color: #367be2;
+    padding: 4px 10px;
+    border-radius: 15px;
+    font-size: 0.85rem;
+}
+
+.location-badge
+ {
+    background-color: #e0f2f1;
+    color: #00796b;
+    padding: 4px 10px;
+    border-radius: 15px;
+    font-size: 0.85rem;
+}
