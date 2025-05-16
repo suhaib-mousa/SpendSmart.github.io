@@ -6,7 +6,7 @@ import Budget from "./pages/Budget";
 import Planner from "./pages/Planner";
 import Discounts from "./pages/Discounts";
 import Tips from "./pages/Tips";
-import CategoryPage from "./pages/CategoryPage";
+import CategoryPage from "./pages/CategoryPage.jsx";
 import './styles/global.css';
 
 function App() {
