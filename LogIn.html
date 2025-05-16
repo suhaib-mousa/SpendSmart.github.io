@@ -77,6 +77,12 @@
             border-color: var(--primary-blue);
             outline: none;
         }
+        
+        @media (max-width: 576px) {
+           .med{
+            margin-left: .9rem !important;
+           }
+        }
     </style>
 </head>
 
@@ -98,18 +104,18 @@
                     </div>
 
 
-                    <div class="form-floating w-75 mx-5 my-2">
+                    <div class="form-floating w-75 mx-5 my-2 med">
                         <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com">
                         <label for="floatingInput">Email address</label>
                     </div>
-                    <div class="form-floating w-75 mx-5 my-2">
+                    <div class="form-floating w-75 mx-5 my-2 med">
                         <input type="password" class="form-control" id="floatingPassword" placeholder="Password">
                         <label for="floatingPassword">Password</label>
                     </div>
-                    <div class="forgot-password ms-5 ps-2">
+                    <div class="forgot-password ms-5 ps-2 med">
                         <a href="ForgetPass.html" style="text-decoration: none; color:var(--primary-blue);">Forgot your password?</a>
                     </div>
-                    <button class="btn w-75 py-3 mx-5 my-2" type="submit">Log In</button>
+                    <button class="btn w-75 py-3 mx-5 my-2 med" type="submit">Log In</button>
 
 
                 </form>
