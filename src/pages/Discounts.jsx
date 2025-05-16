@@ -43,7 +43,7 @@ function Discounts() {
               </div>
             </div>
             <div className="col-lg-6" data-aos="fade-left">
-              <img src="/media/disc.png" alt="Discover Deals" className="hero-image" />
+              <img src="/src/Media/disc.png" alt="Discover Deals" className="hero-image" />
             </div>
           </div>
         </div>
@@ -83,16 +83,18 @@ function Discounts() {
       </section>
 
       {/* Footer */}
-      <footer className="py-3 my-4">
+      <footer>
         <div className="container">
-          <ul className="nav justify-content-center border-bottom pb-3 mb-3">
-            <li className="nav-item"><Link to="/" className="nav-link px-2 text-muted">Home</Link></li>
-            <li className="nav-item"><Link to="/discounts" className="nav-link px-2 text-muted">Discounts</Link></li>
-            <li className="nav-item"><Link to="/budget" className="nav-link px-2 text-muted">Budget Analysis</Link></li>
-            <li className="nav-item"><Link to="/planner" className="nav-link px-2 text-muted">Financial Planner</Link></li>
-            <li className="nav-item"><Link to="/tips" className="nav-link px-2 text-muted">Tips</Link></li>
-          </ul>
-          <p className="text-center text-muted">© 2025 University Of Jordan, SpendSmart</p>
+          <footer className="py-3 my-4 text-center">
+            <ul className="nav justify-content-center border-bottom pb-3 mb-3">
+              <li className="nav-item"><Link to="/" className="nav-link px-2 text-muted">Home</Link></li>
+              <li className="nav-item"><Link to="/discounts" className="nav-link px-2 text-muted">Discounts</Link></li>
+              <li className="nav-item"><Link to="/budget" className="nav-link px-2 text-muted">Budget Analysis</Link></li>
+              <li className="nav-item"><Link to="/planner" className="nav-link px-2 text-muted">Financial Planner</Link></li>
+              <li className="nav-item"><Link to="/tips" className="nav-link px-2 text-muted">Tips</Link></li>
+            </ul>
+            <p className="text-center text-muted">© 2025 University Of Jordan, SpendSmart</p>
+          </footer>
         </div>
       </footer>
 
@@ -138,7 +140,7 @@ const deals = [
     originalPrice: 100,
     currentPrice: 50,
     discount: "50%",
-    image: "/media/camping.png",
+    image: "/src/Media/camping.png",
     validUntil: "2025-12-31"
   },
   {
@@ -147,7 +149,7 @@ const deals = [
     originalPrice: 200,
     currentPrice: 140,
     discount: "30%",
-    image: "/media/businessman-1026415_640.jpg",
+    image: "/src/Media/businessman-1026415_640.jpg",
     validUntil: "2025-12-31"
   },
   {
@@ -156,7 +158,7 @@ const deals = [
     originalPrice: 80,
     currentPrice: 60,
     discount: "25%",
-    image: "/media/teamwork-7423959_640.jpg",
+    image: "/src/Media/teamwork-7423959_640.jpg",
     validUntil: "2025-12-31"
   },
   {
@@ -165,7 +167,43 @@ const deals = [
     originalPrice: 500,
     currentPrice: 300,
     discount: "40%",
-    image: "/media/disc.png",
+    image: "/src/Media/disc.png",
+    validUntil: "2025-12-31"
+  },
+  {
+    title: "Outdoor Adventures",
+    location: "Petra, Jordan",
+    originalPrice: 150,
+    currentPrice: 90,
+    discount: "40%",
+    image: "/src/Media/Untitled design(1).png",
+    validUntil: "2025-12-31"
+  },
+  {
+    title: "Family Fun",
+    location: "Dead Sea, Jordan",
+    originalPrice: 120,
+    currentPrice: 84,
+    discount: "30%",
+    image: "/src/Media/Untitled design(3).png",
+    validUntil: "2025-12-31"
+  },
+  {
+    title: "Wellness & Spa",
+    location: "Amman, Jordan",
+    originalPrice: 200,
+    currentPrice: 140,
+    discount: "30%",
+    image: "/src/Media/Untitled design(4).png",
+    validUntil: "2025-12-31"
+  },
+  {
+    title: "Cultural Tours",
+    location: "Jerash, Jordan",
+    originalPrice: 90,
+    currentPrice: 63,
+    discount: "30%",
+    image: "/src/Media/Untitled design(5).png",
     validUntil: "2025-12-31"
   }
 ];
