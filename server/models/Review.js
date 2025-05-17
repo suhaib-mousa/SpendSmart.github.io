@@ -6,6 +6,11 @@ const reviewSchema = new mongoose.Schema({
     ref: 'Deal',
     required: true
   },
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
+  },
   name: {
     type: String,
     required: true,
@@ -27,6 +32,9 @@ const reviewSchema = new mongoose.Schema({
     default: Date.now
   }
 });
+
+// Compound index to ensure one review per user per deal
+reviewSchema.index({ deal: 1, user: 1 }, { unique: true });
 
 // Update deal rating when a review is added or modified
 reviewSchema.post('save', async function() {
