@@ -10,6 +10,7 @@ import categoryRoutes from './routes/categories.js';
 import authRoutes from './routes/auth.js';
 import tipRoutes from './routes/tips.js';
 import plannerRoutes from './routes/planner.js';
+import budgetRoutes from './routes/budget.js';
 
 dotenv.config();
 
@@ -29,6 +30,7 @@ app.use('/api/reviews', reviewRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/tips', tipRoutes);
 app.use('/api/planner', plannerRoutes);
+app.use('/api/budget', budgetRoutes);
 
 const PORT = process.env.PORT || 5000;
 
