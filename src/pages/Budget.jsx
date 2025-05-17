@@ -5,6 +5,127 @@ import { Line } from 'react-chartjs-2';
 import { saveBudgetAnalysis, getBudgetHistory } from '../services/api';
 import '../styles/Budget.css';
 
+// Questions configuration
+const questions = [
+  {
+    en: "Hello! I'm the SpendSmart Budget Assistant. I'll help you analyze your finances and provide personalized advice. What's your name?",
+    ar: "مرحبا! أنا مساعد SpendSmart للميزانية. سأساعدك في تحليل أمورك المالية وتقديم نصائح مخصصة. ما هو اسمك؟",
+    validation: null
+  },
+  {
+    en: "Nice to meet you! What's your total monthly income in JOD?",
+    ar: "تشرفت بمعرفتك! ما هو إجمالي دخلك الشهري بالدينار الأردني؟",
+    validation: "number",
+    errorMsg: {
+      en: "Please enter a valid number for your income in JOD.",
+      ar: "الرجاء إدخال رقم صحيح لدخلك بالدينار الأردني."
+    }
+  },
+  {
+    en: "How much would you like to save each month (in JOD)?",
+    ar: "كم تود أن توفر كل شهر (بالدينار الأردني)؟",
+    validation: "number",
+    errorMsg: {
+      en: "Please enter a valid number for your savings goal in JOD.",
+      ar: "الرجاء إدخال رقم صحيح لهدف التوفير بالدينار الأردني."
+    }
+  },
+  {
+    en: "How much do you spend on housing per month (rent/mortgage) in JOD?",
+    ar: "كم تنفق على السكن شهريًا (إيجار/رهن عقاري) بالدينار الأردني؟",
+    validation: "number",
+    errorMsg: {
+      en: "Please enter a valid number for your housing expenses in JOD.",
+      ar: "الرجاء إدخال رقم صحيح لنفقات السكن بالدينار الأردني."
+    },
+    category: "housing"
+  },
+  {
+    en: "How much do you spend on transportation per month (car payments, gas, public transport) in JOD?",
+    ar: "كم تنفق على المواصلات شهريًا (دفعات السيارة، البنزين، المواصلات العامة) بالدينار الأردني؟",
+    validation: "number",
+    errorMsg: {
+      en: "Please enter a valid number for your transportation expenses in JOD.",
+      ar: "الرجاء إدخال رقم صحيح لنفقات المواصلات بالدينار الأردني."
+    },
+    category: "transportation"
+  },
+  {
+    en: "How much do you spend on food per month (groceries, dining out) in JOD?",
+    ar: "كم تنفق على الطعام شهريًا (البقالة، تناول الطعام بالخارج) بالدينار الأردني؟",
+    validation: "number",
+    errorMsg: {
+      en: "Please enter a valid number for your food expenses in JOD.",
+      ar: "الرجاء إدخال رقم صحيح لنفقات الطعام بالدينار الأردني."
+    },
+    category: "food"
+  },
+  {
+    en: "How much do you spend on utilities per month (electricity, water, internet) in JOD?",
+    ar: "كم تنفق على المرافق شهريًا (الكهرباء، الماء، الإنترنت) بالدينار الأردني؟",
+    validation: "number",
+    errorMsg: {
+      en: "Please enter a valid number for your utilities expenses in JOD.",
+      ar: "الرجاء إدخال رقم صحيح لنفقات المرافق بالدينار الأردني."
+    },
+    category: "utilities"
+  },
+  {
+    en: "How much do you spend on healthcare per month (insurance, medications) in JOD?",
+    ar: "كم تنفق على الرعاية الصحية شهريًا (التأمين، الأدوية) بالدينار الأردني؟",
+    validation: "number",
+    errorMsg: {
+      en: "Please enter a valid number for your healthcare expenses in JOD.",
+      ar: "الرجاء إدخال رقم صحيح لنفقات الرعاية الصحية بالدينار الأردني."
+    },
+    category: "healthcare"
+  },
+  {
+    en: "How much do you spend on education per month (tuition, books, courses) in JOD?",
+    ar: "كم تنفق على التعليم شهريًا (الرسوم الدراسية، الكتب، الدورات) بالدينار الأردني؟",
+    validation: "number",
+    errorMsg: {
+      en: "Please enter a valid number for your education expenses in JOD.",
+      ar: "الرجاء إدخال رقم صحيح لنفقات التعليم بالدينار الأردني."
+    },
+    category: "education"
+  },
+  {
+    en: "How much do you spend on entertainment per month (movies, hobbies, dining out) in JOD?",
+    ar: "كم تنفق على الترفيه شهريًا (الأفلام، الهوايات، الخروج) بالدينار الأردني؟",
+    validation: "number",
+    errorMsg: {
+      en: "Please enter a valid number for your entertainment expenses in JOD.",
+      ar: "الرجاء إدخال رقم صحيح لنفقات الترفيه بالدينار الأردني."
+    },
+    category: "entertainment"
+  },
+  {
+    en: "How much do you spend on debt repayment per month (credit cards, loans) in JOD?",
+    ar: "كم تنفق على سداد الديون شهريًا (بطاقات الائتمان، القروض) بالدينار الأردني؟",
+    validation: "number",
+    errorMsg: {
+      en: "Please enter a valid number for your debt repayment in JOD.",
+      ar: "الرجاء إدخال رقم صحيح لسداد الديون بالدينار الأردني."
+    },
+    category: "debt"
+  },
+  {
+    en: "How much do you spend on other expenses per month in JOD? (clothing, gifts, subscriptions, etc.)",
+    ar: "كم تنفق على النفقات الأخرى شهريًا بالدينار الأردني؟ (الملابس، الهدايا، الاشتراكات، إلخ)",
+    validation: "number",
+    errorMsg: {
+      en: "Please enter a valid number for your other expenses in JOD.",
+      ar: "الرجاء إدخال رقم صحيح للنفقات الأخرى بالدينار الأردني."
+    },
+    category: "other"
+  },
+  {
+    en: "That's all I need! I'll analyze your budget now and provide personalized recommendations.",
+    ar: "هذا كل ما أحتاجه! سأقوم بتحليل ميزانيتك الآن وتقديم توصيات مخصصة."
+  }
+];
+
 function Budget() {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
@@ -30,7 +151,11 @@ function Budget() {
     }
     
     setCurrentLanguage(localStorage.getItem('preferredLanguage') || 'en');
-    startConversation();
+    
+    // Delay the first message to prevent duplication
+    setTimeout(() => {
+      startConversation();
+    }, 100);
 
     return () => {
       // Cleanup
@@ -48,9 +173,7 @@ function Budget() {
 
   const startConversation = () => {
     setIsWaitingForAnswer(true);
-    setTimeout(() => {
-      addMessage(questions[0][currentLanguage]);
-    }, 500);
+    addMessage(questions[0][currentLanguage]);
   };
 
   const addMessage = (text, isUser = false) => {
@@ -133,6 +256,7 @@ function Budget() {
         await saveBudgetAnalysis(userResponses);
         await fetchBudgetHistory();
         setShowAnalysis(true);
+        analyzeAndDisplayResults();
       } catch (error) {
         console.error('Error saving budget:', error);
         toast.error('Failed to save budget analysis');
@@ -146,6 +270,27 @@ function Budget() {
         setIsWaitingForAnswer(true);
       }, 500);
     }
+  };
+
+  const analyzeAndDisplayResults = () => {
+    // Calculate total expenses
+    const totalExpenses = Object.values(userResponses.expenses).reduce((sum, value) => sum + value, 0);
+    
+    // Calculate remaining money
+    const remainingMoney = userResponses.totalIncome - totalExpenses;
+    
+    // Add analysis results to chat
+    const analysisMessage = currentLanguage === 'ar'
+      ? `تحليل الميزانية:\n` +
+        `إجمالي الدخل: ${userResponses.totalIncome} دينار\n` +
+        `إجمالي النفقات: ${totalExpenses} دينار\n` +
+        `المال المتبقي: ${remainingMoney} دينار`
+      : `Budget Analysis:\n` +
+        `Total Income: ${userResponses.totalIncome} JOD\n` +
+        `Total Expenses: ${totalExpenses} JOD\n` +
+        `Remaining Money: ${remainingMoney} JOD`;
+    
+    addMessage(analysisMessage);
   };
 
   return (
