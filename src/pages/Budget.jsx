@@ -5,6 +5,127 @@ import Chart from 'chart.js/auto';
 import { saveBudgetAnalysis, getBudgetHistory } from '../services/api';
 import '../styles/Budget.css';
 
+// Questions array
+const questions = [
+  {
+    en: "Hello! I'm the SpendSmart Budget Assistant. I'll help you analyze your finances and provide personalized advice. What's your name?",
+    ar: "مرحبا! أنا مساعد SpendSmart للميزانية. سأساعدك في تحليل أمورك المالية وتقديم نصائح مخصصة. ما هو اسمك؟",
+    validation: null
+  },
+  {
+    en: "Nice to meet you! What's your total monthly income in JOD?",
+    ar: "تشرفت بمعرفتك! ما هو إجمالي دخلك الشهري بالدينار الأردني؟",
+    validation: "number",
+    errorMsg: {
+      en: "Please enter a valid number for your income in JOD.",
+      ar: "الرجاء إدخال رقم صحيح لدخلك بالدينار الأردني."
+    }
+  },
+  {
+    en: "How much would you like to save each month (in JOD)?",
+    ar: "كم تود أن توفر كل شهر (بالدينار الأردني)؟",
+    validation: "number",
+    errorMsg: {
+      en: "Please enter a valid number for your savings goal in JOD.",
+      ar: "الرجاء إدخال رقم صحيح لهدف التوفير بالدينار الأردني."
+    }
+  },
+  {
+    en: "How much do you spend on housing per month (rent/mortgage) in JOD?",
+    ar: "كم تنفق على السكن شهريًا (إيجار/رهن عقاري) بالدينار الأردني؟",
+    validation: "number",
+    errorMsg: {
+      en: "Please enter a valid number for your housing expenses in JOD.",
+      ar: "الرجاء إدخال رقم صحيح لنفقات السكن بالدينار الأردني."
+    },
+    category: "housing"
+  },
+  {
+    en: "How much do you spend on transportation per month (car payments, gas, public transport) in JOD?",
+    ar: "كم تنفق على المواصلات شهريًا (دفعات السيارة، البنزين، المواصلات العامة) بالدينار الأردني؟",
+    validation: "number",
+    errorMsg: {
+      en: "Please enter a valid number for your transportation expenses in JOD.",
+      ar: "الرجاء إدخال رقم صحيح لنفقات المواصلات بالدينار الأردني."
+    },
+    category: "transportation"
+  },
+  {
+    en: "How much do you spend on food per month (groceries, dining out) in JOD?",
+    ar: "كم تنفق على الطعام شهريًا (البقالة، تناول الطعام بالخارج) بالدينار الأردني؟",
+    validation: "number",
+    errorMsg: {
+      en: "Please enter a valid number for your food expenses in JOD.",
+      ar: "الرجاء إدخال رقم صحيح لنفقات الطعام بالدينار الأردني."
+    },
+    category: "food"
+  },
+  {
+    en: "How much do you spend on utilities per month (electricity, water, internet) in JOD?",
+    ar: "كم تنفق على المرافق شهريًا (الكهرباء، الماء، الإنترنت) بالدينار الأردني؟",
+    validation: "number",
+    errorMsg: {
+      en: "Please enter a valid number for your utilities expenses in JOD.",
+      ar: "الرجاء إدخال رقم صحيح لنفقات المرافق بالدينار الأردني."
+    },
+    category: "utilities"
+  },
+  {
+    en: "How much do you spend on healthcare per month (insurance, medications) in JOD?",
+    ar: "كم تنفق على الرعاية الصحية شهريًا (التأمين، الأدوية) بالدينار الأردني؟",
+    validation: "number",
+    errorMsg: {
+      en: "Please enter a valid number for your healthcare expenses in JOD.",
+      ar: "الرجاء إدخال رقم صحيح لنفقات الرعاية الصحية بالدينار الأردني."
+    },
+    category: "healthcare"
+  },
+  {
+    en: "How much do you spend on education per month (tuition, books, courses) in JOD?",
+    ar: "كم تنفق على التعليم شهريًا (الرسوم الدراسية، الكتب، الدورات) بالدينار الأردني؟",
+    validation: "number",
+    errorMsg: {
+      en: "Please enter a valid number for your education expenses in JOD.",
+      ar: "الرجاء إدخال رقم صحيح لنفقات التعليم بالدينار الأردني."
+    },
+    category: "education"
+  },
+  {
+    en: "How much do you spend on entertainment per month (movies, hobbies, dining out) in JOD?",
+    ar: "كم تنفق على الترفيه شهريًا (الأفلام، الهوايات، الخروج) بالدينار الأردني؟",
+    validation: "number",
+    errorMsg: {
+      en: "Please enter a valid number for your entertainment expenses in JOD.",
+      ar: "الرجاء إدخال رقم صحيح لنفقات الترفيه بالدينار الأردني."
+    },
+    category: "entertainment"
+  },
+  {
+    en: "How much do you spend on debt repayment per month (credit cards, loans) in JOD?",
+    ar: "كم تنفق على سداد الديون شهريًا (بطاقات الائتمان، القروض) بالدينار الأردني؟",
+    validation: "number",
+    errorMsg: {
+      en: "Please enter a valid number for your debt repayment in JOD.",
+      ar: "الرجاء إدخال رقم صحيح لسداد الديون بالدينار الأردني."
+    },
+    category: "debt"
+  },
+  {
+    en: "How much do you spend on other expenses per month in JOD? (clothing, gifts, subscriptions, etc.)",
+    ar: "كم تنفق على النفقات الأخرى شهريًا بالدينار الأردني؟ (الملابس، الهدايا، الاشتراكات، إلخ)",
+    validation: "number",
+    errorMsg: {
+      en: "Please enter a valid number for your other expenses in JOD.",
+      ar: "الرجاء إدخال رقم صحيح للنفقات الأخرى بالدينار الأردني."
+    },
+    category: "other"
+  },
+  {
+    en: "That's all I need! I'll analyze your budget now and provide personalized recommendations.",
+    ar: "هذا كل ما أحتاجه! سأقوم بتحليل ميزانيتك الآن وتقديم توصيات مخصصة."
+  }
+];
+
 function Budget() {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
@@ -31,7 +152,11 @@ function Budget() {
     }
     
     setCurrentLanguage(localStorage.getItem('preferredLanguage') || 'en');
-    startConversation();
+    
+    // Only start conversation if it hasn't started yet
+    if (currentQuestion === 0 && !isWaitingForAnswer) {
+      startConversation();
+    }
 
     return () => {
       if (chartInstanceRef.current) {
@@ -51,7 +176,6 @@ function Budget() {
 
   const startConversation = () => {
     setIsWaitingForAnswer(true);
-    setCurrentQuestion(0);
     addMessage(questions[0][currentLanguage]);
   };
 
@@ -65,10 +189,27 @@ function Budget() {
     }
   };
 
-  const handleUserInput = async (input) => {
-    if (!isWaitingForAnswer) return;
+  const showTyping = () => {
+    const typingDiv = document.createElement('div');
+    typingDiv.className = 'typing-indicator';
+    typingDiv.id = 'typing-indicator';
+    typingDiv.innerHTML = '<span></span><span></span><span></span>';
+    chatMessagesRef.current?.appendChild(typingDiv);
+    if (chatMessagesRef.current) {
+      chatMessagesRef.current.scrollTop = chatMessagesRef.current.scrollHeight;
+    }
+  };
 
-    // Validate input if needed
+  const hideTyping = () => {
+    const typingDiv = document.getElementById('typing-indicator');
+    if (typingDiv) {
+      typingDiv.remove();
+    }
+  };
+
+  const handleUserInput = async (input) => {
+    if (!isWaitingForAnswer || !input.trim()) return;
+
     const currentQ = questions[currentQuestion];
     if (currentQ.validation === 'number') {
       if (!validateNumberInput(input)) {
@@ -107,8 +248,6 @@ function Budget() {
       return newResponses;
     });
 
-    setCurrentQuestion(prev => prev + 1);
-
     if (currentQuestion === questions.length - 1) {
       if (!user) {
         toast.error('Please log in to save your analysis');
@@ -117,16 +256,22 @@ function Budget() {
       }
 
       try {
+        showTyping();
         await saveBudgetAnalysis(userResponses);
         await fetchBudgetHistory();
+        hideTyping();
         setShowAnalysis(true);
         createExpensesChart();
       } catch (error) {
+        hideTyping();
         console.error('Error saving budget:', error);
         toast.error('Failed to save budget analysis');
       }
     } else {
+      showTyping();
       setTimeout(() => {
+        hideTyping();
+        setCurrentQuestion(prev => prev + 1);
         addMessage(questions[currentQuestion + 1][currentLanguage]);
         setIsWaitingForAnswer(true);
       }, 500);
@@ -249,14 +394,5 @@ function Budget() {
     </div>
   );
 }
-
-// Questions array
-const questions = [
-  {
-    en: "Hello! I'm the SpendSmart Budget Assistant. I'll help you analyze your finances and provide personalized advice. What's your name?",
-    ar: "مرحبا! أنا مساعد SpendSmart للميزانية. سأساعدك في تحليل أمورك المالية وتقديم نصائح مخصصة. ما هو اسمك؟"
-  },
-  // Add all questions here...
-];
 
 export default Budget;
