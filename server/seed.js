@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import Deal from './models/Deal.js';
 import Category from './models/Category.js';
 import Review from './models/Review.js';
+import User from './models/User.js';
 import connectDB from './config/db.js';
 
 dotenv.config();
@@ -44,8 +45,19 @@ const seedDatabase = async () => {
     await Deal.deleteMany({});
     await Category.deleteMany({});
     await Review.deleteMany({});
+    await User.deleteMany({});
 
     console.log('Previous data cleared');
+
+    // Create test user
+    const testUser = await User.create({
+      firstName: 'Test',
+      lastName: 'User',
+      email: 'test@example.com',
+      password: 'password123'
+    });
+
+    console.log('Test user created');
 
     // Insert categories
     const createdCategories = await Category.insertMany(categories);
@@ -115,31 +127,21 @@ const seedDatabase = async () => {
     const createdDeals = await Deal.insertMany(deals);
     console.log('Deals seeded');
 
-    // Initial reviews
+    // Initial reviews with user reference
     const reviews = [
       {
         deal: createdDeals[0]._id,
-        name: "Ahmad Ibrahim",
+        user: testUser._id,
+        name: "Test User",
         rating: 5,
         comment: "Great quality gear at an amazing price!"
       },
       {
-        deal: createdDeals[0]._id,
-        name: "Layla Hassan",
+        deal: createdDeals[1]._id,
+        user: testUser._id,
+        name: "Test User",
         rating: 4,
         comment: "Good selection and helpful staff."
-      },
-      {
-        deal: createdDeals[1]._id,
-        name: "Omar Khalil",
-        rating: 4,
-        comment: "Great quality suits at reasonable prices"
-      },
-      {
-        deal: createdDeals[2]._id,
-        name: "Sarah Ahmed",
-        rating: 5,
-        comment: "Amazing experience for our team!"
       }
     ];
 
