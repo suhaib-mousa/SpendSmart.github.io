@@ -252,20 +252,24 @@ function Planner() {
     }));
   };
 
-  const saveData = async () => {
+  const handleStartAnalysis = async () => {
     if (!user) {
-      toast.error('Please log in to save your plan');
+      toast.error('Please log in to view analysis');
       navigate('/login');
       return;
     }
 
     try {
+      // Save the data first
       await savePlannerEntry({
         monthlyIncome,
         expenses
       });
-      toast.success('Financial plan saved successfully!');
+      
+      // Then show analysis and fetch updated history
+      setShowAnalysis(true);
       fetchPlannerHistory();
+      toast.success('Data saved successfully!');
     } catch (error) {
       console.error('Error saving plan:', error);
       toast.error('Failed to save financial plan');
@@ -377,7 +381,7 @@ function Planner() {
             <span>{remainingIncome.toFixed(2)} JOD</span>
           </div>
 
-          {showHistory && plannerHistory.length > 0 && (
+          {user && showHistory && plannerHistory.length > 0 && (
             <div className="history-section budget-section">
               <h2 className="section-title">Planning History</h2>
               {plannerHistory.map((entry, index) => (
@@ -404,22 +408,21 @@ function Planner() {
         <div className="cta-section">
           <div className="cta-content">
             <h2>Ready to Analyze?</h2>
-            <p>Save your data and view detailed insights to optimize your budget.</p>
+            <p>{user ? 'View detailed insights to optimize your budget.' : 'Log in to save your data and view detailed insights.'}</p>
             <div className="cta-buttons">
-              <button className="save-button" onClick={saveData}>
-                <i className="fas fa-save"></i> Save Plan
-              </button>
-              <button className="save-button" onClick={() => setShowAnalysis(!showAnalysis)}>
+              <button className="save-button" onClick={handleStartAnalysis}>
                 <i className="fas fa-chart-pie"></i> {showAnalysis ? 'Hide Analysis' : 'Start Analysis'}
               </button>
-              <button className="save-button" onClick={() => setShowHistory(!showHistory)}>
-                <i className="fas fa-history"></i> {showHistory ? 'Hide History' : 'View History'}
-              </button>
+              {user && (
+                <button className="save-button" onClick={() => setShowHistory(!showHistory)}>
+                  <i className="fas fa-history"></i> {showHistory ? 'Hide History' : 'View History'}
+                </button>
+              )}
             </div>
           </div>
         </div>
 
-        {showAnalysis && (
+        {showAnalysis && user && (
           <div className="analysis-container">
             <div className="analysis-header">
               <h2>Three-Thirds Financial Analysis</h2>
