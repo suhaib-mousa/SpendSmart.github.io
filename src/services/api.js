@@ -135,3 +135,21 @@ export const getPlannerHistory = async () => {
     throw error;
   }
 };
+
+export const saveBudgetAnalysis = async (budgetData) => {
+  try {
+    const response = await api.post('/budget', budgetData);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getBudgetHistory = async () => {
+  try {
+    const response = await api.get('/budget');
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
