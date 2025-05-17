@@ -1,9 +1,27 @@
-import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { toast } from 'react-hot-toast';
+import { logout } from '../services/auth';
 
 const Navbar = () => {
   const location = useLocation();
+  const navigate = useNavigate();
+  const [user, setUser] = useState(null);
   const isTipsPage = location.pathname === '/tips';
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
+  }, []);
+
+  const handleLogout = () => {
+    logout();
+    setUser(null);
+    toast.success('Successfully logged out!');
+    navigate('/');
+  };
 
   return (
     <nav className={`navbar navbar-expand-lg sticky-top ${isTipsPage ? 'navbar-tips' : ''}`}>
@@ -62,12 +80,23 @@ const Navbar = () => {
             </li>
           </ul>
           <div className="ms-lg-4 mt-3 mt-lg-0">
-            <Link to="/login" className="btn btn-outline-primary me-2">
-              Log In
-            </Link>
-            <Link to="/signup" className="btn btn-primary">
-              Sign Up
-            </Link>
+            {user ? (
+              <div className="d-flex align-items-center">
+                <span className="me-3">Welcome, {user.firstName}!</span>
+                <button onClick={handleLogout} className="btn btn-outline-primary">
+                  Sign Out
+                </button>
+              </div>
+            ) : (
+              <>
+                <Link to="/login" className="btn btn-outline-primary me-2">
+                  Log In
+                </Link>
+                <Link to="/signup" className="btn btn-primary">
+                  Sign Up
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </div>
