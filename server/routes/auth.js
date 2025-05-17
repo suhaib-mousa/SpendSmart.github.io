@@ -2,6 +2,7 @@ import express from 'express';
 import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
 import crypto from 'crypto';
+import { sendResetPasswordEmail } from '../config/email.js';
 
 const router = express.Router();
 
@@ -103,13 +104,11 @@ router.post('/forgot-password', async (req, res) => {
     await user.save();
 
     // Generate reset link
-    const resetLink = `http://localhost:5173/reset-password/${resetToken}`;
+    const resetLink = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
     
-    // Log the reset link (for development purposes)
-    console.log('Password Reset Link:', resetLink);
+    // Send reset password email
+    await sendResetPasswordEmail(email, resetLink);
 
-    // In production, you would send this link via email
-    // For now, we'll just return it in the response
     res.json({ 
       message: 'Password reset instructions sent to email',
       resetLink // Only include this in development
