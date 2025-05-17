@@ -182,6 +182,19 @@ function Budget() {
     };
   }, []);
 
+  const setLanguage = (lang) => {
+    setCurrentLanguage(lang);
+    localStorage.setItem('preferredLanguage', lang);
+    document.body.dir = lang === 'ar' ? 'rtl' : 'ltr';
+    updateLanguageUI();
+  };
+
+  const updateLanguageUI = () => {
+    if (userInputRef.current) {
+      userInputRef.current.placeholder = currentLanguage === 'ar' ? 'اكتب إجابتك هنا...' : 'Type your answer here...';
+    }
+  };
+
   const fetchBudgetHistory = async () => {
     try {
       const history = await getBudgetHistory();
@@ -231,7 +244,9 @@ function Budget() {
         addBotMessage(questions[currentQuestion + 1][currentLanguage]);
         setTimeout(() => {
           analyzeAndDisplayResults(updatedResponses);
-          addBotMessage("Would you like to analyze your budget again with different numbers? Type \"restart\" or refresh the page.");
+          addBotMessage(currentLanguage === 'ar' 
+            ? "هل تريد تحليل ميزانيتك مرة أخرى بأرقام مختلفة؟ اكتب 'إعادة' أو قم بتحديث الصفحة."
+            : "Would you like to analyze your budget again with different numbers? Type \"restart\" or refresh the page.");
         }, 1000);
       } catch (error) {
         toast.error('Failed to save budget analysis');
@@ -274,41 +289,28 @@ function Budget() {
     const analysisComponent = (
       <div className="analysis-results">
         <div className="d-flex justify-content-between align-items-center mb-4">
-          <h3 className="text-xl font-bold text-blue-700">Personal Budget Analysis</h3>
+          <h3 className="text-xl font-bold text-blue-700">
+            {currentLanguage === 'ar' ? 'تحليل الميزانية الشخصية' : 'Personal Budget Analysis'}
+          </h3>
         </div>
 
-        {showHistory && budgetHistory.length > 0 && (
-          <div className="budget-history mb-4">
-            <h4 className="font-semibold mb-3">Previous Reports</h4>
-            <div className="history-list">
-              {budgetHistory.map((report, index) => (
-                <div key={index} className="history-item p-3 bg-light rounded mb-2">
-                  <div className="d-flex justify-content-between">
-                    <span className="font-semibold">Report {index + 1}</span>
-                    <span className="text-muted">{new Date(report.date).toLocaleDateString()}</span>
-                  </div>
-                  <div className="mt-2">
-                    <div>Income: {report.totalIncome.toFixed(2)} JOD</div>
-                    <div>Expenses: {report.analysis.totalExpenses.toFixed(2)} JOD</div>
-                    <div>Remaining: {report.analysis.remainingMoney.toFixed(2)} JOD</div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-        
         <div className="analysis-stats">
           <div className="stat">
-            <span className="stat-label">Total Income:</span>
+            <span className="stat-label">
+              {currentLanguage === 'ar' ? 'إجمالي الدخل:' : 'Total Income:'}
+            </span>
             <span className="stat-value">{data.totalIncome.toFixed(2)} JOD</span>
           </div>
           <div className="stat">
-            <span className="stat-label">Total Expenses:</span>
+            <span className="stat-label">
+              {currentLanguage === 'ar' ? 'إجمالي المصروفات:' : 'Total Expenses:'}
+            </span>
             <span className="stat-value">{totalExpenses.toFixed(2)} JOD</span>
           </div>
           <div className={`stat ${remainingMoney >= 0 ? 'positive' : 'negative'}`}>
-            <span className="stat-label">Remaining Money:</span>
+            <span className="stat-label">
+              {currentLanguage === 'ar' ? 'المال المتبقي:' : 'Remaining Money:'}
+            </span>
             <span className="stat-value">{remainingMoney.toFixed(2)} JOD</span>
           </div>
         </div>
@@ -316,8 +318,12 @@ function Budget() {
         <div className="savings-advice">
           <p className="text-base">
             {remainingMoney < data.savingsGoal
-              ? `You need to adjust your budget to reach your savings goal of ${data.savingsGoal.toFixed(2)} JOD. Currently, you need to save an additional ${Math.abs(savingsShortfall).toFixed(2)} JOD monthly.`
-              : `Congratulations! You're meeting your savings goal with an extra ${Math.abs(savingsShortfall).toFixed(2)} JOD per month.`}
+              ? currentLanguage === 'ar'
+                ? `تحتاج إلى تعديل ميزانيتك للوصول إلى هدف التوفير البالغ ${data.savingsGoal.toFixed(2)} دينار. حاليًا، تحتاج إلى توفير ${Math.abs(savingsShortfall).toFixed(2)} دينار إضافي شهريًا.`
+                : `You need to adjust your budget to reach your savings goal of ${data.savingsGoal.toFixed(2)} JOD. Currently, you need to save an additional ${Math.abs(savingsShortfall).toFixed(2)} JOD monthly.`
+              : currentLanguage === 'ar'
+                ? `تهانينا! أنت تحقق هدف التوفير الخاص بك مع ${Math.abs(savingsShortfall).toFixed(2)} دينار إضافي شهريًا.`
+                : `Congratulations! You're meeting your savings goal with an extra ${Math.abs(savingsShortfall).toFixed(2)} JOD per month.`}
           </p>
         </div>
         
@@ -325,34 +331,58 @@ function Budget() {
           <canvas ref={chartRef}></canvas>
         </div>
         
-        <h4 className="mt-4 mb-2 font-semibold text-lg text-blue-800">Specific Recommendations:</h4>
+        <h4 className="mt-4 mb-2 font-semibold text-lg text-blue-800">
+          {currentLanguage === 'ar' ? 'توصيات محددة:' : 'Specific Recommendations:'}
+        </h4>
         
         {categoryAdvice.slice(0, 3).map((advice, index) => (
           <div key={index} className="category-advice">
-            <h4 className="font-semibold">{advice.category.charAt(0).toUpperCase() + advice.category.slice(1)}</h4>
+            <h4 className="font-semibold">
+              {currentLanguage === 'ar'
+                ? advice.category.charAt(0).toUpperCase() + advice.category.slice(1)
+                : advice.category.charAt(0).toUpperCase() + advice.category.slice(1)}
+            </h4>
             <p>{advice.advice}</p>
           </div>
         ))}
         
         <div className="goal-guidance mt-4">
-          <h4 className="font-semibold mb-2 text-blue-800">Goal Achievement Plan:</h4>
+          <h4 className="font-semibold mb-2 text-blue-800">
+            {currentLanguage === 'ar' ? 'خطة تحقيق الهدف:' : 'Goal Achievement Plan:'}
+          </h4>
           <p>
             {remainingMoney < data.savingsGoal
-              ? `To achieve your savings goal, you'll need larger reductions in your expenses. Consider reviewing other budget items or increasing your income.`
-              : `Keep up the good work! Consider investing or saving the extra money for future goals.`}
+              ? currentLanguage === 'ar'
+                ? 'لتحقيق هدف التوفير الخاص بك، ستحتاج إلى تخفيضات أكبر في نفقاتك. فكر في مراجعة بنود الميزانية الأخرى أو زيادة دخلك.'
+                : 'To achieve your savings goal, you\'ll need larger reductions in your expenses. Consider reviewing other budget items or increasing your income.'
+              : currentLanguage === 'ar'
+                ? 'واصل العمل الجيد! فكر في استثمار أو ادخار المال الإضافي للأهداف المستقبلية.'
+                : 'Keep up the good work! Consider investing or saving the extra money for future goals.'}
           </p>
         </div>
         
         <div className="recommendation-card mt-4">
-          <h4 className="font-semibold mb-2">Actionable Tips:</h4>
+          <h4 className="font-semibold mb-2">
+            {currentLanguage === 'ar' ? 'نصائح قابلة للتنفيذ:' : 'Actionable Tips:'}
+          </h4>
           <ul className="list-disc pl-5">
             {categoryAdvice.slice(0, 3).map((advice, index) => (
               <li key={index} className="mb-2">
-                {`${advice.category.charAt(0).toUpperCase() + advice.category.slice(1)}: Reduce spending by 50% to reach the recommended budget of ${((recommendedPercentages[advice.category] / 100) * data.totalIncome).toFixed(2)} JOD monthly.`}
+                {currentLanguage === 'ar'
+                  ? `${advice.category}: قلل الإنفاق بنسبة 50٪ للوصول إلى الميزانية الموصى بها البالغة ${((recommendedPercentages[advice.category] / 100) * data.totalIncome).toFixed(2)} دينار شهريًا.`
+                  : `${advice.category.charAt(0).toUpperCase() + advice.category.slice(1)}: Reduce spending by 50% to reach the recommended budget of ${((recommendedPercentages[advice.category] / 100) * data.totalIncome).toFixed(2)} JOD monthly.`}
               </li>
             ))}
-            <li className="mb-2">Track your daily expenses for a full month to identify additional savings areas.</li>
-            <li className="mb-2">Designate one "no-spend day" per week where you avoid any non-essential purchases.</li>
+            <li className="mb-2">
+              {currentLanguage === 'ar'
+                ? 'تتبع نفقاتك اليومية لمدة شهر كامل لتحديد مجالات التوفير الإضافية.'
+                : 'Track your daily expenses for a full month to identify additional savings areas.'}
+            </li>
+            <li className="mb-2">
+              {currentLanguage === 'ar'
+                ? 'حدد يومًا واحدًا "بدون إنفاق" في الأسبوع حيث تتجنب أي مشتريات غير ضرورية.'
+                : 'Designate one "no-spend day" per week where you avoid any non-essential purchases.'}
+            </li>
           </ul>
         </div>
       </div>
@@ -366,17 +396,21 @@ function Budget() {
         new Chart(ctx, {
           type: 'bar',
           data: {
-            labels: Object.keys(data.expenses).map(key => key.charAt(0).toUpperCase() + key.slice(1)),
+            labels: Object.keys(data.expenses).map(key => 
+              currentLanguage === 'ar'
+                ? key.charAt(0).toUpperCase() + key.slice(1)
+                : key.charAt(0).toUpperCase() + key.slice(1)
+            ),
             datasets: [
               {
-                label: 'Actual Expenses (JOD)',
+                label: currentLanguage === 'ar' ? 'النفقات الفعلية (دينار)' : 'Actual Expenses (JOD)',
                 data: Object.values(data.expenses),
                 backgroundColor: 'rgba(54, 162, 235, 0.7)',
                 borderColor: 'rgba(54, 162, 235, 1)',
                 borderWidth: 1
               },
               {
-                label: 'Recommended Expenses (JOD)',
+                label: currentLanguage === 'ar' ? 'النفقات الموصى بها (دينار)' : 'Recommended Expenses (JOD)',
                 data: Object.keys(data.expenses).map(category => 
                   (recommendedPercentages[category] / 100) * data.totalIncome
                 ),
@@ -394,7 +428,7 @@ function Budget() {
                 beginAtZero: true,
                 title: {
                   display: true,
-                  text: 'Amount (JOD)'
+                  text: currentLanguage === 'ar' ? 'المبلغ (دينار)' : 'Amount (JOD)'
                 }
               }
             },
@@ -408,7 +442,9 @@ function Budget() {
                     }
                     label += parseFloat(context.raw).toFixed(2) + ' JOD';
                     const percentage = (context.raw / data.totalIncome * 100).toFixed(1);
-                    label += ` (${percentage}% of income)`;
+                    label += currentLanguage === 'ar'
+                      ? ` (${percentage}٪ من الدخل)`
+                      : ` (${percentage}% of income)`;
                     return label;
                   }
                 }
@@ -426,7 +462,7 @@ function Budget() {
     if (!input || isTyping) return;
 
     if (currentQuestion === questions.length - 1) {
-      if (input.toLowerCase() === 'restart') {
+      if (input.toLowerCase() === 'restart' || input === 'إعادة') {
         window.location.reload();
         return;
       }
@@ -452,35 +488,57 @@ function Budget() {
             {currentLanguage === 'ar' ? 'مساعد تحليل الميزانية' : 'Budget Analysis Assistant'}
           </p>
         </div>
-        {user && (
-          <button 
-            className="history-toggle"
-            onClick={() => setShowHistory(!showHistory)}
-          >
-            {showHistory ? 'Hide History' : 'View History'}
-          </button>
-        )}
+        <div className="header-controls">
+          <div className="language-switcher">
+            <button 
+              className={`lang-btn ${currentLanguage === 'en' ? 'active' : ''}`}
+              onClick={() => setLanguage('en')}
+            >
+              English
+            </button>
+            <button 
+              className={`lang-btn ${currentLanguage === 'ar' ? 'active' : ''}`}
+              onClick={() => setLanguage('ar')}
+            >
+              العربية
+            </button>
+          </div>
+          {user && (
+            <button 
+              className="history-toggle"
+              onClick={() => setShowHistory(!showHistory)}
+            >
+              {currentLanguage === 'ar' ? 'عرض السجل' : 'View History'}
+            </button>
+          )}
+        </div>
       </div>
 
       {showHistory && budgetHistory.length > 0 && (
         <div className="history-panel">
-          <h3>Previous Reports</h3>
+          <h3>{currentLanguage === 'ar' ? 'التقارير السابقة' : 'Previous Reports'}</h3>
           {budgetHistory.map((report, index) => (
             <div key={report._id} className="history-item">
               <div className="history-date">
-                {new Date(report.date).toLocaleDateString()}
+                {new Date(report.date).toLocaleDateString(currentLanguage === 'ar' ? 'ar-SA' : 'en-US')}
               </div>
               <div className="history-stats">
                 <div className="history-stat">
-                  <span className="history-stat-label">Income:</span>
+                  <span className="history-stat-label">
+                    {currentLanguage === 'ar' ? 'الدخل:' : 'Income:'}
+                  </span>
                   <span className="history-stat-value">{report.totalIncome.toFixed(2)} JOD</span>
                 </div>
                 <div className="history-stat">
-                  <span className="history-stat-label">Expenses:</span>
+                  <span className="history-stat-label">
+                    {currentLanguage === 'ar' ? 'المصروفات:' : 'Expenses:'}
+                  </span>
                   <span className="history-stat-value">{report.analysis.totalExpenses.toFixed(2)} JOD</span>
                 </div>
                 <div className="history-stat">
-                  <span className="history-stat-label">Remaining:</span>
+                  <span className="history-stat-label">
+                    {currentLanguage === 'ar' ? 'المتبقي:' : 'Remaining:'}
+                  </span>
                   <span className={`history-stat-value ${report.analysis.remainingMoney >= 0 ? 'positive' : 'negative'}`}>
                     {report.analysis.remainingMoney.toFixed(2)} JOD
                   </span>

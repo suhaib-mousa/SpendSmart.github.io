@@ -173,6 +173,7 @@
   margin-right: auto;
   margin-left: 0;
 }
+
 .history-toggle {
   position: absolute;
   top: 1rem;
@@ -245,4 +246,61 @@
 
 .history-stat-value.negative {
   color: var(--error-color);
+}
+
+.header-controls {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.language-switcher {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.lang-btn {
+  padding: 0.5rem 1rem;
+  border: 1px solid white;
+  background: transparent;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.9rem;
+}
+
+.lang-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.lang-btn.active {
+  background: white;
+  color: var(--primary-blue);
+}
+
+/* RTL Support */
+[dir="rtl"] .header-controls {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .chat-input input {
+  text-align: right;
+}
+
+[dir="rtl"] .chat-input button {
+  margin-right: 0.5rem;
+  margin-left: 0;
+}
+
+[dir="rtl"] .history-panel {
+  text-align: right;
+}
+
+[dir="rtl"] .history-stat {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .typing-indicator {
+  flex-direction: row-reverse;
 }
