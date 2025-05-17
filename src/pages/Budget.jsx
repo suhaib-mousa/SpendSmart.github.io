@@ -1,11 +1,11 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import Chart from 'chart.js/auto';
-import { saveBudgetAnalysis, getBudgetHistory } from '../services/api';
+import { saveBudgetAnalysis } from '../services/api';
 import '../styles/Budget.css';
 
-// Standard expense percentages
+// Standard expense percentages based on financial planning guidelines
 const recommendedPercentages = {
   housing: 30,
   transportation: 15,
@@ -153,6 +153,7 @@ function Budget() {
     expenses: {}
   });
   const [isTyping, setIsTyping] = useState(false);
+  const [showAnalysis, setShowAnalysis] = useState(false);
   const chartRef = useRef(null);
   const messagesEndRef = useRef(null);
   const hasStartedRef = useRef(false);
@@ -166,47 +167,40 @@ function Budget() {
     document.body.dir = preferredLang === 'ar' ? 'rtl' : 'ltr';
 
     if (!hasStartedRef.current) {
-      startConversation(preferredLang); // pass directly instead of relying on state
+      startConversation();
       hasStartedRef.current = true;
     }
+
+    return () => {
+      if (chartRef.current) {
+        chartRef.current.destroy();
+      }
+    };
   }, []);
 
-  const startConversation = (lang) => {
-    addBotMessage(questions[0][lang]);
+  const startConversation = () => {
+    addBotMessage(questions[0][currentLanguage]);
   };
 
-
   const addBotMessage = (text) => {
-    setMessages(prev => [...prev, { text, isUser: false, isTyping: false }]);
+    setMessages(prev => [...prev, { text, isUser: false }]);
   };
 
   const addUserMessage = (text) => {
     setMessages(prev => [...prev, { text, isUser: true }]);
   };
 
-  const showTypingIndicator = () => {
-    setMessages(prev => [...prev, { isTyping: true }]);
-    setIsTyping(true);
-  };
-
-  const hideTypingIndicator = () => {
-    setMessages(prev => prev.filter(msg => !msg.isTyping));
-    setIsTyping(false);
-  };
-
   const processAnswer = async (answer) => {
-    // Update user responses
     const updatedResponses = { ...userResponses };
+    
     if (currentQuestion === 0) updatedResponses.name = answer;
     else if (currentQuestion === 1) updatedResponses.totalIncome = parseFloat(answer);
     else if (currentQuestion === 2) updatedResponses.savingsGoal = parseFloat(answer);
     else if (currentQuestion >= 3 && currentQuestion <= 11) {
       const category = questions[currentQuestion].category;
-      updatedResponses.expenses = { 
-        ...updatedResponses.expenses, 
-        [category]: parseFloat(answer) 
-      };
+      updatedResponses.expenses[category] = parseFloat(answer);
     }
+    
     setUserResponses(updatedResponses);
 
     if (currentQuestion === questions.length - 1) {
@@ -215,20 +209,145 @@ function Budget() {
         navigate('/login');
         return;
       }
+
       try {
         await saveBudgetAnalysis(updatedResponses);
-        analyzeAndDisplayResults();
+        analyzeAndDisplayResults(updatedResponses);
       } catch (error) {
         toast.error('Failed to save budget analysis');
       }
     } else {
-      showTypingIndicator();
+      setIsTyping(true);
       setTimeout(() => {
-        hideTypingIndicator();
+        setIsTyping(false);
         setCurrentQuestion(prev => prev + 1);
         addBotMessage(questions[currentQuestion + 1][currentLanguage]);
-      }, 800);
+      }, 1000);
     }
+  };
+
+  const analyzeAndDisplayResults = (data) => {
+    const totalExpenses = Object.values(data.expenses).reduce((sum, value) => sum + value, 0);
+    const remainingMoney = data.totalIncome - totalExpenses;
+    const savingsShortfall = data.savingsGoal - remainingMoney;
+
+    // Create analysis component
+    const analysisComponent = (
+      <div className="analysis-results">
+        <div className="budget-summary">
+          <div className="summary-item">
+            <h3>Total Income</h3>
+            <p className="amount">{data.totalIncome.toFixed(2)} JOD</p>
+          </div>
+          <div className="summary-item">
+            <h3>Total Expenses</h3>
+            <p className="amount">{totalExpenses.toFixed(2)} JOD</p>
+          </div>
+          <div className="summary-item">
+            <h3>Remaining Money</h3>
+            <p className={`amount ${remainingMoney >= 0 ? 'positive' : 'negative'}`}>
+              {remainingMoney.toFixed(2)} JOD
+            </p>
+          </div>
+        </div>
+
+        <div className="budget-message">
+          {remainingMoney < data.savingsGoal ? (
+            <div className="alert alert-warning">
+              You need to adjust your budget to reach your savings goal of {data.savingsGoal} JOD. 
+              Currently, you need to save an additional {savingsShortfall.toFixed(2)} JOD monthly.
+            </div>
+          ) : (
+            <div className="alert alert-success">
+              Congratulations! You're meeting your savings goal with an extra {Math.abs(savingsShortfall).toFixed(2)} JOD per month.
+            </div>
+          )}
+        </div>
+
+        <div className="chart-container">
+          <canvas ref={chartRef}></canvas>
+        </div>
+
+        <div className="recommendations">
+          <h3>Specific Recommendations:</h3>
+          {Object.entries(data.expenses).map(([category, amount]) => {
+            const recommendedAmount = (recommendedPercentages[category] / 100) * data.totalIncome;
+            const difference = amount - recommendedAmount;
+            
+            if (difference > 0) {
+              return (
+                <div key={category} className="recommendation-item">
+                  <h4>{category.charAt(0).toUpperCase() + category.slice(1)}</h4>
+                  <p>
+                    You're spending {amount.toFixed(2)} JOD ({((amount / data.totalIncome) * 100).toFixed(1)}% of your income) on {category}.
+                    Recommended spending is {recommendedAmount.toFixed(2)} JOD ({recommendedPercentages[category]}%).
+                    You could save {difference.toFixed(2)} JOD monthly by reducing this category.
+                  </p>
+                </div>
+              );
+            }
+            return null;
+          })}
+        </div>
+
+        <div className="actionable-tips">
+          <h3>Actionable Tips:</h3>
+          <ul>
+            <li>Track your daily expenses for a full month to identify additional savings areas.</li>
+            <li>Consider implementing a "no-spend day" once per week.</li>
+            <li>Look for ways to reduce your highest expense categories first.</li>
+            <li>Set up automatic transfers for savings on payday.</li>
+          </ul>
+        </div>
+      </div>
+    );
+
+    // Add analysis to messages
+    setMessages(prev => [...prev, { component: analysisComponent }]);
+    
+    // Create chart
+    setTimeout(() => {
+      if (chartRef.current) {
+        const ctx = chartRef.current.getContext('2d');
+        new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: Object.keys(data.expenses).map(key => key.charAt(0).toUpperCase() + key.slice(1)),
+            datasets: [
+              {
+                label: 'Actual Expenses',
+                data: Object.values(data.expenses),
+                backgroundColor: '#2A4B7C'
+              },
+              {
+                label: 'Recommended Expenses',
+                data: Object.keys(data.expenses).map(category => 
+                  (recommendedPercentages[category] / 100) * data.totalIncome
+                ),
+                backgroundColor: '#B7E0FF'
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            scales: {
+              y: {
+                beginAtZero: true,
+                title: {
+                  display: true,
+                  text: 'Amount (JOD)'
+                }
+              }
+            },
+            plugins: {
+              legend: {
+                position: 'bottom'
+              }
+            }
+          }
+        });
+      }
+    }, 100);
   };
 
   const handleSubmit = (e) => {
@@ -247,54 +366,38 @@ function Budget() {
     processAnswer(input);
   };
 
-  const analyzeAndDisplayResults = () => {
-    const totalExpenses = Object.values(userResponses.expenses).reduce((a, b) => a + b, 0);
-    const remaining = userResponses.totalIncome - totalExpenses;
-    const savingsDiff = remaining - userResponses.savingsGoal;
-
-    const analysis = (
-      <div className="analysis-results">
-        {/* Add full analysis JSX here similar to original HTML */}
-      </div>
-    );
-
-    showTypingIndicator();
-    setTimeout(() => {
-      hideTypingIndicator();
-      setMessages(prev => [...prev, { component: analysis }]);
-      createExpensesChart();
-    }, 1000);
-  };
-
-  const createExpensesChart = () => {
-    // Chart creation logic similar to original
-  };
-
   return (
     <div className="chatbot-container">
       <div className="chat-header">
-        {/* Header content */}
+        <div>
+          <h1 className="text-xl font-bold">SpendSmart</h1>
+          <p className="text-sm" id="header-subtitle">
+            {currentLanguage === 'ar' ? 'مساعد تحليل الميزانية' : 'Budget Analysis Assistant'}
+          </p>
+        </div>
       </div>
 
-      <div className="chat-messages">
-        {messages.map((msg, i) => (
-          <div key={i} className={`message ${msg.isUser ? 'user-message' : 'bot-message'}`}>
-            {msg.isTyping ? (
-              <div className="typing-indicator">
-                <span></span><span></span><span></span>
-              </div>
-            ) : msg.component ? (
-              msg.component
-            ) : (
-              msg.text
-            )}
+      <div className="chat-messages" ref={messagesEndRef}>
+        {messages.map((msg, index) => (
+          <div
+            key={index}
+            className={`message ${msg.isUser ? 'user-message' : 'bot-message'}`}
+          >
+            {msg.component || msg.text}
           </div>
         ))}
-        <div ref={messagesEndRef} />
+        {isTyping && (
+          <div className="typing-indicator">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+        )}
       </div>
 
       <form onSubmit={handleSubmit} className="chat-input">
         <input
+          type="text"
           name="message"
           placeholder={currentLanguage === 'ar' ? 'اكتب إجابتك هنا...' : 'Type your answer here...'}
           disabled={isTyping}
