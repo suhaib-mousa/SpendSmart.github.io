@@ -275,12 +275,6 @@ function Budget() {
       <div className="analysis-results">
         <div className="d-flex justify-content-between align-items-center mb-4">
           <h3 className="text-xl font-bold text-blue-700">Personal Budget Analysis</h3>
-          <button 
-            className="btn btn-outline-primary btn-sm"
-            onClick={() => setShowHistory(!showHistory)}
-          >
-            {showHistory ? 'Hide History' : 'View History'}
-          </button>
         </div>
 
         {showHistory && budgetHistory.length > 0 && (

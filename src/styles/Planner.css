@@ -283,8 +283,11 @@
   height: 100%;
 }
 
-.chart-container {
+.sticky-wrapper.chart-container {
   position: sticky;
+}
+
+.chart-container {
   top: 2rem;
   z-index: 10;
 }
