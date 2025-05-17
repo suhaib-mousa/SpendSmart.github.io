@@ -277,127 +277,120 @@ function Budget() {
 
   return (
     <div className="budget-container">
-      <div className="text-center mb-12" data-aos="fade-up">
-        <h1 className="text-4xl font-bold text-gray-800 mb-4">Financial Planner</h1>
-        <p className="text-lg text-gray-600">Enter your monthly income and expenses to analyze your spending and make smart financial decisions.</p>
-      </div>
-
-      <div className="budget-grid">
-        <div className="budget-form" data-aos="fade-right">
-          <div className="income-section">
-            <h2 className="text-xl font-semibold mb-4">Monthly Income</h2>
+      <div className="main-container">
+        <h1 className="page-title">Financial Planner</h1>
+        <p className="subheading">Enter your monthly income and expenses to analyze your spending and make smart financial decisions.</p>
+        
+        <div className="left-content">
+          <div className="budget-section income-box">
+            <h2 className="section-title">Monthly Income</h2>
             <input
               type="number"
-              className="budget-input"
+              className="amount-input"
               value={monthlyIncome}
               onChange={(e) => setMonthlyIncome(parseFloat(e.target.value) || 0)}
-              placeholder="Enter monthly income"
+              placeholder="Amount in JOD"
             />
           </div>
 
-          <h2 className="text-xl font-semibold mb-4">Budget Distribution</h2>
-          {Object.entries(expenses).map(([category, value]) => (
-            <div key={category} className="budget-item">
-              <div 
-                className="category-color"
-                style={{ 
-                  backgroundColor: {
-                    charity: '#52741F',
-                    food: '#00B2F6',
-                    housing: '#FF6B6B',
-                    utilities: '#4ECDC4',
-                    maintenance: '#FF9F43',
-                    transportation: '#F368E0',
-                    education: '#FFD93D',
-                    entertainment: '#6C5CE7',
-                    debt: '#E69DB8',
-                    health: '#C599B6',
-                    savings: '#00B894',
-                    others: '#A569BD'
-                  }[category]
-                }}
-              />
-              <span className="capitalize">{category}</span>
-              <input
-                type="number"
-                className="budget-input"
-                value={value}
-                onChange={(e) => handleExpenseChange(category, e.target.value)}
-                placeholder={`Enter ${category} expense`}
-              />
-            </div>
-          ))}
-
-          <div className="budget-summary">
-            <div>
-              <span>Total Expenses:</span>
-              <span>{totalExpenses.toFixed(2)} JOD</span>
-            </div>
-            <div>
-              <span>Remaining Income:</span>
-              <span>{remainingIncome.toFixed(2)} JOD</span>
-            </div>
+          <div className="budget-section">
+            <h2 className="section-title">Budget Distribution</h2>
+            {Object.entries(expenses).map(([category, value]) => (
+              <div key={category} className="budget-item">
+                <div 
+                  className="category-color"
+                  style={{ 
+                    backgroundColor: {
+                      charity: '#52741F',
+                      food: '#00B2F6',
+                      housing: '#FF6B6B',
+                      utilities: '#4ECDC4',
+                      maintenance: '#FF9F43',
+                      transportation: '#F368E0',
+                      education: '#FFD93D',
+                      entertainment: '#6C5CE7',
+                      debt: '#E69DB8',
+                      health: '#C599B6',
+                      savings: '#00B894',
+                      others: '#A569BD'
+                    }[category]
+                  }}
+                />
+                <span className="capitalize">{category}</span>
+                <input
+                  type="number"
+                  className="amount-input"
+                  value={value}
+                  onChange={(e) => handleExpenseChange(category, e.target.value)}
+                  placeholder={`Enter ${category} expense`}
+                />
+                <span className="percentage">
+                  {((value / monthlyIncome) * 100 || 0).toFixed(1)}%
+                </span>
+              </div>
+            ))}
           </div>
 
-          <button
-            onClick={saveData}
-            className="w-full mt-6 bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
-          >
-            Save Data
-          </button>
+          <div className="total-section">
+            <span>Total Expenses:</span>
+            <span>{totalExpenses.toFixed(2)} JOD</span>
+          </div>
+
+          <div className="remaining-income">
+            <span>Remaining Income:</span>
+            <span>{remainingIncome.toFixed(2)} JOD</span>
+          </div>
         </div>
 
-        <div className="chart-container" data-aos="fade-left">
+        <div className="chart-container">
           <canvas ref={budgetCanvasRef}></canvas>
         </div>
-      </div>
 
-      <div className="text-center mt-8">
-        <button
-          onClick={() => setShowAnalysis(!showAnalysis)}
-          className="bg-green-600 text-white py-2 px-6 rounded hover:bg-green-700"
-        >
-          {showAnalysis ? 'Hide Analysis' : 'Show Analysis'}
-        </button>
-      </div>
-
-      {showAnalysis && (
-        <div className="analysis-container" data-aos="fade-up">
-          <div className="analysis-grid">
-            <div className="analysis-section">
-              <div className="analysis-header">
-                <h2 className="text-2xl font-bold mb-4">Three-Thirds Financial Analysis</h2>
-                <div className="mb-6">
-                  <h3 className="text-xl font-semibold mb-2">Category Breakdown</h3>
-                  <ul className="list-disc pl-6">
-                    <li><span className="font-semibold">Obligations (1/3):</span> Housing, Transportation, Debt, Health, Education, Maintenance, Utilities</li>
-                    <li><span className="font-semibold">Personal (1/3):</span> Others, Entertainment, Charity, Food</li>
-                    <li><span className="font-semibold">Investment (1/3):</span> Savings</li>
-                  </ul>
-                </div>
-              </div>
-
-              <div className="analysis-chart">
-                <h3 className="text-xl font-semibold mb-4">Current vs Ideal Distribution</h3>
-                <canvas ref={comparisonCanvasRef}></canvas>
-              </div>
-
-              <div className="analysis-chart">
-                <h3 className="text-xl font-semibold mb-4">5-Year Investment Projection</h3>
-                <canvas ref={yearlyCanvasRef}></canvas>
-              </div>
-
-              <button
-                onClick={downloadPDF}
-                className="download-button"
-              >
-                <i className="fas fa-file-download"></i>
-                Download PDF Report
+        <div className="cta-section">
+          <div className="cta-content">
+            <h2>Ready to Analyze?</h2>
+            <p>Save your data and view detailed insights to optimize your budget.</p>
+            <div className="cta-buttons">
+              <button className="save-button" onClick={saveData}>
+                <i className="fas fa-save"></i> Save Data
+              </button>
+              <button className="save-button" onClick={() => setShowAnalysis(!showAnalysis)}>
+                <i className="fas fa-chart-pie"></i> {showAnalysis ? 'Hide Analysis' : 'Start Analysis'}
               </button>
             </div>
           </div>
         </div>
-      )}
+
+        {showAnalysis && (
+          <div className="analysis-container">
+            <div className="analysis-header">
+              <h2>Three-Thirds Financial Analysis</h2>
+              <div className="analysis-section">
+                <h3>Category Breakdown</h3>
+                <ul>
+                  <li><span className="font-bold">Obligations (1/3):</span> Housing, Transportation, Debt, Health, Education, Maintenance, Utilities</li>
+                  <li><span className="font-bold">Personal (1/3):</span> Others, Entertainment, Charity, Food</li>
+                  <li><span className="font-bold">Investment (1/3):</span> Savings</li>
+                </ul>
+              </div>
+            </div>
+
+            <div className="analysis-chart">
+              <h3>Current vs Ideal Distribution</h3>
+              <canvas ref={comparisonCanvasRef}></canvas>
+            </div>
+
+            <div className="analysis-chart">
+              <h3>5-Year Investment Projection</h3>
+              <canvas ref={yearlyCanvasRef}></canvas>
+            </div>
+
+            <button className="save-button" onClick={downloadPDF}>
+              <i className="fas fa-file-download"></i> Download PDF Report
+            </button>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
