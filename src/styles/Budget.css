@@ -1,1 +1,76 @@
-/* Add all the CSS styles from the HTML file here */
+:root {
+  --primary-color: #1a73e8;
+  --primary-dark: #0d47a1;
+  --secondary-color: #f0f4f8;
+  --bot-message-bg: #e3f2fd;
+  --user-message-bg: #e8f5e9;
+  --error-color: #f44336;
+  --success-color: #4caf50;
+  --primary-blue: #0056b3;
+  --secondary-blue: #007bff;
+  --light-blue: #e6f2ff;
+  --dark-blue: #004085;
+  --accent-blue: #00a0e9;
+}
+
+.chatbot-container {
+  max-width: 800px;
+  height: 600px;
+  background: white;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  top: 100px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+}
+
+.chat-header {
+  background-color: var(--primary-color);
+  color: white;
+  padding: 1rem;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+
+.chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1rem;
+  scroll-behavior: smooth;
+}
+
+.chat-input {
+  padding: 1rem;
+  border-top: 1px solid #e5e7eb;
+  display: flex;
+}
+
+.message {
+  max-width: 80%;
+  margin-bottom: 1rem;
+  padding: 0.75rem;
+  border-radius: 1rem;
+  position: relative;
+  line-height: 1.5;
+}
+
+.bot-message {
+  background-color: var(--bot-message-bg);
+  border-bottom-left-radius: 0.25rem;
+  align-self: flex-start;
+  margin-right: auto;
+}
+
+.user-message {
+  background-color: var(--user-message-bg);
+  border-bottom-right-radius: 0.25rem;
+  align-self: flex-end;
+  margin-left: auto;
+  text-align: right;
+}
+
+/* Add all the remaining CSS from the HTML file */
