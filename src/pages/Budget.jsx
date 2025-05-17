@@ -5,6 +5,20 @@ import Chart from 'chart.js/auto';
 import { saveBudgetAnalysis, getBudgetHistory } from '../services/api';
 import '../styles/Budget.css';
 
+// Standard expense percentages
+const recommendedPercentages = {
+  housing: 30,
+  transportation: 15,
+  food: 15,
+  utilities: 10,
+  healthcare: 5,
+  education: 5,
+  entertainment: 5,
+  debt: 10,
+  savings: 10,
+  other: 5
+};
+
 // Questions configuration
 const questions = [
   {
@@ -142,6 +156,7 @@ function Budget() {
   const [budgetHistory, setBudgetHistory] = useState([]);
   const chatMessagesRef = useRef(null);
   const userInputRef = useRef(null);
+  const chartRef = useRef(null);
 
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
@@ -154,7 +169,13 @@ function Budget() {
     
     setTimeout(() => {
       startConversation();
-    }, 100);
+    }, 1000);
+
+    return () => {
+      if (chartRef.current) {
+        chartRef.current.destroy();
+      }
+    };
   }, []);
 
   const fetchBudgetHistory = async () => {
@@ -298,6 +319,90 @@ function Budget() {
     setTimeout(() => {
       createExpensesChart();
     }, 100);
+  };
+
+  const createExpensesChart = () => {
+    const canvas = document.getElementById('expenseChart');
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    
+    if (chartRef.current) {
+      chartRef.current.destroy();
+    }
+
+    const categories = Object.keys(userResponses.expenses);
+    const values = Object.values(userResponses.expenses);
+    const translatedCategories = categories.map(category => {
+      return currentLanguage === 'ar' ? getCategoryNameArabic(category) : getCategoryNameEnglish(category);
+    });
+
+    chartRef.current = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: translatedCategories,
+        datasets: [
+          {
+            label: currentLanguage === 'ar' ? 'النفقات الفعلية (دينار أردني)' : 'Actual Expenses (JOD)',
+            data: values,
+            backgroundColor: 'rgba(54, 162, 235, 0.7)',
+            borderColor: 'rgba(54, 162, 235, 1)',
+            borderWidth: 1
+          },
+          {
+            label: currentLanguage === 'ar' ? 'النفقات الموصى بها (دينار أردني)' : 'Recommended Expenses (JOD)',
+            data: categories.map(category => (recommendedPercentages[category] / 100) * userResponses.totalIncome),
+            backgroundColor: 'rgba(255, 99, 132, 0.5)',
+            borderColor: 'rgba(255, 99, 132, 1)',
+            borderWidth: 1,
+            type: 'bar'
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          y: {
+            beginAtZero: true,
+            title: {
+              display: true,
+              text: currentLanguage === 'ar' ? 'المبلغ (دينار أردني)' : 'Amount (JOD)'
+            }
+          }
+        }
+      }
+    });
+  };
+
+  const getCategoryNameArabic = (category) => {
+    const translations = {
+      housing: 'السكن',
+      transportation: 'المواصلات',
+      food: 'الطعام',
+      utilities: 'المرافق',
+      healthcare: 'الرعاية الصحية',
+      education: 'التعليم',
+      entertainment: 'الترفيه',
+      debt: 'الديون',
+      other: 'نفقات أخرى'
+    };
+    return translations[category] || category;
+  };
+
+  const getCategoryNameEnglish = (category) => {
+    const names = {
+      housing: 'Housing',
+      transportation: 'Transportation',
+      food: 'Food',
+      utilities: 'Utilities',
+      healthcare: 'Healthcare',
+      education: 'Education',
+      entertainment: 'Entertainment',
+      debt: 'Debt Repayment',
+      other: 'Other Expenses'
+    };
+    return names[category] || category;
   };
 
   return (
