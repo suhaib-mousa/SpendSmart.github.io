@@ -13,7 +13,7 @@ export const sendResetPasswordEmail = async (email, resetLink) => {
     console.log('Using reset link:', resetLink);
 
     const response = await resend.emails.send({
-      from: 'SpendSmart <noreply@spendsmart.com>',
+      from: 'SpendSmart <you@resend.dev>',
       to: email,
       subject: 'Reset Your SpendSmart Password',
       html: `

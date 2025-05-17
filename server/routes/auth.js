@@ -110,13 +110,13 @@ router.post('/forgot-password', async (req, res) => {
     console.log('Reset token saved to user');
 
     // Generate reset link
-    const resetLink = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
+    const resetLink = `http://localhost:5173/reset-password/${resetToken}`;
     console.log('Generated reset link:', resetLink);
     
     try {
-      console.log('Attempting to send reset email');
-      await sendResetPasswordEmail(email, resetLink);
-      console.log('Reset email sent successfully');
+      // console.log('Attempting to send reset email');
+      // await sendResetPasswordEmail(email, resetLink);
+      // console.log('Reset email sent successfully');
       
       res.json({ 
         message: 'Password reset instructions sent to email',
