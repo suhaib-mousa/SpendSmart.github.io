@@ -61,16 +61,20 @@ function Planner() {
   }, []);
 
   useEffect(() => {
+    updateBudgetChart();
+  }, [monthlyIncome, expenses]);
+
+  useEffect(() => {
     if (showAnalysis) {
       requestAnimationFrame(() => {
-        updateCharts();
+        updateAnalysisCharts();
         generateInsights();
       });
     } else {
-      destroyCharts();
+      destroyAnalysisCharts();
       setInsights(null);
     }
-  }, [monthlyIncome, expenses, showAnalysis]);
+  }, [showAnalysis]);
 
   const fetchPlannerHistory = async () => {
     try {
@@ -158,47 +162,52 @@ function Planner() {
     });
   };
 
-  const updateCharts = () => {
-    // Update budget chart
-    if (budgetCanvasRef.current) {
-      if (budgetChartRef.current) {
-        budgetChartRef.current.destroy();
-      }
+  const updateBudgetChart = () => {
+  if (budgetCanvasRef.current) {
+    if (budgetChartRef.current) {
+      budgetChartRef.current.destroy();
+    }
 
-      const ctx = budgetCanvasRef.current.getContext('2d');
-      budgetChartRef.current = new Chart(ctx, {
-        type: 'doughnut',
-        data: {
-          labels: Object.keys(expenses).map(key => key.charAt(0).toUpperCase() + key.slice(1)),
-          datasets: [{
-            data: Object.values(expenses),
-            backgroundColor: [
-              '#52741F', '#00B2F6', '#FF6B6B', '#4ECDC4', '#FF9F43',
-              '#F368E0', '#FFD93D', '#6C5CE7', '#E69DB8', '#C599B6',
-              '#00B894', '#A569BD'
-            ]
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: {
-              position: 'bottom',
-              labels: {
-                padding: 20
-              }
+    const ctx = budgetCanvasRef.current.getContext('2d');
+    budgetChartRef.current = new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels: Object.keys(expenses).map(key => key.charAt(0).toUpperCase() + key.slice(1)),
+        datasets: [{
+          data: Object.values(expenses),
+          backgroundColor: [
+            '#52741F', '#00B2F6', '#FF6B6B', '#4ECDC4', '#FF9F43',
+            '#F368E0', '#FFD93D', '#6C5CE7', '#E69DB8', '#C599B6',
+            '#00B894', '#A569BD'
+          ]
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'bottom',
+            labels: {
+              padding: 20
             }
           }
         }
-      });
-    }
+      }
+    });
+  }
+};
 
-    // Update analysis charts if showing analysis
-    if (showAnalysis) {
-      updateAnalysisCharts();
-    }
-  };
+const destroyAnalysisCharts = () => {
+  if (comparisonChartRef.current) {
+    comparisonChartRef.current.destroy();
+    comparisonChartRef.current = null;
+  }
+  if (yearlyChartRef.current) {
+    yearlyChartRef.current.destroy();
+    yearlyChartRef.current = null;
+  }
+};
 
   const updateAnalysisCharts = () => {
     const obligationsCategories = ['housing', 'transportation', 'debt', 'health', 'education', 'maintenance', 'utilities'];
