@@ -1,15 +1,22 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import '../styles/Home.css';
 
 function Home() {
+  const [user, setUser] = useState(null);
+
   useEffect(() => {
     AOS.init({
       once: true,
       duration: 800
     });
+
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
   }, []);
 
   return (
@@ -167,18 +174,20 @@ function Home() {
         </div>
       </section>
 
-      {/* Call to Action Section */}
-      <section className="cta">
-        <div className="container">
-          <div data-aos="fade-up" data-aos-duration="1000">
-            <h2>Ready to Start Saving?</h2>
-            <p>Join thousands of users in Jordan who are taking control of their finances and discovering amazing deals with SpendSmart.</p>
-            <div className="d-flex justify-content-center flex-wrap gap-2">
-              <Link to="/signup" className="btn btn-primary btn-lg me-2 mb-2 mb-md-0">Sign Up for Free</Link>
+      {/* Call to Action Section - Only show if not authenticated */}
+      {!user && (
+        <section className="cta">
+          <div className="container">
+            <div data-aos="fade-up" data-aos-duration="1000">
+              <h2>Ready to Start Saving?</h2>
+              <p>Join thousands of users in Jordan who are taking control of their finances and discovering amazing deals with SpendSmart.</p>
+              <div className="d-flex justify-content-center flex-wrap gap-2">
+                <Link to="/signup" className="btn btn-primary btn-lg me-2 mb-2 mb-md-0">Sign Up for Free</Link>
+              </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* Footer */}
       <footer>
