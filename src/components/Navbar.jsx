@@ -14,7 +14,7 @@ const Navbar = () => {
     if (storedUser) {
       setUser(JSON.parse(storedUser));
     }
-  }, []);
+  }, [location]); // Re-check user status when location changes
 
   const handleLogout = () => {
     logout();
@@ -40,13 +40,20 @@ const Navbar = () => {
         <div className="collapse navbar-collapse" id="navbarNav">
           <ul className="navbar-nav ms-auto">
             <li className="nav-item">
-              <Link className="nav-link active" to="/">
+              <Link 
+                className={`nav-link ${location.pathname === '/' ? 'active' : ''}`} 
+                to="/"
+              >
                 Home
               </Link>
             </li>
             <li className="nav-item dropdown">
               <a
-                className="nav-link dropdown-toggle"
+                className={`nav-link dropdown-toggle ${
+                  location.pathname.includes('/budget') || location.pathname.includes('/planner')
+                    ? 'active'
+                    : ''
+                }`}
                 href="#"
                 id="navbarDropdown"
                 role="button"
@@ -57,24 +64,36 @@ const Navbar = () => {
               </a>
               <ul className="dropdown-menu" aria-labelledby="navbarDropdown">
                 <li>
-                  <Link className="dropdown-item" to="/budget">
+                  <Link 
+                    className={`dropdown-item ${location.pathname === '/budget' ? 'active' : ''}`}
+                    to="/budget"
+                  >
                     Budget Analysis
                   </Link>
                 </li>
                 <li>
-                  <Link className="dropdown-item" to="/planner">
+                  <Link 
+                    className={`dropdown-item ${location.pathname === '/planner' ? 'active' : ''}`}
+                    to="/planner"
+                  >
                     Financial Planner
                   </Link>
                 </li>
               </ul>
             </li>
             <li className="nav-item">
-              <Link className="nav-link" to="/discounts">
+              <Link 
+                className={`nav-link ${location.pathname === '/discounts' ? 'active' : ''}`}
+                to="/discounts"
+              >
                 Discounts
               </Link>
             </li>
             <li className="nav-item">
-              <Link className="nav-link" to="/tips">
+              <Link 
+                className={`nav-link ${location.pathname === '/tips' ? 'active' : ''}`}
+                to="/tips"
+              >
                 Tips
               </Link>
             </li>
@@ -83,16 +102,25 @@ const Navbar = () => {
             {user ? (
               <div className="d-flex align-items-center">
                 <span className="me-3">Welcome, {user.firstName}!</span>
-                <button onClick={handleLogout} className="btn btn-outline-primary">
+                <button 
+                  onClick={handleLogout} 
+                  className="btn btn-outline-primary"
+                >
                   Sign Out
                 </button>
               </div>
             ) : (
               <>
-                <Link to="/login" className="btn btn-outline-primary me-2">
+                <Link 
+                  to="/login" 
+                  className={`btn btn-outline-primary me-2 ${location.pathname === '/login' ? 'active' : ''}`}
+                >
                   Log In
                 </Link>
-                <Link to="/signup" className="btn btn-primary">
+                <Link 
+                  to="/signup" 
+                  className={`btn btn-primary ${location.pathname === '/signup' ? 'active' : ''}`}
+                >
                   Sign Up
                 </Link>
               </>
