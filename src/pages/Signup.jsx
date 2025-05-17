@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
-import { supabase } from '../lib/supabase';
+import { register } from '../services/auth';
 import '../styles/Auth.css';
 
 function Signup() {
@@ -24,23 +24,16 @@ function Signup() {
     }
 
     try {
-      const { data, error } = await supabase.auth.signUp({
+      await register({
+        firstName,
+        lastName,
         email,
-        password,
-        options: {
-          data: {
-            first_name: firstName,
-            last_name: lastName,
-          },
-        },
+        password
       });
-
-      if (error) throw error;
-
-      toast.success('Successfully signed up! Please check your email to verify your account.');
+      toast.success('Successfully signed up!');
       navigate('/login');
     } catch (error) {
-      toast.error(error.message);
+      toast.error(error.message || 'Failed to sign up');
     } finally {
       setLoading(false);
     }

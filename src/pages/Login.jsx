@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
-import { supabase } from '../lib/supabase';
+import { login } from '../services/auth';
 import '../styles/Auth.css';
 
 function Login() {
@@ -15,17 +15,11 @@ function Login() {
     setLoading(true);
 
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-
-      if (error) throw error;
-
+      await login(email, password);
       toast.success('Successfully logged in!');
       navigate('/');
     } catch (error) {
-      toast.error(error.message);
+      toast.error(error.message || 'Failed to login');
     } finally {
       setLoading(false);
     }

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
-import { supabase } from '../lib/supabase';
+import { forgotPassword } from '../services/auth';
 import '../styles/Auth.css';
 
 function ForgotPassword() {
@@ -13,16 +13,11 @@ function ForgotPassword() {
     setLoading(true);
 
     try {
-      const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/reset-password`,
-      });
-
-      if (error) throw error;
-
+      await forgotPassword(email);
       toast.success('Password reset instructions have been sent to your email!');
       setEmail('');
     } catch (error) {
-      toast.error(error.message);
+      toast.error(error.message || 'Failed to send reset instructions');
     } finally {
       setLoading(false);
     }
