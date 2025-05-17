@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import Chart from 'chart.js/auto';
-import { saveBudgetAnalysis } from '../services/api';
+import { saveBudgetAnalysis, getBudgetHistory } from '../services/api';
 import '../styles/Budget.css';
 
 // Standard expense percentages based on financial planning guidelines
@@ -154,13 +154,18 @@ function Budget() {
   });
   const [isTyping, setIsTyping] = useState(false);
   const [showAnalysis, setShowAnalysis] = useState(false);
+  const [budgetHistory, setBudgetHistory] = useState([]);
+  const [showHistory, setShowHistory] = useState(false);
   const chartRef = useRef(null);
   const messagesEndRef = useRef(null);
   const hasStartedRef = useRef(false);
 
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
-    if (storedUser) setUser(JSON.parse(storedUser));
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+      fetchBudgetHistory();
+    }
 
     const preferredLang = localStorage.getItem('preferredLanguage') || 'en';
     setCurrentLanguage(preferredLang);
@@ -178,6 +183,16 @@ function Budget() {
     };
   }, []);
 
+  const fetchBudgetHistory = async () => {
+    try {
+      const history = await getBudgetHistory();
+      setBudgetHistory(history);
+    } catch (error) {
+      console.error('Error fetching budget history:', error);
+      toast.error('Failed to load budget history');
+    }
+  };
+
   const startConversation = () => {
     addBotMessage(questions[0][currentLanguage]);
   };
@@ -191,6 +206,8 @@ function Budget() {
   };
 
   const processAnswer = async (answer) => {
+    isWaitingForAnswer = false;
+
     const updatedResponses = { ...userResponses };
     
     if (currentQuestion === 0) updatedResponses.name = answer;
@@ -261,7 +278,36 @@ function Budget() {
     // Create analysis component
     const analysisComponent = (
       <div className="analysis-results">
-        <h3 className="text-xl font-bold text-blue-700 mb-3">Personal Budget Analysis</h3>
+        <div className="d-flex justify-content-between align-items-center mb-4">
+          <h3 className="text-xl font-bold text-blue-700">Personal Budget Analysis</h3>
+          <button 
+            className="btn btn-outline-primary btn-sm"
+            onClick={() => setShowHistory(!showHistory)}
+          >
+            {showHistory ? 'Hide History' : 'View History'}
+          </button>
+        </div>
+
+        {showHistory && budgetHistory.length > 0 && (
+          <div className="budget-history mb-4">
+            <h4 className="font-semibold mb-3">Previous Reports</h4>
+            <div className="history-list">
+              {budgetHistory.map((report, index) => (
+                <div key={index} className="history-item p-3 bg-light rounded mb-2">
+                  <div className="d-flex justify-content-between">
+                    <span className="font-semibold">Report {index + 1}</span>
+                    <span className="text-muted">{new Date(report.date).toLocaleDateString()}</span>
+                  </div>
+                  <div className="mt-2">
+                    <div>Income: {report.totalIncome.toFixed(2)} JOD</div>
+                    <div>Expenses: {report.analysis.totalExpenses.toFixed(2)} JOD</div>
+                    <div>Remaining: {report.analysis.remainingMoney.toFixed(2)} JOD</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
         
         <div className="analysis-stats">
           <div className="stat">
@@ -389,7 +435,7 @@ function Budget() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const input = e.target.message.value.trim();
+    const input = userInput.value.trim();
     if (!input || isTyping) return;
 
     if (currentQuestion === questions.length - 1) {
