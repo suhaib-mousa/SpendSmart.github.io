@@ -191,6 +191,11 @@ function Discounts() {
 
   // Filter deals based on search and filters
   const filteredDeals = deals.filter(deal => {
+    // Skip filtering for non-authenticated users
+    if (!user) {
+      return true;
+    }
+
     const matchesSearch = deal.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          deal.location.toLowerCase().includes(searchTerm.toLowerCase());
     
@@ -222,6 +227,9 @@ function Discounts() {
     return matchesSearch && matchesLocation && matchesPriceRange() && matchesDiscount();
   });
 
+  // Limit deals for non-authenticated users
+  const displayedDeals = user ? filteredDeals : filteredDeals.slice(0, 4);
+
   if (loading) {
     return (
       <div className="loading-container">
@@ -251,14 +259,16 @@ function Discounts() {
             <div className="col-lg-6" data-aos="fade-right">
               <h1>Find the Best Deals</h1>
               <p>Discover amazing discounts and offers across Jordan</p>
-              <div className="search-box">
-                <input 
-                  type="text" 
-                  placeholder="Search for deals, locations, or categories..." 
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
-              </div>
+              {user && (
+                <div className="search-box">
+                  <input 
+                    type="text" 
+                    placeholder="Search for deals, locations, or categories..." 
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                  />
+                </div>
+              )}
             </div>
             <div className="col-lg-6" data-aos="fade-left">
               <img src="/Media/disc.png" alt="Discover Deals" className="hero-image" />
@@ -267,69 +277,80 @@ function Discounts() {
         </div>
       </section>
 
-      {/* Filters Section */}
-      <section className="filters-section">
-        <div className="container">
-          <div className="row g-3">
-            <div className="col-md-3">
-              <select 
-                className="form-select" 
-                value={selectedLocation} 
-                onChange={(e) => setSelectedLocation(e.target.value)}
-              >
-                <option value="">All Locations</option>
-                {locations.map(location => (
-                  <option key={location} value={location}>{location}</option>
-                ))}
-              </select>
-            </div>
-            <div className="col-md-3">
-              <select 
-                className="form-select" 
-                value={selectedPriceRange} 
-                onChange={(e) => setPriceRange(e.target.value)}
-              >
-                <option value="">Price Range</option>
-                <option value="under50">Under 50 JD</option>
-                <option value="50to100">50-100 JD</option>
-                <option value="100to200">100-200 JD</option>
-                <option value="over200">Over 200 JD</option>
-              </select>
-            </div>
-            <div className="col-md-3">
-              <select 
-                className="form-select" 
-                value={selectedDiscount} 
-                onChange={(e) => setDiscount(e.target.value)}
-              >
-                <option value="">Discount Range</option>
-                <option value="under25">Under 25%</option>
-                <option value="25to50">25-50%</option>
-                <option value="over50">Over 50%</option>
-              </select>
-            </div>
-            <div className="col-md-3">
-              <button 
-                className="btn btn-outline-primary w-100"
-                onClick={() => {
-                  setSearchTerm('');
-                  setSelectedLocation('');
-                  setPriceRange('');
-                  setDiscount('');
-                }}
-              >
-                Clear Filters
-              </button>
+      {/* Filters Section - Only show for authenticated users */}
+      {user && (
+        <section className="filters-section">
+          <div className="container">
+            <div className="row g-3">
+              <div className="col-md-3">
+                <select 
+                  className="form-select" 
+                  value={selectedLocation} 
+                  onChange={(e) => setSelectedLocation(e.target.value)}
+                >
+                  <option value="">All Locations</option>
+                  {locations.map(location => (
+                    <option key={location} value={location}>{location}</option>
+                  ))}
+                </select>
+              </div>
+              <div className="col-md-3">
+                <select 
+                  className="form-select" 
+                  value={selectedPriceRange} 
+                  onChange={(e) => setPriceRange(e.target.value)}
+                >
+                  <option value="">Price Range</option>
+                  <option value="under50">Under 50 JD</option>
+                  <option value="50to100">50-100 JD</option>
+                  <option value="100to200">100-200 JD</option>
+                  <option value="over200">Over 200 JD</option>
+                </select>
+              </div>
+              <div className="col-md-3">
+                <select 
+                  className="form-select" 
+                  value={selectedDiscount} 
+                  onChange={(e) => setDiscount(e.target.value)}
+                >
+                  <option value="">Discount Range</option>
+                  <option value="under25">Under 25%</option>
+                  <option value="25to50">25-50%</option>
+                  <option value="over50">Over 50%</option>
+                </select>
+              </div>
+              <div className="col-md-3">
+                <button 
+                  className="btn btn-outline-primary w-100"
+                  onClick={() => {
+                    setSearchTerm('');
+                    setSelectedLocation('');
+                    setPriceRange('');
+                    setDiscount('');
+                  }}
+                >
+                  Clear Filters
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* All Deals Section */}
       <section className="all-deals-section">
         <div className="container">
+          {!user && (
+            <div className="alert alert-info text-center mb-4" role="alert">
+              <h4 className="alert-heading mb-2">Limited Preview</h4>
+              <p className="mb-0">
+                <Link to="/login" className="alert-link">Log in</Link> or <Link to="/signup" className="alert-link">sign up</Link> to see all available deals and unlock advanced features!
+              </p>
+            </div>
+          )}
+
           <div className="row">
-            {filteredDeals.map((deal, index) => (
+            {displayedDeals.map((deal, index) => (
               <div className="col-lg-3 col-md-6 mb-4" key={deal._id} data-aos="fade-up" data-aos-delay={index * 100}>
                 <div className="deal-card" onClick={() => handleDealClick(deal)}>
                   <div className="deal-image">
@@ -352,7 +373,7 @@ function Discounts() {
               </div>
             ))}
             
-            {filteredDeals.length === 0 && (
+            {displayedDeals.length === 0 && (
               <div className="col-12 text-center py-5">
                 <h3>No deals found matching your criteria</h3>
                 <p>Try adjusting your filters or search term</p>
@@ -382,7 +403,7 @@ function Discounts() {
                 <div className="p-6">
                   <div className="flex justify-between items-start mb-4">
                     <h2 className="text-2xl font-bold">{selectedDeal.title}</h2>
-                  {selectedDeal.isNew && <div className="badge-new">NEW</div>}
+                    {selectedDeal.isNew && <div className="badge-new">NEW</div>}
                     
                     <div>
                       <div className="star-rating">
