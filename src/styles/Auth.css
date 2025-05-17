@@ -20,8 +20,7 @@
   padding: 2rem;
   display: flex;
   flex-direction: column;
-  transform: translateX(0);
-  transition: transform 0.4s ease-out;
+  animation: slideInLeft 0.6s ease-out;
   position: relative;
   z-index: 2;
   background: white;
@@ -179,6 +178,14 @@
   box-shadow: 0 4px 12px rgba(0, 86, 179, 0.2);
 }
 
+.login.auth-cta-side {
+  clip-path: polygon(0% 0, 85% 0, 100% 100%, 0% 100%);
+}
+
+.signup.auth-cta-side {  
+  clip-path: polygon(15% 0, 100% 0, 100% 100%, 0% 100%);
+}
+
 /* Right side - CTA */
 .auth-cta-side {
   width: 50%;
@@ -190,35 +197,18 @@
   color: white;
   padding: 2rem;
   text-align: center;
+  animation: slideInRight 0.6s ease-out;
   position: relative;
   z-index: 1;
-  transform: translateX(0);
-  transition: transform 0.4s ease-out;
-}
-
-.login.auth-cta-side {
-  transform: skewX(-10deg) translateX(5%);
-  transform-origin: bottom right;
-}
-
-.signup.auth-cta-side {
-  transform: skewX(10deg) translateX(-5%);
-  transform-origin: bottom left;
+  transition: clip-path 0.6s ease-in-out;
 }
 
 .auth-cta-content {
   max-width: 400px;
   transform: translateX(0);
-  transition: transform 0.4s ease-out;
+  transition: transform 0.6s ease-in-out;
   opacity: 1;
-}
-
-.login.auth-cta-side .auth-cta-content {
-  transform: skewX(10deg);
-}
-
-.signup.auth-cta-side .auth-cta-content {
-  transform: skewX(-10deg);
+  animation: fadeIn 0.6s ease-out 0.3s both;
 }
 
 .auth-cta-title {
@@ -253,6 +243,36 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
+/* Animations */
+@keyframes slideInLeft {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .auth-container {
@@ -262,20 +282,10 @@
   .auth-form-side,
   .auth-cta-side {
     width: 100%;
-    transform: none;
-  }
-
-  .login.auth-cta-side,
-  .signup.auth-cta-side {
-    transform: none;
-  }
-
-  .login.auth-cta-side .auth-cta-content,
-  .signup.auth-cta-side .auth-cta-content {
-    transform: none;
   }
 
   .auth-cta-side {
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
     padding: 3rem 1rem;
   }
 
