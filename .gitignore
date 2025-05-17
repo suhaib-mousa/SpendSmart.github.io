@@ -1,27 +1,33 @@
 # Dependencies
-node_modules
-package-lock.json
+node_modules/
+.pnp
+.pnp.js
 
-# Environment
+# Testing
+coverage/
+
+# Production
+dist/
+build/
+
+# Misc
+.DS_Store
 .env
 .env.local
-.env.*.local
-
-# Build output
-dist
-build
-
-# IDE/Editor
-.vscode
-.idea
-*.swp
-*.swo
+.env.development.local
+.env.test.local
+.env.production.local
 
 # Logs
-logs
-*.log
 npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
-# System Files
-.DS_Store
-Thumbs.db
+# Editor directories and files
+.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
