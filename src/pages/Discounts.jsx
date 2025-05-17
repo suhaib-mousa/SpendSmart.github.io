@@ -19,6 +19,8 @@ function Discounts() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [user, setUser] = useState(null);
+  const [userReview, setUserReview] = useState(null);
+  const [isEditing, setIsEditing] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -29,7 +31,6 @@ function Discounts() {
     fetchDeals();
     fetchCategories();
 
-    // Get user from localStorage
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
       setUser(JSON.parse(storedUser));
@@ -40,14 +41,19 @@ function Discounts() {
     if (selectedDeal) {
       document.body.classList.add('modal-open');
       fetchDealReviews(selectedDeal._id);
+      if (user) {
+        fetchUserReview(selectedDeal._id);
+      }
     } else {
       document.body.classList.remove('modal-open');
+      setUserReview(null);
+      setIsEditing(false);
     }
     
     return () => {
       document.body.classList.remove('modal-open');
     };
-  }, [selectedDeal]);
+  }, [selectedDeal, user]);
 
   const fetchDeals = async () => {
     try {
@@ -81,51 +87,120 @@ function Discounts() {
     }
   };
 
+  const fetchUserReview = async (dealId) => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) return;
+
+      const response = await fetch(`http://localhost:5000/api/reviews/user/${dealId}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        if (data) {
+          setUserReview(data);
+          setRating(data.rating);
+          setReviewComment(data.comment);
+        }
+      }
+    } catch (err) {
+      console.error('Error fetching user review:', err);
+    }
+  };
+
   const handleDealClick = (deal) => {
     setSelectedDeal(deal);
     setRating(0);
     setReviewComment('');
+    setIsEditing(false);
   };
 
   const closeModal = () => {
     setSelectedDeal(null);
+    setUserReview(null);
+    setIsEditing(false);
   };
 
   const handleReviewSubmit = async (e) => {
     e.preventDefault();
 
     if (!user) {
-      // Store the current deal ID in sessionStorage
       sessionStorage.setItem('pendingReviewDeal', selectedDeal._id);
-      // Redirect to login
       navigate('/login');
       return;
     }
 
     try {
-      const reviewData = {
-        deal: selectedDeal._id,
-        name: `${user.firstName} ${user.lastName}`,
-        rating,
-        comment: reviewComment
-      };
+      const token = localStorage.getItem('token');
+      const response = await fetch('http://localhost:5000/api/reviews', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          deal: selectedDeal._id,
+          rating,
+          comment: reviewComment
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to submit review');
+      }
+
+      const savedReview = await response.json();
       
-      await createReview(reviewData);
       await fetchDealReviews(selectedDeal._id);
-      await fetchDeals(); // Refresh deals to get updated ratings
+      await fetchDeals();
       
-      // Clear form
-      setRating(0);
-      setReviewComment('');
+      setUserReview(savedReview);
+      setIsEditing(false);
+      
+      if (!userReview) {
+        setRating(0);
+        setReviewComment('');
+      }
     } catch (err) {
       console.error('Error submitting review:', err);
     }
   };
 
-  // Get unique locations for filter
+  const handleEditClick = () => {
+    setIsEditing(true);
+    setRating(userReview.rating);
+    setReviewComment(userReview.comment);
+  };
+
+  const handleDeleteReview = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`http://localhost:5000/api/reviews/${userReview._id}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to delete review');
+      }
+
+      setUserReview(null);
+      setRating(0);
+      setReviewComment('');
+      await fetchDealReviews(selectedDeal._id);
+      await fetchDeals();
+    } catch (err) {
+      console.error('Error deleting review:', err);
+    }
+  };
+
   const locations = [...new Set(deals.map(deal => deal.location))];
 
-  // Filter deals based on search and filters
   const filteredDeals = deals.filter(deal => {
     const matchesSearch = deal.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          deal.location.toLowerCase().includes(searchTerm.toLowerCase());
@@ -180,7 +255,6 @@ function Discounts() {
 
   return (
     <div className="discounts-page">
-      {/* Hero Section */}
       <section className="hero-section">
         <div className="container">
           <div className="row align-items-center">
@@ -203,7 +277,6 @@ function Discounts() {
         </div>
       </section>
 
-      {/* Filters Section */}
       <section className="filters-section">
         <div className="container">
           <div className="row g-3">
@@ -261,7 +334,6 @@ function Discounts() {
         </div>
       </section>
 
-      {/* All Deals Section */}
       <section className="all-deals-section">
         <div className="container">
           <div className="row">
@@ -298,7 +370,6 @@ function Discounts() {
         </div>
       </section>
 
-      {/* Footer */}
       <footer>
         <div className="container">
           <footer className="py-3 my-4 text-center">
@@ -314,7 +385,6 @@ function Discounts() {
         </div>
       </footer>
 
-      {/* Deal Modal */}
       {selectedDeal && (
         <div className="modal show d-block" tabIndex="-1">
           <div className="modal-backdrop show" onClick={closeModal}></div>
@@ -384,37 +454,57 @@ function Discounts() {
                     </div>
 
                     <div className="review-form bg-gray-50 p-4 rounded-lg">
-                      <h4 className="font-medium mb-3">Add Your Review</h4>
+                      <h4 className="font-medium mb-3">
+                        {userReview && !isEditing ? 'Your Review' : 'Add Your Review'}
+                      </h4>
                       {user ? (
-                        <form onSubmit={handleReviewSubmit}>
-                          <div className="mb-3">
-                            <label className="block text-gray-700 text-sm font-medium mb-1">Rating</label>
-                            <div className="star-input-container flex">
-                              {[1, 2, 3, 4, 5].map((star) => (
-                                <span
-                                  key={star}
-                                  className={`star-input ${rating >= star ? 'active' : ''}`}
-                                  onClick={() => setRating(star)}
-                                >
-                                  ★
-                                </span>
-                              ))}
+                        userReview && !isEditing ? (
+                          <div className="user-review">
+                            <div className="star-rating">
+                              <div className="empty-stars">★★★★★</div>
+                              <div className="filled-stars" style={{width: `${userReview.rating * 20}%`}}>★★★★★</div>
+                            </div>
+                            <p className="my-3">{userReview.comment}</p>
+                            <div className="review-actions">
+                              <button onClick={handleEditClick} className="btn btn-primary me-2">
+                                Edit Review
+                              </button>
+                              <button onClick={handleDeleteReview} className="btn btn-danger">
+                                Delete Review
+                              </button>
                             </div>
                           </div>
-                          <div className="mb-3">
-                            <label className="block text-gray-700 text-sm font-medium mb-1">Your Review</label>
-                            <textarea
-                              className="comment-input w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                              rows="3"
-                              value={reviewComment}
-                              onChange={(e) => setReviewComment(e.target.value)}
-                              required
-                            ></textarea>
-                          </div>
-                          <button type="submit" className="submit-review btn-primary w-full py-2 rounded-md">
-                            Submit Review
-                          </button>
-                        </form>
+                        ) : (
+                          <form onSubmit={handleReviewSubmit}>
+                            <div className="mb-3">
+                              <label className="block text-gray-700 text-sm font-medium mb-1">Rating</label>
+                              <div className="star-input-container flex">
+                                {[1, 2, 3, 4, 5].map((star) => (
+                                  <span
+                                    key={star}
+                                    className={`star-input ${rating >= star ? 'active' : ''}`}
+                                    onClick={() => setRating(star)}
+                                  >
+                                    ★
+                                  </span>
+                                ))}
+                              </div>
+                            </div>
+                            <div className="mb-3">
+                              <label className="block text-gray-700 text-sm font-medium mb-1">Your Review</label>
+                              <textarea
+                                className="comment-input w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                rows="3"
+                                value={reviewComment}
+                                onChange={(e) => setReviewComment(e.target.value)}
+                                required
+                              ></textarea>
+                            </div>
+                            <button type="submit" className="submit-review btn-primary w-full py-2 rounded-md">
+                              {isEditing ? 'Update Review' : 'Submit Review'}
+                            </button>
+                          </form>
+                        )
                       ) : (
                         <div className="text-center">
                           <p className="mb-3">Please log in to leave a review</p>
