@@ -8,6 +8,7 @@ import dealRoutes from './routes/deals.js';
 import reviewRoutes from './routes/reviews.js';
 import categoryRoutes from './routes/categories.js';
 import authRoutes from './routes/auth.js';
+import tipRoutes from './routes/tips.js';
 
 dotenv.config();
 
@@ -25,6 +26,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/deals', dealRoutes);
 app.use('/api/reviews', reviewRoutes);
 app.use('/api/categories', categoryRoutes);
+app.use('/api/tips', tipRoutes);
 
 const PORT = process.env.PORT || 5000;
 

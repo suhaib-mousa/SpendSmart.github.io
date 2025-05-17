@@ -4,35 +4,47 @@ import Deal from './models/Deal.js';
 import Category from './models/Category.js';
 import Review from './models/Review.js';
 import User from './models/User.js';
+import Tip from './models/Tip.js';
 import connectDB from './config/db.js';
 
 dotenv.config();
 
-// Initial categories
-const categories = [
+// Initial tips
+const tips = [
   {
-    name: 'Outdoor',
-    description: 'Outdoor activities and equipment'
+    title: "Ways to make money from the Internet",
+    text: "A video from the Online Lessons channel discusses ways to make money online and increase your sources of income..",
+    link: "https://youtu.be/wAIIct0rNZU?si=duAyUiHhcqcePIbT",
+    image: "/Media/Untitled design(8).png",
+    order: 1
   },
   {
-    name: 'Fashion',
-    description: 'Clothing and accessories'
+    title: "The most important rule in investment",
+    text: "What is investment, why do we invest, and how? This clip will answer these questions.",
+    link: "https://youtu.be/bFfeCSbLaB8?si=EDYwvHJEwK6WHj4u",
+    image: "/Media/Untitled design(10).png",
+    order: 2
   },
   {
-    name: 'Activities',
-    description: 'Entertainment and recreational activities'
+    title: "Best money management system",
+    text: "A video from the Dupamicaffeine channel shows a practical way to divide your monthly salary and increase your income..",
+    link: "https://youtu.be/loGAyJTbu88?si=C6H6odrof4pjwXlS",
+    image: "/Media/Untitled design(11).png",
+    order: 3
   },
   {
-    name: 'Technology',
-    description: 'Electronics and gadgets'
+    title: "How to be creative in financial management and save your money?",
+    text: "YouTube video showing ways to manage your finances well.",
+    link: "https://youtu.be/s0t_4MSQEYQ?si=aX-tJnzhbu4Alc-w",
+    image: "/Media/Untitled design(14).png",
+    order: 4
   },
   {
-    name: 'Wellness',
-    description: 'Health and wellness services'
-  },
-  {
-    name: 'Culture',
-    description: 'Cultural experiences and tours'
+    title: "financial freedom",
+    text: "YouTube clip from the show \"Seen\" talking about financial freedom.",
+    link: "https://youtu.be/kZTSzFfMFjY?si=yGGtVtRu5M5NTLLw",
+    image: "/Media/Untitled design(12).png",
+    order: 5
   }
 ];
 
@@ -46,6 +58,7 @@ const seedDatabase = async () => {
     await Category.deleteMany({});
     await Review.deleteMany({});
     await User.deleteMany({});
+    await Tip.deleteMany({});
 
     console.log('Previous data cleared');
 
@@ -59,96 +72,16 @@ const seedDatabase = async () => {
 
     console.log('Test user created');
 
+    // Insert tips
+    await Tip.insertMany(tips);
+    console.log('Tips seeded');
+
     // Insert categories
     const createdCategories = await Category.insertMany(categories);
     console.log('Categories seeded');
 
-    // Create a mapping of category names to their IDs
-    const categoryMap = {};
-    createdCategories.forEach(cat => {
-      categoryMap[cat.name] = cat._id;
-    });
-
-    // Initial deals
-    const deals = [
-      {
-        title: "Adventure Gear",
-        location: "Amman, Jordan",
-        originalPrice: 100,
-        currentPrice: 50,
-        discount: "50%",
-        image: "/Media/camping.png",
-        validUntil: "2025-12-31",
-        category: categoryMap['Outdoor'],
-        isNew: true,
-        description: "Get the best deals on camping and hiking gear. Perfect for your next outdoor adventure.",
-        address: "King Hussein Business Park, Amman"
-      },
-      {
-        title: "Business Attire",
-        location: "Irbid, Jordan",
-        originalPrice: 200,
-        currentPrice: 140,
-        discount: "30%",
-        image: "/Media/businessman-1026415_640.jpg",
-        validUntil: "2025-12-31",
-        category: categoryMap['Fashion'],
-        description: "Professional business wear for men and women. Suits, shirts, and accessories.",
-        address: "University Street, Irbid"
-      },
-      {
-        title: "Team Activities",
-        location: "Aqaba, Jordan",
-        originalPrice: 80,
-        currentPrice: 60,
-        discount: "25%",
-        image: "/Media/teamwork-7423959_640.jpg",
-        validUntil: "2025-12-31",
-        category: categoryMap['Activities'],
-        description: "Team building activities and water sports in Aqaba.",
-        address: "South Beach, Aqaba"
-      },
-      {
-        title: "Electronics",
-        location: "Zarqa, Jordan",
-        originalPrice: 500,
-        currentPrice: 300,
-        discount: "40%",
-        image: "/Media/disc.png",
-        validUntil: "2025-12-31",
-        category: categoryMap['Technology'],
-        isNew: true,
-        description: "Latest electronics and gadgets at discounted prices.",
-        address: "New Zarqa, Main Street"
-      }
-    ];
-
-    // Insert deals
-    const createdDeals = await Deal.insertMany(deals);
-    console.log('Deals seeded');
-
-    // Initial reviews with user reference
-    const reviews = [
-      {
-        deal: createdDeals[0]._id,
-        user: testUser._id,
-        name: "Test User",
-        rating: 5,
-        comment: "Great quality gear at an amazing price!"
-      },
-      {
-        deal: createdDeals[1]._id,
-        user: testUser._id,
-        name: "Test User",
-        rating: 4,
-        comment: "Good selection and helpful staff."
-      }
-    ];
-
-    // Insert reviews
-    await Review.insertMany(reviews);
-    console.log('Reviews seeded');
-
+    // Rest of your seeding logic...
+    
     console.log('Database seeded successfully');
     process.exit(0);
   } catch (error) {

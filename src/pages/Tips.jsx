@@ -1,61 +1,61 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation } from 'swiper/modules';
+import { getTips } from '../services/api';
+import { toast } from 'react-hot-toast';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import '../styles/Tips.css';
 
 const Tips = () => {
+  const [tips, setTips] = useState([]);
+  const [currentTip, setCurrentTip] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [hiddenSlides, setHiddenSlides] = useState([]);
+  
   const prevRef = useRef(null);
   const nextRef = useRef(null);
   const swiperRef = useRef(null);
 
-  const mainTip = {
-    bg: '/Media/Untitled design(8).png',
-    title: 'Ways to make money from the Internet',
-    text: 'A video from the Online Lessons channel discusses ways to make money online and increase your sources of income..',
-    link: 'https://youtu.be/wAIIct0rNZU?si=duAyUiHhcqcePIbT'
-  };
+  useEffect(() => {
+    fetchTips();
+  }, []);
 
-  const tips = [
-    {
-      bg: '/Media/Untitled design(10).png',
-      title: 'The most important rule in investment',
-      text: 'What is investment, why do we invest, and how? This clip will answer these questions.',
-      link: 'https://youtu.be/bFfeCSbLaB8?si=EDYwvHJEwK6WHj4u'
-    },
-    {
-      bg: '/Media/Untitled design(11).png',
-      title: 'Best money management system',
-      text: 'A video from the Dupamicaffeine channel shows a practical way to divide your monthly salary and increase your income..',
-      link: 'https://youtu.be/loGAyJTbu88?si=C6H6odrof4pjwXlS'
-    },
-    {
-      bg: '/Media/Untitled design(14).png',
-      title: 'How to be creative in financial management and save your money?',
-      text: 'YouTube video showing ways to manage your finances well.',
-      link: 'https://youtu.be/s0t_4MSQEYQ?si=aX-tJnzhbu4Alc-w'
-    },
-    {
-      bg: '/Media/Untitled design(12).png',
-      title: 'financial freedom',
-      text: 'YouTube clip from the show \"Seen\" talking about financial freedom.',
-      link: 'https://youtu.be/kZTSzFfMFjY?si=yGGtVtRu5M5NTLLw'
+  useEffect(() => {
+    if (currentTip) {
+      const root = document.getElementById('hero');
+      if (root) {
+        root.style.backgroundImage = `url('${currentTip.image}')`;
+        root.style.backgroundSize = 'cover';
+        root.style.backgroundPosition = 'center';
+      }
     }
-  ];
+  }, [currentTip]);
 
-  const [currentTip, setCurrentTip] = useState(mainTip);
-  const [hiddenSlides, setHiddenSlides] = useState([]);
+  const fetchTips = async () => {
+    try {
+      setLoading(true);
+      const data = await getTips();
+      setTips(data);
+      if (data.length > 0) {
+        setCurrentTip(data[0]);
+      }
+      setError(null);
+    } catch (err) {
+      setError('Failed to load tips');
+      toast.error('Failed to load tips');
+      console.error('Error fetching tips:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleSlideChange = (swiper) => {
     const realIndex = swiper.realIndex;
-    console.log('Current slide index:', realIndex);
-    
-    // Set the current tip based on the active slide
-    const newTip = realIndex - 1 === -1 ? mainTip : tips[realIndex - 1];
+    const newTip = tips[realIndex];
     setCurrentTip(newTip);
     
-    // Create an array of indices for slides that should be hidden
     const newHiddenSlides = [];
     for (let i = 0; i < swiper.slides.length; i++) {
       if (i < realIndex) {
@@ -64,28 +64,40 @@ const Tips = () => {
     }
     
     setHiddenSlides(newHiddenSlides);
-    console.log('Hidden slides:', newHiddenSlides);
   };
 
-  useEffect(() => {
-    const root = document.getElementById('hero');
-    if (root) {
-      root.style.backgroundImage = `url('${currentTip.bg}')`;
-      root.style.backgroundSize = 'cover';
-      root.style.backgroundPosition = 'center';
-    }
-  }, [currentTip]);
+  if (loading) {
+    return (
+      <div className="loading-container">
+        <div className="spinner-border text-primary" role="status">
+          <span className="visually-hidden">Loading...</span>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="error-container">
+        <div className="alert alert-danger" role="alert">
+          {error}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="tips-wrapper">
       <div id="hero" className="hero d-flex justify-content-between align-items-end">
-        <div className="hero-content mb-5">
-          <h1 className="tip-title text-right">{currentTip.title}</h1>
-          <p className="tip-text text-left">{currentTip.text}</p>
-          <a href={currentTip.link} className="tip-link" target="_blank" rel="noopener noreferrer">
-            Discover Now
-          </a>
-        </div>
+        {currentTip && (
+          <div className="hero-content mb-5">
+            <h1 className="tip-title text-right">{currentTip.title}</h1>
+            <p className="tip-text text-left">{currentTip.text}</p>
+            <a href={currentTip.link} className="tip-link" target="_blank" rel="noopener noreferrer">
+              Discover Now
+            </a>
+          </div>
+        )}
 
         <div className="swiper-block">
           <Swiper
@@ -108,10 +120,10 @@ const Tips = () => {
           >
             {tips.map((tip, index) => (
               <SwiperSlide
-                key={index}
+                key={tip._id}
                 className={`tip-slide ${hiddenSlides.includes(index) ? 'hidden-slide' : ''}`}
                 style={{ 
-                  backgroundImage: `url('${tip.bg}')`,
+                  backgroundImage: `url('${tip.image}')`,
                   opacity: hiddenSlides.includes(index) ? 0.3 : 1,
                   transform: hiddenSlides.includes(index) ? 'scale(0.9)' : 'scale(1)'
                 }}

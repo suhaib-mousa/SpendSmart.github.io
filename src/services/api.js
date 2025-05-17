@@ -7,11 +7,9 @@ const api = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
-  // Add timeout to prevent hanging requests
   timeout: 10000,
 });
 
-// Add auth token to requests if it exists
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('token');
   if (token) {
@@ -20,7 +18,6 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-// Add response interceptor for better error handling
 api.interceptors.response.use(
   (response) => response,
   (error) => {
@@ -106,6 +103,15 @@ export const deleteReview = async (reviewId) => {
 export const getCategories = async () => {
   try {
     const response = await api.get('/categories');
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getTips = async () => {
+  try {
+    const response = await api.get('/tips');
     return response.data;
   } catch (error) {
     throw error;
