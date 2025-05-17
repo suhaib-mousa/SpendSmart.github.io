@@ -27,7 +27,7 @@ api.interceptors.response.use(
     
     if (!error.response) {
       throw new Error(
-        'Unable to reach the server. Please check if the server is running and try again.'
+        'Unable to reach the server. Please check if the server is running.'
       );
     }
     
@@ -112,6 +112,24 @@ export const getCategories = async () => {
 export const getTips = async () => {
   try {
     const response = await api.get('/tips');
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const savePlannerEntry = async (plannerData) => {
+  try {
+    const response = await api.post('/planner', plannerData);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getPlannerHistory = async () => {
+  try {
+    const response = await api.get('/planner');
     return response.data;
   } catch (error) {
     throw error;
