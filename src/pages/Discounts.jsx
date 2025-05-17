@@ -91,3 +91,5 @@ const handleReviewSubmit = async (e) => {
     console.error('Error submitting review:', err);
   }
 };
+
+export default handleReviewSubmit
