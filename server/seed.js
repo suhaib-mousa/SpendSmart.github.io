@@ -68,7 +68,6 @@ const seedDatabase = async () => {
         image: "/Media/camping.png",
         validUntil: "2025-12-31",
         category: categoryMap['Outdoor'],
-        rating: 4.5,
         isNew: true,
         description: "Get the best deals on camping and hiking gear. Perfect for your next outdoor adventure.",
         address: "King Hussein Business Park, Amman"
@@ -82,7 +81,6 @@ const seedDatabase = async () => {
         image: "/Media/businessman-1026415_640.jpg",
         validUntil: "2025-12-31",
         category: categoryMap['Fashion'],
-        rating: 4.2,
         description: "Professional business wear for men and women. Suits, shirts, and accessories.",
         address: "University Street, Irbid"
       },
@@ -95,7 +93,6 @@ const seedDatabase = async () => {
         image: "/Media/teamwork-7423959_640.jpg",
         validUntil: "2025-12-31",
         category: categoryMap['Activities'],
-        rating: 4.8,
         description: "Team building activities and water sports in Aqaba.",
         address: "South Beach, Aqaba"
       },
@@ -108,7 +105,6 @@ const seedDatabase = async () => {
         image: "/Media/disc.png",
         validUntil: "2025-12-31",
         category: categoryMap['Technology'],
-        rating: 4.3,
         isNew: true,
         description: "Latest electronics and gadgets at discounted prices.",
         address: "New Zarqa, Main Street"
