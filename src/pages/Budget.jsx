@@ -159,6 +159,7 @@ function Budget() {
   const chartRef = useRef(null);
   const messagesEndRef = useRef(null);
   const hasStartedRef = useRef(false);
+  const userInputRef = useRef(null);
 
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
@@ -206,8 +207,6 @@ function Budget() {
   };
 
   const processAnswer = async (answer) => {
-    isWaitingForAnswer = false;
-
     const updatedResponses = { ...userResponses };
     
     if (currentQuestion === 0) updatedResponses.name = answer;
@@ -435,7 +434,7 @@ function Budget() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const input = userInput.value.trim();
+    const input = e.target.elements.message.value.trim();
     if (!input || isTyping) return;
 
     if (currentQuestion === questions.length - 1) {
@@ -491,6 +490,7 @@ function Budget() {
           name="message"
           placeholder={currentLanguage === 'ar' ? 'اكتب إجابتك هنا...' : 'Type your answer here...'}
           disabled={isTyping}
+          ref={userInputRef}
         />
         <button type="submit" disabled={isTyping}>
           <i className="fas fa-paper-plane"></i>
