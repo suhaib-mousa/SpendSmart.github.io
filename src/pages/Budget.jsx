@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
-import { Line } from 'react-chartjs-2';
+import Chart from 'chart.js/auto';
 import { saveBudgetAnalysis, getBudgetHistory } from '../services/api';
 import '../styles/Budget.css';
 
@@ -152,14 +152,9 @@ function Budget() {
     
     setCurrentLanguage(localStorage.getItem('preferredLanguage') || 'en');
     
-    // Delay the first message to prevent duplication
     setTimeout(() => {
       startConversation();
     }, 100);
-
-    return () => {
-      // Cleanup
-    };
   }, []);
 
   const fetchBudgetHistory = async () => {
@@ -179,7 +174,7 @@ function Budget() {
   const addMessage = (text, isUser = false) => {
     const messageDiv = document.createElement('div');
     messageDiv.className = `message ${isUser ? 'user-message' : 'bot-message'} ${currentLanguage === 'ar' ? 'text-right' : ''}`;
-    messageDiv.textContent = text;
+    messageDiv.innerHTML = text;
     chatMessagesRef.current?.appendChild(messageDiv);
     if (chatMessagesRef.current) {
       chatMessagesRef.current.scrollTop = chatMessagesRef.current.scrollHeight;
@@ -273,24 +268,36 @@ function Budget() {
   };
 
   const analyzeAndDisplayResults = () => {
-    // Calculate total expenses
     const totalExpenses = Object.values(userResponses.expenses).reduce((sum, value) => sum + value, 0);
-    
-    // Calculate remaining money
     const remainingMoney = userResponses.totalIncome - totalExpenses;
-    
-    // Add analysis results to chat
-    const analysisMessage = currentLanguage === 'ar'
-      ? `تحليل الميزانية:\n` +
-        `إجمالي الدخل: ${userResponses.totalIncome} دينار\n` +
-        `إجمالي النفقات: ${totalExpenses} دينار\n` +
-        `المال المتبقي: ${remainingMoney} دينار`
-      : `Budget Analysis:\n` +
-        `Total Income: ${userResponses.totalIncome} JOD\n` +
-        `Total Expenses: ${totalExpenses} JOD\n` +
-        `Remaining Money: ${remainingMoney} JOD`;
-    
-    addMessage(analysisMessage);
+    const savingsComparison = remainingMoney - userResponses.savingsGoal;
+
+    const analysisHTML = `
+      <div class="analysis-results">
+        <h3 class="text-xl font-bold text-blue-700 mb-3">${currentLanguage === 'ar' ? 'تحليل الميزانية الشخصي' : 'Personal Budget Analysis'}</h3>
+        
+        <div class="analysis-stats">
+          <div class="stat">
+            <span class="stat-label">${currentLanguage === 'ar' ? 'إجمالي الدخل:' : 'Total Income:'}</span>
+            <span class="stat-value">${userResponses.totalIncome.toFixed(2)} JOD</span>
+          </div>
+          <div class="stat">
+            <span class="stat-label">${currentLanguage === 'ar' ? 'إجمالي النفقات:' : 'Total Expenses:'}</span>
+            <span class="stat-value">${totalExpenses.toFixed(2)} JOD</span>
+          </div>
+          <div class="stat ${remainingMoney >= 0 ? 'positive' : 'negative'}">
+            <span class="stat-label">${currentLanguage === 'ar' ? 'المال المتبقي:' : 'Remaining Money:'}</span>
+            <span class="stat-value">${remainingMoney.toFixed(2)} JOD</span>
+          </div>
+        </div>
+      </div>
+    `;
+
+    addMessage(analysisHTML);
+
+    setTimeout(() => {
+      createExpensesChart();
+    }, 100);
   };
 
   return (
