@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import '../styles/Discounts.css';
@@ -15,10 +15,11 @@ function Discounts() {
   const [selectedPriceRange, setPriceRange] = useState('');
   const [selectedDiscount, setDiscount] = useState('');
   const [rating, setRating] = useState(0);
-  const [reviewName, setReviewName] = useState('');
   const [reviewComment, setReviewComment] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [user, setUser] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     AOS.init({
@@ -27,6 +28,12 @@ function Discounts() {
     });
     fetchDeals();
     fetchCategories();
+
+    // Get user from localStorage
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
   }, []);
 
   useEffect(() => {
@@ -77,7 +84,6 @@ function Discounts() {
   const handleDealClick = (deal) => {
     setSelectedDeal(deal);
     setRating(0);
-    setReviewName('');
     setReviewComment('');
   };
 
@@ -87,10 +93,19 @@ function Discounts() {
 
   const handleReviewSubmit = async (e) => {
     e.preventDefault();
+
+    if (!user) {
+      // Store the current deal ID in sessionStorage
+      sessionStorage.setItem('pendingReviewDeal', selectedDeal._id);
+      // Redirect to login
+      navigate('/login');
+      return;
+    }
+
     try {
       const reviewData = {
         deal: selectedDeal._id,
-        name: reviewName,
+        name: `${user.firstName} ${user.lastName}`,
         rating,
         comment: reviewComment
       };
@@ -101,7 +116,6 @@ function Discounts() {
       
       // Clear form
       setRating(0);
-      setReviewName('');
       setReviewComment('');
     } catch (err) {
       console.error('Error submitting review:', err);
@@ -371,45 +385,44 @@ function Discounts() {
 
                     <div className="review-form bg-gray-50 p-4 rounded-lg">
                       <h4 className="font-medium mb-3">Add Your Review</h4>
-                      <form onSubmit={handleReviewSubmit}>
-                        <div className="mb-3">
-                          <label className="block text-gray-700 text-sm font-medium mb-1">Your Name</label>
-                          <input
-                            type="text"
-                            className="name-input w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            value={reviewName}
-                            onChange={(e) => setReviewName(e.target.value)}
-                            required
-                          />
-                        </div>
-                        <div className="mb-3">
-                          <label className="block text-gray-700 text-sm font-medium mb-1">Rating</label>
-                          <div className="star-input-container flex">
-                            {[1, 2, 3, 4, 5].map((star) => (
-                              <span
-                                key={star}
-                                className={`star-input ${rating >= star ? 'active' : ''}`}
-                                onClick={() => setRating(star)}
-                              >
-                                ★
-                              </span>
-                            ))}
+                      {user ? (
+                        <form onSubmit={handleReviewSubmit}>
+                          <div className="mb-3">
+                            <label className="block text-gray-700 text-sm font-medium mb-1">Rating</label>
+                            <div className="star-input-container flex">
+                              {[1, 2, 3, 4, 5].map((star) => (
+                                <span
+                                  key={star}
+                                  className={`star-input ${rating >= star ? 'active' : ''}`}
+                                  onClick={() => setRating(star)}
+                                >
+                                  ★
+                                </span>
+                              ))}
+                            </div>
                           </div>
+                          <div className="mb-3">
+                            <label className="block text-gray-700 text-sm font-medium mb-1">Your Review</label>
+                            <textarea
+                              className="comment-input w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              rows="3"
+                              value={reviewComment}
+                              onChange={(e) => setReviewComment(e.target.value)}
+                              required
+                            ></textarea>
+                          </div>
+                          <button type="submit" className="submit-review btn-primary w-full py-2 rounded-md">
+                            Submit Review
+                          </button>
+                        </form>
+                      ) : (
+                        <div className="text-center">
+                          <p className="mb-3">Please log in to leave a review</p>
+                          <Link to="/login" className="btn btn-primary">
+                            Log In
+                          </Link>
                         </div>
-                        <div className="mb-3">
-                          <label className="block text-gray-700 text-sm font-medium mb-1">Your Review</label>
-                          <textarea
-                            className="comment-input w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            rows="3"
-                            value={reviewComment}
-                            onChange={(e) => setReviewComment(e.target.value)}
-                            required
-                          ></textarea>
-                        </div>
-                        <button type="submit" className="submit-review btn-primary w-full py-2 rounded-md">
-                          Submit Review
-                        </button>
-                      </form>
+                      )}
                     </div>
                   </div>
                 </div>
