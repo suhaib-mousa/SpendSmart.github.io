@@ -173,3 +173,10 @@
   background-color: transparent !important;
   box-shadow: none;
 }
+
+.navbar 
+{
+    position: fixed !important;
+    box-shadow: none !important;
+    width: 100% !important;
+}
