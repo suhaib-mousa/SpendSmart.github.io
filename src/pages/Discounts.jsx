@@ -1,7 +1,69 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import AOS from 'aos';
+import { getDeals } from '../services/api';
+import 'aos/dist/aos.css';
 
-function Discounts({ user, deals, handleDealClick }) {
+function Discounts() {
+  const [deals, setDeals] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    AOS.init({
+      duration: 1000,
+      once: true
+    });
+
+    const fetchDeals = async () => {
+      try {
+        setLoading(true);
+        const data = await getDeals();
+        setDeals(data);
+        setError(null);
+      } catch (err) {
+        setError(err.message);
+        console.error('Error fetching deals:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDeals();
+
+    // Get user from localStorage
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
+  }, []);
+
+  const handleDealClick = (deal) => {
+    // Handle deal click logic here
+    console.log('Deal clicked:', deal);
+  };
+
+  if (loading) {
+    return (
+      <div className="loading-container">
+        <div className="spinner-border text-primary" role="status">
+          <span className="visually-hidden">Loading...</span>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="error-container">
+        <div className="alert alert-danger" role="alert">
+          {error}
+        </div>
+      </div>
+    );
+  }
+
   return (
     // All Deals Section
     <section className="all-deals-section">
@@ -51,7 +113,7 @@ function Discounts({ user, deals, handleDealClick }) {
               <h3>Want to See More?</h3>
               <p>Sign up now to unlock all available deals and exclusive discounts!</p>
               <div>
-                <Link to="/login" className="btn btn-primary">Log In</Link>
+                <Link to="/login" className="btn btn-primary me-2">Log In</Link>
                 <Link to="/signup" className="btn btn-outline-primary">Sign Up</Link>
               </div>
             </div>
