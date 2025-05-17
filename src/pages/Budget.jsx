@@ -203,7 +203,7 @@ function Budget() {
     
     setUserResponses(updatedResponses);
 
-    if (currentQuestion === questions.length - 1) {
+    if (currentQuestion === questions.length - 2) {
       if (!user) {
         toast.error('Please log in to save your analysis');
         navigate('/login');
@@ -212,7 +212,12 @@ function Budget() {
 
       try {
         await saveBudgetAnalysis(updatedResponses);
-        analyzeAndDisplayResults(updatedResponses);
+        setCurrentQuestion(prev => prev + 1);
+        addBotMessage(questions[currentQuestion + 1][currentLanguage]);
+        setTimeout(() => {
+          analyzeAndDisplayResults(updatedResponses);
+          addBotMessage("Would you like to analyze your budget again with different numbers? Type \"restart\" or refresh the page.");
+        }, 1000);
       } catch (error) {
         toast.error('Failed to save budget analysis');
       }
@@ -231,72 +236,88 @@ function Budget() {
     const remainingMoney = data.totalIncome - totalExpenses;
     const savingsShortfall = data.savingsGoal - remainingMoney;
 
+    // Calculate category-specific advice
+    const categoryAdvice = [];
+    Object.entries(data.expenses).forEach(([category, amount]) => {
+      const recommendedAmount = (recommendedPercentages[category] / 100) * data.totalIncome;
+      const difference = amount - recommendedAmount;
+      const actualPercentage = (amount / data.totalIncome) * 100;
+      
+      if (difference > 0) {
+        categoryAdvice.push({
+          category,
+          advice: `You're spending ${amount.toFixed(2)} JOD (${actualPercentage.toFixed(1)}% of your income) on ${category}. Recommended spending is ${recommendedAmount.toFixed(2)} JOD (${recommendedPercentages[category]}%). You could save ${difference.toFixed(2)} JOD monthly by reducing this category.`
+        });
+      }
+    });
+
+    // Sort by highest overspending
+    categoryAdvice.sort((a, b) => {
+      const aAmount = data.expenses[a.category];
+      const bAmount = data.expenses[b.category];
+      return bAmount - aAmount;
+    });
+
     // Create analysis component
     const analysisComponent = (
       <div className="analysis-results">
-        <div className="budget-summary">
-          <div className="summary-item">
-            <h3>Total Income</h3>
-            <p className="amount">{data.totalIncome.toFixed(2)} JOD</p>
+        <h3 className="text-xl font-bold text-blue-700 mb-3">Personal Budget Analysis</h3>
+        
+        <div className="analysis-stats">
+          <div className="stat">
+            <span className="stat-label">Total Income:</span>
+            <span className="stat-value">{data.totalIncome.toFixed(2)} JOD</span>
           </div>
-          <div className="summary-item">
-            <h3>Total Expenses</h3>
-            <p className="amount">{totalExpenses.toFixed(2)} JOD</p>
+          <div className="stat">
+            <span className="stat-label">Total Expenses:</span>
+            <span className="stat-value">{totalExpenses.toFixed(2)} JOD</span>
           </div>
-          <div className="summary-item">
-            <h3>Remaining Money</h3>
-            <p className={`amount ${remainingMoney >= 0 ? 'positive' : 'negative'}`}>
-              {remainingMoney.toFixed(2)} JOD
-            </p>
+          <div className={`stat ${remainingMoney >= 0 ? 'positive' : 'negative'}`}>
+            <span className="stat-label">Remaining Money:</span>
+            <span className="stat-value">{remainingMoney.toFixed(2)} JOD</span>
           </div>
         </div>
-
-        <div className="budget-message">
-          {remainingMoney < data.savingsGoal ? (
-            <div className="alert alert-warning">
-              You need to adjust your budget to reach your savings goal of {data.savingsGoal} JOD. 
-              Currently, you need to save an additional {savingsShortfall.toFixed(2)} JOD monthly.
-            </div>
-          ) : (
-            <div className="alert alert-success">
-              Congratulations! You're meeting your savings goal with an extra {Math.abs(savingsShortfall).toFixed(2)} JOD per month.
-            </div>
-          )}
+        
+        <div className="savings-advice">
+          <p className="text-base">
+            {remainingMoney < data.savingsGoal
+              ? `You need to adjust your budget to reach your savings goal of ${data.savingsGoal.toFixed(2)} JOD. Currently, you need to save an additional ${Math.abs(savingsShortfall).toFixed(2)} JOD monthly.`
+              : `Congratulations! You're meeting your savings goal with an extra ${Math.abs(savingsShortfall).toFixed(2)} JOD per month.`}
+          </p>
         </div>
-
-        <div className="chart-container">
+        
+        <div className="expense-chart-container">
           <canvas ref={chartRef}></canvas>
         </div>
-
-        <div className="recommendations">
-          <h3>Specific Recommendations:</h3>
-          {Object.entries(data.expenses).map(([category, amount]) => {
-            const recommendedAmount = (recommendedPercentages[category] / 100) * data.totalIncome;
-            const difference = amount - recommendedAmount;
-            
-            if (difference > 0) {
-              return (
-                <div key={category} className="recommendation-item">
-                  <h4>{category.charAt(0).toUpperCase() + category.slice(1)}</h4>
-                  <p>
-                    You're spending {amount.toFixed(2)} JOD ({((amount / data.totalIncome) * 100).toFixed(1)}% of your income) on {category}.
-                    Recommended spending is {recommendedAmount.toFixed(2)} JOD ({recommendedPercentages[category]}%).
-                    You could save {difference.toFixed(2)} JOD monthly by reducing this category.
-                  </p>
-                </div>
-              );
-            }
-            return null;
-          })}
+        
+        <h4 className="mt-4 mb-2 font-semibold text-lg text-blue-800">Specific Recommendations:</h4>
+        
+        {categoryAdvice.slice(0, 3).map((advice, index) => (
+          <div key={index} className="category-advice">
+            <h4 className="font-semibold">{advice.category.charAt(0).toUpperCase() + advice.category.slice(1)}</h4>
+            <p>{advice.advice}</p>
+          </div>
+        ))}
+        
+        <div className="goal-guidance mt-4">
+          <h4 className="font-semibold mb-2 text-blue-800">Goal Achievement Plan:</h4>
+          <p>
+            {remainingMoney < data.savingsGoal
+              ? `To achieve your savings goal, you'll need larger reductions in your expenses. Consider reviewing other budget items or increasing your income.`
+              : `Keep up the good work! Consider investing or saving the extra money for future goals.`}
+          </p>
         </div>
-
-        <div className="actionable-tips">
-          <h3>Actionable Tips:</h3>
-          <ul>
-            <li>Track your daily expenses for a full month to identify additional savings areas.</li>
-            <li>Consider implementing a "no-spend day" once per week.</li>
-            <li>Look for ways to reduce your highest expense categories first.</li>
-            <li>Set up automatic transfers for savings on payday.</li>
+        
+        <div className="recommendation-card mt-4">
+          <h4 className="font-semibold mb-2">Actionable Tips:</h4>
+          <ul className="list-disc pl-5">
+            {categoryAdvice.slice(0, 3).map((advice, index) => (
+              <li key={index} className="mb-2">
+                {`${advice.category.charAt(0).toUpperCase() + advice.category.slice(1)}: Reduce spending by 50% to reach the recommended budget of ${((recommendedPercentages[advice.category] / 100) * data.totalIncome).toFixed(2)} JOD monthly.`}
+              </li>
+            ))}
+            <li className="mb-2">Track your daily expenses for a full month to identify additional savings areas.</li>
+            <li className="mb-2">Designate one "no-spend day" per week where you avoid any non-essential purchases.</li>
           </ul>
         </div>
       </div>
@@ -315,21 +336,26 @@ function Budget() {
             labels: Object.keys(data.expenses).map(key => key.charAt(0).toUpperCase() + key.slice(1)),
             datasets: [
               {
-                label: 'Actual Expenses',
+                label: 'Actual Expenses (JOD)',
                 data: Object.values(data.expenses),
-                backgroundColor: '#2A4B7C'
+                backgroundColor: 'rgba(54, 162, 235, 0.7)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1
               },
               {
-                label: 'Recommended Expenses',
+                label: 'Recommended Expenses (JOD)',
                 data: Object.keys(data.expenses).map(category => 
                   (recommendedPercentages[category] / 100) * data.totalIncome
                 ),
-                backgroundColor: '#B7E0FF'
+                backgroundColor: 'rgba(255, 99, 132, 0.5)',
+                borderColor: 'rgba(255, 99, 132, 1)',
+                borderWidth: 1
               }
             ]
           },
           options: {
             responsive: true,
+            maintainAspectRatio: false,
             scales: {
               y: {
                 beginAtZero: true,
@@ -340,8 +366,19 @@ function Budget() {
               }
             },
             plugins: {
-              legend: {
-                position: 'bottom'
+              tooltip: {
+                callbacks: {
+                  label: function(context) {
+                    let label = context.dataset.label || '';
+                    if (label) {
+                      label += ': ';
+                    }
+                    label += parseFloat(context.raw).toFixed(2) + ' JOD';
+                    const percentage = (context.raw / data.totalIncome * 100).toFixed(1);
+                    label += ` (${percentage}% of income)`;
+                    return label;
+                  }
+                }
               }
             }
           }
@@ -354,6 +391,13 @@ function Budget() {
     e.preventDefault();
     const input = e.target.message.value.trim();
     if (!input || isTyping) return;
+
+    if (currentQuestion === questions.length - 1) {
+      if (input.toLowerCase() === 'restart') {
+        window.location.reload();
+        return;
+      }
+    }
 
     const currentQ = questions[currentQuestion];
     if (currentQ.validation === 'number' && !/^\d*\.?\d+$/.test(input)) {
