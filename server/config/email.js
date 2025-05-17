@@ -3,11 +3,16 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
+console.log('Initializing Resend with API key:', process.env.RESEND_API_KEY ? 'API key exists' : 'API key missing');
+
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 export const sendResetPasswordEmail = async (email, resetLink) => {
   try {
-    await resend.emails.send({
+    console.log('Preparing to send email to:', email);
+    console.log('Using reset link:', resetLink);
+
+    const response = await resend.emails.send({
       from: 'SpendSmart <noreply@spendsmart.com>',
       to: email,
       subject: 'Reset Your SpendSmart Password',
@@ -23,8 +28,11 @@ export const sendResetPasswordEmail = async (email, resetLink) => {
         </div>
       `
     });
+
+    console.log('Email sent successfully:', response);
+    return response;
   } catch (error) {
-    console.error('Failed to send reset password email:', error);
-    throw new Error('Failed to send reset password email');
+    console.error('Error details:', error);
+    throw error;
   }
 };

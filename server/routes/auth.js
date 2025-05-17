@@ -89,12 +89,17 @@ router.post('/login', async (req, res) => {
 // Forgot Password
 router.post('/forgot-password', async (req, res) => {
   try {
+    console.log('Received forgot password request for email:', req.body.email);
+    
     const { email } = req.body;
     const user = await User.findOne({ email });
 
     if (!user) {
+      console.log('User not found for email:', email);
       return res.status(404).json({ message: 'User not found' });
     }
+
+    console.log('User found, generating reset token');
 
     // Generate reset token
     const resetToken = crypto.randomBytes(20).toString('hex');
@@ -102,18 +107,27 @@ router.post('/forgot-password', async (req, res) => {
     user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
 
     await user.save();
+    console.log('Reset token saved to user');
 
     // Generate reset link
     const resetLink = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
+    console.log('Generated reset link:', resetLink);
     
-    // Send reset password email
-    await sendResetPasswordEmail(email, resetLink);
-
-    res.json({ 
-      message: 'Password reset instructions sent to email',
-      resetLink // Only include this in development
-    });
+    try {
+      console.log('Attempting to send reset email');
+      await sendResetPasswordEmail(email, resetLink);
+      console.log('Reset email sent successfully');
+      
+      res.json({ 
+        message: 'Password reset instructions sent to email',
+        resetLink // Only include this in development
+      });
+    } catch (emailError) {
+      console.error('Failed to send reset email:', emailError);
+      res.status(500).json({ message: 'Failed to send reset email' });
+    }
   } catch (error) {
+    console.error('Error in forgot-password route:', error);
     res.status(500).json({ message: error.message });
   }
 });
