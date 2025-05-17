@@ -277,3 +277,13 @@
     width: 80px;
   }
 }
+.sticky-wrapper {
+  position: relative;
+  height: 100%;
+}
+
+.chart-container {
+  position: sticky;
+  top: 2rem;
+  z-index: 10;
+}
