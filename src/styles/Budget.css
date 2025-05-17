@@ -1,6 +1,6 @@
 /* Base styles */
 .chatbot-container {
-  max-width: 800px;
+  width: 800px;
   height: 600px;
   background: white;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -176,11 +176,11 @@
 
 .history-toggle {
   position: absolute;
-  top: 1rem;
-  right: 1rem;
+  top: -1rem;
+  right: 0rem;
   background: var(--primary-blue);
   color: white;
-  border: none;
+  border: 1px solid;
   padding: 0.5rem 1rem;
   border-radius: 4px;
   cursor: pointer;
@@ -303,4 +303,8 @@
 
 [dir="rtl"] .typing-indicator {
   flex-direction: row-reverse;
+}
+.chat-message a {
+  color: #1a73e8;
+  text-decoration: underline;
 }

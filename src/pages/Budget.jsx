@@ -17,6 +17,21 @@ const recommendedPercentages = {
   savings: 10,
   other: 5
 };
+const translateCategory = (category) => {
+  const translations = {
+    housing: 'السكن',
+    transportation: 'المواصلات',
+    food: 'الطعام',
+    utilities: 'المرافق',
+    healthcare: 'الرعاية الصحية',
+    education: 'التعليم',
+    entertainment: 'الترفيه',
+    debt: 'الديون',
+    savings: 'التوفير',
+    other: 'أخرى'
+  };
+  return translations[category] || category;
+};
 
 const questions = [
   {
@@ -161,18 +176,38 @@ function Budget() {
 
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
+    const preferredLang = localStorage.getItem('preferredLanguage') || 'en';
+    setCurrentLanguage(preferredLang);
+
     if (storedUser) {
       setUser(JSON.parse(storedUser));
       fetchBudgetHistory();
     }
 
-    const preferredLang = localStorage.getItem('preferredLanguage') || 'en';
-    setCurrentLanguage(preferredLang);
-    document.body.dir = preferredLang === 'ar' ? 'rtl' : 'ltr';
-
     if (!hasStartedRef.current) {
-      startConversation();
-      hasStartedRef.current = true;
+      if (!storedUser) {
+        addBotMessage(
+          <div>
+            {preferredLang === 'ar' ? (
+              <>
+                <span>يرجى </span>
+                <a href="/login" className="text-blue-600 underline">تسجيل الدخول</a>
+                <span> للبدء في تحليل الميزانية.</span>
+              </>
+            ) : (
+              <>
+                <span>Please </span>
+                <a href="/login" className="text-blue-600 underline">log in</a>
+                <span> to start your budget analysis.</span>
+              </>
+            )}
+          </div>
+        );
+      } else {
+        startConversation();
+      }
+
+      hasStartedRef.current = true; // ✅ Prevents any of the above from repeating
     }
 
     return () => {
@@ -182,10 +217,12 @@ function Budget() {
     };
   }, []);
 
+
+
+
   const setLanguage = (lang) => {
     setCurrentLanguage(lang);
     localStorage.setItem('preferredLanguage', lang);
-    document.body.dir = lang === 'ar' ? 'rtl' : 'ltr';
     updateLanguageUI();
   };
 
@@ -209,9 +246,14 @@ function Budget() {
     addBotMessage(questions[0][currentLanguage]);
   };
 
-  const addBotMessage = (text) => {
-    setMessages(prev => [...prev, { text, isUser: false }]);
+  const addBotMessage = (text, questionIndex = null) => {
+    if (typeof text === 'string') {
+      setMessages(prev => [...prev, { text, isUser: false, questionIndex }]);
+    } else {
+      setMessages(prev => [...prev, { component: text, isUser: false }]);
+    }
   };
+
 
   const addUserMessage = (text) => {
     setMessages(prev => [...prev, { text, isUser: true }]);
@@ -275,8 +317,11 @@ function Budget() {
       if (difference > 0) {
         categoryAdvice.push({
           category,
-          advice: `You're spending ${amount.toFixed(2)} JOD (${actualPercentage.toFixed(1)}% of your income) on ${category}. Recommended spending is ${recommendedAmount.toFixed(2)} JOD (${recommendedPercentages[category]}%). You could save ${difference.toFixed(2)} JOD monthly by reducing this category.`
+          advice: currentLanguage === 'ar'
+            ? `أنت تنفق ${amount.toFixed(2)} دينار (${actualPercentage.toFixed(1)}٪ من دخلك) على ${translateCategory(category)}. النفقات الموصى بها هي ${recommendedAmount.toFixed(2)} دينار (${recommendedPercentages[category]}٪). يمكنك توفير ${difference.toFixed(2)} دينار شهريًا عن طريق تقليل هذا البند.`
+            : `You're spending ${amount.toFixed(2)} JOD (${actualPercentage.toFixed(1)}% of your income) on ${category}. Recommended spending is ${recommendedAmount.toFixed(2)} JOD (${recommendedPercentages[category]}%). You could save ${difference.toFixed(2)} JOD monthly by reducing this category.`
         });
+
       }
     });
 
@@ -572,13 +617,14 @@ function Budget() {
           type="text"
           name="message"
           placeholder={currentLanguage === 'ar' ? 'اكتب إجابتك هنا...' : 'Type your answer here...'}
-          disabled={isTyping}
+          disabled={isTyping || !user}
           ref={userInputRef}
         />
-        <button type="submit" disabled={isTyping}>
+        <button type="submit" disabled={isTyping || !user}>
           <i className="fas fa-paper-plane"></i>
         </button>
       </form>
+
     </div>
   );
 }

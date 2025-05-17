@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import { logout } from '../services/auth';
@@ -6,7 +6,9 @@ import { logout } from '../services/auth';
 const Navbar = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const dropdownRef = useRef(null);
   const [user, setUser] = useState(null);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
   const isTipsPage = location.pathname === '/tips';
 
   useEffect(() => {
@@ -14,13 +16,29 @@ const Navbar = () => {
     if (storedUser) {
       setUser(JSON.parse(storedUser));
     }
-  }, [location]); // Re-check user status when location changes
+  }, [location]);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   const handleLogout = () => {
     logout();
     setUser(null);
     toast.success('Successfully logged out!');
     navigate('/');
+  };
+
+  const toggleDropdown = () => {
+    setDropdownOpen(!dropdownOpen);
   };
 
   return (
@@ -47,34 +65,28 @@ const Navbar = () => {
                 Home
               </Link>
             </li>
-            <li className="nav-item dropdown">
-              <a
-                className={`nav-link dropdown-toggle ${
-                  location.pathname.includes('/budget') || location.pathname.includes('/planner')
-                    ? 'active'
-                    : ''
-                }`}
-                href="#"
-                id="navbarDropdown"
-                role="button"
-                data-bs-toggle="dropdown"
-                aria-expanded="false"
+            <li className="nav-item dropdown" ref={dropdownRef}>
+              <button
+                className={`nav-link dropdown-toggle btn btn-link ${location.pathname.includes('/budget') || location.pathname.includes('/planner') ? 'active' : ''}`}
+                onClick={toggleDropdown}
               >
                 Budgeting
-              </a>
-              <ul className="dropdown-menu" aria-labelledby="navbarDropdown">
+              </button>
+              <ul className={`dropdown-menu ${dropdownOpen ? 'show' : ''}`}>
                 <li>
-                  <Link 
+                  <Link
                     className={`dropdown-item ${location.pathname === '/budget' ? 'active' : ''}`}
                     to="/budget"
+                    onClick={() => setDropdownOpen(false)}
                   >
                     Budget Analysis
                   </Link>
                 </li>
                 <li>
-                  <Link 
+                  <Link
                     className={`dropdown-item ${location.pathname === '/planner' ? 'active' : ''}`}
                     to="/planner"
+                    onClick={() => setDropdownOpen(false)}
                   >
                     Financial Planner
                   </Link>
