@@ -33,22 +33,63 @@ reviewSchema.post('save', async function() {
   const Review = this.constructor;
   const dealId = this.deal;
   
-  const stats = await Review.aggregate([
-    {
-      $match: { deal: dealId }
-    },
-    {
-      $group: {
-        _id: '$deal',
-        avgRating: { $avg: '$rating' }
+  try {
+    const stats = await Review.aggregate([
+      {
+        $match: { deal: dealId }
+      },
+      {
+        $group: {
+          _id: '$deal',
+          avgRating: { $avg: '$rating' },
+          numReviews: { $sum: 1 }
+        }
       }
-    }
-  ]);
+    ]);
 
-  if (stats.length > 0) {
-    await mongoose.model('Deal').findByIdAndUpdate(dealId, {
-      rating: Math.round(stats[0].avgRating * 10) / 10
-    });
+    if (stats.length > 0) {
+      await mongoose.model('Deal').findByIdAndUpdate(dealId, {
+        rating: Math.round(stats[0].avgRating * 10) / 10,
+        numReviews: stats[0].numReviews
+      });
+    }
+  } catch (error) {
+    console.error('Error updating deal rating:', error);
+  }
+});
+
+// Also update rating when a review is deleted
+reviewSchema.post('remove', async function() {
+  const Review = this.constructor;
+  const dealId = this.deal;
+  
+  try {
+    const stats = await Review.aggregate([
+      {
+        $match: { deal: dealId }
+      },
+      {
+        $group: {
+          _id: '$deal',
+          avgRating: { $avg: '$rating' },
+          numReviews: { $sum: 1 }
+        }
+      }
+    ]);
+
+    const update = stats.length > 0 
+      ? {
+          rating: Math.round(stats[0].avgRating * 10) / 10,
+          numReviews: stats[0].numReviews
+        }
+      : {
+          rating: 0,
+          numReviews: 0
+        };
+
+    await mongoose.model('Deal').findByIdAndUpdate(dealId, update);
+  } catch (error) {
+    console.error('Error updating deal rating after review deletion:', error);
   }
 });
 

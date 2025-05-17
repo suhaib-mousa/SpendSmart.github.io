@@ -45,6 +45,10 @@ const dealSchema = new mongoose.Schema({
     min: 0,
     max: 5
   },
+  numReviews: {
+    type: Number,
+    default: 0
+  },
   isNew: {
     type: Boolean,
     default: false
@@ -69,9 +73,15 @@ const dealSchema = new mongoose.Schema({
   }
 });
 
-// Update the updatedAt timestamp before saving
+// Calculate discount percentage before saving
 dealSchema.pre('save', function(next) {
   this.updatedAt = Date.now();
+  
+  // Calculate discount percentage
+  const discountAmount = this.originalPrice - this.currentPrice;
+  const discountPercentage = (discountAmount / this.originalPrice) * 100;
+  this.discount = `${Math.round(discountPercentage)}%`;
+  
   next();
 });
 
