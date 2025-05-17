@@ -1,8 +1,36 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { toast } from 'react-hot-toast';
+import { supabase } from '../lib/supabase';
 import '../styles/Auth.css';
 
 function Login() {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (error) throw error;
+
+      toast.success('Successfully logged in!');
+      navigate('/');
+    } catch (error) {
+      toast.error(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="auth-container">
       <div className="login auth-form-side">
@@ -18,13 +46,16 @@ function Login() {
             <p>Log in to your account so you can start saving today.</p>
           </div>
 
-          <form className="auth-form">
+          <form className="auth-form" onSubmit={handleLogin}>
             <div className="form-group">
               <input
                 type="email"
                 className="form-control"
                 id="email"
                 placeholder=" "
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
               />
               <label className="form-label" htmlFor="email">Email address</label>
             </div>
@@ -35,6 +66,9 @@ function Login() {
                 className="form-control"
                 id="password"
                 placeholder=" "
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
               />
               <label className="form-label" htmlFor="password">Password</label>
             </div>
@@ -49,8 +83,8 @@ function Login() {
               </Link>
             </div>
 
-            <button type="submit" className="submit-button">
-              Log In
+            <button type="submit" className="submit-button" disabled={loading}>
+              {loading ? 'Logging in...' : 'Log In'}
             </button>
           </form>
         </div>

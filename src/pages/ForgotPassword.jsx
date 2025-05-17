@@ -1,8 +1,33 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { toast } from 'react-hot-toast';
+import { supabase } from '../lib/supabase';
 import '../styles/Auth.css';
 
 function ForgotPassword() {
+  const [email, setEmail] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const handleResetPassword = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/reset-password`,
+      });
+
+      if (error) throw error;
+
+      toast.success('Password reset instructions have been sent to your email!');
+      setEmail('');
+    } catch (error) {
+      toast.error(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="auth-container">
       <div className="login auth-form-side">
@@ -18,19 +43,22 @@ function ForgotPassword() {
             <p>Enter your email address below to reset your password.</p>
           </div>
 
-          <form className="auth-form">
+          <form className="auth-form" onSubmit={handleResetPassword}>
             <div className="form-group">
               <input
                 type="email"
                 className="form-control"
                 id="email"
                 placeholder=" "
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
               />
               <label className="form-label" htmlFor="email">Email address</label>
             </div>
 
-            <button type="submit" className="submit-button">
-              Submit
+            <button type="submit" className="submit-button" disabled={loading}>
+              {loading ? 'Sending...' : 'Submit'}
             </button>
           </form>
         </div>

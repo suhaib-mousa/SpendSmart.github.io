@@ -1,8 +1,51 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { toast } from 'react-hot-toast';
+import { supabase } from '../lib/supabase';
 import '../styles/Auth.css';
 
 function Signup() {
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+
+  const handleSignup = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+
+    if (password !== confirmPassword) {
+      toast.error('Passwords do not match');
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            first_name: firstName,
+            last_name: lastName,
+          },
+        },
+      });
+
+      if (error) throw error;
+
+      toast.success('Successfully signed up! Please check your email to verify your account.');
+      navigate('/login');
+    } catch (error) {
+      toast.error(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="auth-container">
       <div className="login auth-cta-side">
@@ -29,7 +72,7 @@ function Signup() {
             <p>Join our community and start your savings journey!</p>
           </div>
 
-          <form className="auth-form">
+          <form className="auth-form" onSubmit={handleSignup}>
             <div className="row">
               <div className="col-6">
                 <div className="form-group">
@@ -38,6 +81,9 @@ function Signup() {
                     className="form-control"
                     id="firstName"
                     placeholder=" "
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
+                    required
                   />
                   <label className="form-label" htmlFor="firstName">First name</label>
                 </div>
@@ -49,6 +95,9 @@ function Signup() {
                     className="form-control"
                     id="lastName"
                     placeholder=" "
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
+                    required
                   />
                   <label className="form-label" htmlFor="lastName">Last name</label>
                 </div>
@@ -61,6 +110,9 @@ function Signup() {
                 className="form-control"
                 id="email"
                 placeholder=" "
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
               />
               <label className="form-label" htmlFor="email">Email address</label>
             </div>
@@ -71,6 +123,9 @@ function Signup() {
                 className="form-control"
                 id="password"
                 placeholder=" "
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
               />
               <label className="form-label" htmlFor="password">Password</label>
             </div>
@@ -81,19 +136,22 @@ function Signup() {
                 className="form-control"
                 id="confirmPassword"
                 placeholder=" "
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                required
               />
               <label className="form-label" htmlFor="confirmPassword">Confirm Password</label>
             </div>
 
             <div className="auth-links">
               <label className="remember-me">
-                <input type="checkbox" />
-                <span>Remember me</span>
+                <input type="checkbox" required />
+                <span>I agree to the Terms and Conditions</span>
               </label>
             </div>
 
-            <button type="submit" className="submit-button">
-              Sign Up
+            <button type="submit" className="submit-button" disabled={loading}>
+              {loading ? 'Signing up...' : 'Sign Up'}
             </button>
           </form>
         </div>
