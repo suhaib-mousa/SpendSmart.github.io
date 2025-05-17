@@ -4,7 +4,7 @@
   overflow: hidden;
 }
 
-.hero {
+#hero  {
   min-height: 100vh;
   display: flex;
   justify-content: space-between;
@@ -21,13 +21,13 @@
   max-width: 600px;
 }
 
-.hero h1 {
-  font-size: 4rem;
-  font-weight: bold;
-  color: white;
+#hero  h1 {
+  font-size: 4rem !important;;
+  font-weight: bold !important;;
+  color: white !important;;
 }
-.hero p {
-  color: white;
+#hero p {
+  color: white !important;
 }
 .tip-link {
   display: inline-block;

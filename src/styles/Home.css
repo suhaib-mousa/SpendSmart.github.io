@@ -32,12 +32,12 @@
 
 .hero h1 {
   font-weight: 700;
-  color: var(--dark-blue);
+  color: var(--dark-blue) !important;
   margin-bottom: 20px;
 }
 
 .hero p {
-  color: #666;
+  color: #666 !important;
   font-size: 1.2rem;
   margin-bottom: 30px;
 }

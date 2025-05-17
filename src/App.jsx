@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import Navbar from "./components/Navbar";
+import Footer from "./components/Footer";
 import Home from "./pages/Home";
 import Budget from "./pages/Budget";
 import Planner from "./pages/Planner";
@@ -27,24 +28,28 @@ function App() {
           <>
             <Navbar />
             <Home />
+            <Footer />
           </>
         } />
         <Route path="/budget" element={
           <>
             <Navbar />
             <Budget />
+            <Footer />
           </>
         } />
         <Route path="/planner" element={
           <>
             <Navbar />
             <Planner />
+            <Footer />
           </>
         } />
         <Route path="/discounts" element={
           <>
             <Navbar />
             <Discounts />
+            <Footer />
           </>
         } />
         <Route path="/category/:categoryName" element={
