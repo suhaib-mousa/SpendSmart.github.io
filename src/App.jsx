@@ -9,6 +9,7 @@ import Tips from "./pages/Tips";
 import CategoryPage from "./pages/CategoryPage";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
+import ForgotPassword from "./pages/ForgotPassword";
 import './styles/global.css';
 
 function App() {
@@ -17,6 +18,7 @@ function App() {
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/" element={
           <>
             <Navbar />
