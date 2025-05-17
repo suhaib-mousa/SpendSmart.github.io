@@ -102,7 +102,18 @@ router.post('/forgot-password', async (req, res) => {
 
     await user.save();
 
-    res.json({ message: 'Password reset instructions sent to email' });
+    // Generate reset link
+    const resetLink = `http://localhost:5173/reset-password/${resetToken}`;
+    
+    // Log the reset link (for development purposes)
+    console.log('Password Reset Link:', resetLink);
+
+    // In production, you would send this link via email
+    // For now, we'll just return it in the response
+    res.json({ 
+      message: 'Password reset instructions sent to email',
+      resetLink // Only include this in development
+    });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
