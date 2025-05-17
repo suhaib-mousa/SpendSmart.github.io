@@ -374,15 +374,16 @@ function Discounts() {
                   <div className="absolute top-0 right-0 p-4">
                     <span className="discount-badge">{selectedDeal.discount} OFF</span>
                   </div>
-                  <button onClick={closeModal} className="absolute top-4 right-4 bg-white rounded-full w-8 h-8 flex items-center justify-center shadow-md">
+                  <button onClick={closeModal} className="close absolute top-4 right-4 bg-light rounded-full w-8 h-8 flex items-center justify-center shadow-md">
                     <i className="fas fa-times"></i>
                   </button>
-                  {selectedDeal.isNew && <div className="badge-new">NEW</div>}
                 </div>
 
                 <div className="p-6">
                   <div className="flex justify-between items-start mb-4">
                     <h2 className="text-2xl font-bold">{selectedDeal.title}</h2>
+                  {selectedDeal.isNew && <div className="badge-new">NEW</div>}
+                    
                     <div>
                       <div className="star-rating">
                         <div className="empty-stars">★★★★★</div>
@@ -443,18 +444,18 @@ function Discounts() {
                                 required
                               ></textarea>
                             </div>
-                            <div className="flex gap-2">
-                              <button type="submit" className="btn btn-primary">
-                                {userReview ? 'Update Review' : 'Submit Review'}
-                              </button>
+                            <div className="flex gap-3">
+                              <input type="submit" className="btn btn-primary mx-2"
+                                value={userReview ? 'Update Review' : 'Submit Review'}
+                              />
                               {isEditing && (
-                                <button 
+                                <div 
                                   type="button" 
                                   className="btn btn-secondary"
                                   onClick={handleCancelEdit}
                                 >
                                   Cancel
-                                </button>
+                                </div>
                               )}
                             </div>
                           </form>
@@ -462,19 +463,19 @@ function Discounts() {
                           <div>
                             <div className="flex justify-between items-start">
                               <h4 className="font-medium mb-3">Your Review</h4>
-                              <div>
-                                <button 
+                              <div className='d-flex float-end'>
+                                <div 
                                   onClick={handleEditClick}
                                   className="btn btn-sm btn-outline-primary me-2"
                                 >
-                                  Edit
-                                </button>
-                                <button 
+                                  <i className='fa fa-edit'></i>
+                                </div>
+                                <div 
                                   onClick={handleDeleteReview}
                                   className="btn btn-sm btn-outline-danger"
                                 >
-                                  Delete
-                                </button>
+                                  <i className='fa fa-trash'></i>
+                                </div>
                               </div>
                             </div>
                             <div className="star-rating mb-2">

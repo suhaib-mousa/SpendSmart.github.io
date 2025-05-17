@@ -31,24 +31,17 @@ router.get('/user/:dealId', auth, async (req, res) => {
 // Create or update a review
 router.post('/', auth, async (req, res) => {
   try {
-    console.log('Review creation started');
-    console.log('Request body:', req.body);
-    console.log('Authenticated user:', req.user);
-
     const { deal, rating, comment } = req.body;
     
     // Find existing review
     let review = await Review.findOne({ deal, user: req.user.id });
-    console.log('Existing review:', review);
     
     if (review) {
-      console.log('Updating existing review');
       // Update existing review
       review.rating = rating;
       review.comment = comment;
       review.date = Date.now();
     } else {
-      console.log('Creating new review');
       // Create new review with user reference
       review = new Review({
         deal,
@@ -57,14 +50,11 @@ router.post('/', auth, async (req, res) => {
         rating,
         comment
       });
-      console.log('New review object:', review);
     }
 
     const savedReview = await review.save();
-    console.log('Review saved successfully:', savedReview);
     res.status(201).json(savedReview);
   } catch (error) {
-    console.error('Error creating/updating review:', error);
     if (error.code === 11000) { // Duplicate key error
       res.status(400).json({ message: 'You have already reviewed this deal' });
     } else {
