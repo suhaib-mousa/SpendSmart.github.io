@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
 import Chart from 'chart.js/auto';
 import html2pdf from 'html2pdf.js';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
+import '../styles/Budget.css';
 
 function Budget() {
   const [monthlyIncome, setMonthlyIncome] = useState(0);
@@ -21,14 +21,17 @@ function Budget() {
     savings: 0,
     others: 0
   });
-  const [totalExpenses, setTotalExpenses] = useState(0);
-  const [remainingIncome, setRemainingIncome] = useState(0);
   const [showAnalysis, setShowAnalysis] = useState(false);
-
-  // Use refs instead of state for chart instances
+  
+  // Chart refs
   const budgetChartRef = useRef(null);
   const comparisonChartRef = useRef(null);
   const yearlyChartRef = useRef(null);
+  
+  // Chart canvas refs
+  const budgetCanvasRef = useRef(null);
+  const comparisonCanvasRef = useRef(null);
+  const yearlyCanvasRef = useRef(null);
 
   useEffect(() => {
     AOS.init({
@@ -37,52 +40,51 @@ function Budget() {
     });
     loadData();
 
-    // Cleanup function to destroy charts when component unmounts
     return () => {
-      if (budgetChartRef.current) {
-        budgetChartRef.current.destroy();
-        budgetChartRef.current = null;
-      }
-      if (comparisonChartRef.current) {
-        comparisonChartRef.current.destroy();
-        comparisonChartRef.current = null;
-      }
-      if (yearlyChartRef.current) {
-        yearlyChartRef.current.destroy();
-        yearlyChartRef.current = null;
-      }
+      destroyCharts();
     };
   }, []);
 
   useEffect(() => {
-    updateCalculations();
-  }, [monthlyIncome, expenses]);
+    requestAnimationFrame(() => {
+      updateCharts();
+    });
+  }, [monthlyIncome, expenses, showAnalysis]);
 
   const loadData = () => {
     const savedData = JSON.parse(localStorage.getItem('budgetData'));
     if (savedData) {
       setMonthlyIncome(parseFloat(savedData.income) || 0);
-      setExpenses(savedData.expenses);
+      setExpenses(prev => ({
+        ...prev,
+        ...savedData.expenses
+      }));
     }
   };
 
-  const updateCalculations = () => {
-    const total = Object.values(expenses).reduce((sum, value) => sum + parseFloat(value || 0), 0);
-    setTotalExpenses(total);
-    setRemainingIncome(monthlyIncome - total);
-    requestAnimationFrame(() => {
-      updateCharts();
-    });
+  const destroyCharts = () => {
+    if (budgetChartRef.current) {
+      budgetChartRef.current.destroy();
+      budgetChartRef.current = null;
+    }
+    if (comparisonChartRef.current) {
+      comparisonChartRef.current.destroy();
+      comparisonChartRef.current = null;
+    }
+    if (yearlyChartRef.current) {
+      yearlyChartRef.current.destroy();
+      yearlyChartRef.current = null;
+    }
   };
 
   const updateCharts = () => {
     // Update budget chart
-    const ctx = document.getElementById('budget-chart')?.getContext('2d');
-    if (ctx) {
+    if (budgetCanvasRef.current) {
       if (budgetChartRef.current) {
         budgetChartRef.current.destroy();
       }
-      
+
+      const ctx = budgetCanvasRef.current.getContext('2d');
       budgetChartRef.current = new Chart(ctx, {
         type: 'doughnut',
         data: {
@@ -90,16 +92,22 @@ function Budget() {
           datasets: [{
             data: Object.values(expenses),
             backgroundColor: [
-              '#52741F', '#00B2F6', '#FF6B6B', '#4ECDC4', '#FF9F43', 
-              '#F368E0', '#FFD93D', '#6C5CE7', '#E69DB8', '#C599B6', 
+              '#52741F', '#00B2F6', '#FF6B6B', '#4ECDC4', '#FF9F43',
+              '#F368E0', '#FFD93D', '#6C5CE7', '#E69DB8', '#C599B6',
               '#00B894', '#A569BD'
             ]
           }]
         },
         options: {
           responsive: true,
+          maintainAspectRatio: false,
           plugins: {
-            legend: { position: 'bottom' }
+            legend: {
+              position: 'bottom',
+              labels: {
+                padding: 20
+              }
+            }
           }
         }
       });
@@ -107,9 +115,7 @@ function Budget() {
 
     // Update analysis charts if showing analysis
     if (showAnalysis) {
-      requestAnimationFrame(() => {
-        updateAnalysisCharts();
-      });
+      updateAnalysisCharts();
     }
   };
 
@@ -148,13 +154,13 @@ function Budget() {
     }
 
     // Update comparison chart
-    const comparisonCtx = document.getElementById('comparison-chart')?.getContext('2d');
-    if (comparisonCtx) {
+    if (comparisonCanvasRef.current) {
       if (comparisonChartRef.current) {
         comparisonChartRef.current.destroy();
       }
-      
-      comparisonChartRef.current = new Chart(comparisonCtx, {
+
+      const ctx = comparisonCanvasRef.current.getContext('2d');
+      comparisonChartRef.current = new Chart(ctx, {
         type: 'bar',
         data: {
           labels: ['Obligations', 'Personal', 'Investment'],
@@ -173,16 +179,18 @@ function Budget() {
         },
         options: {
           responsive: true,
+          maintainAspectRatio: false,
           plugins: {
-            legend: { position: 'bottom' }
+            legend: {
+              position: 'bottom'
+            }
           }
         }
       });
     }
 
     // Update yearly projection chart
-    const yearlyCtx = document.getElementById('yearly-chart')?.getContext('2d');
-    if (yearlyCtx) {
+    if (yearlyCanvasRef.current) {
       if (yearlyChartRef.current) {
         yearlyChartRef.current.destroy();
       }
@@ -191,8 +199,9 @@ function Budget() {
         current: Array.from({ length: 5 }, (_, i) => actual.investment * (i + 1) * 12),
         ideal: Array.from({ length: 5 }, (_, i) => ideal.investment * (i + 1) * 12)
       };
-      
-      yearlyChartRef.current = new Chart(yearlyCtx, {
+
+      const ctx = yearlyCanvasRef.current.getContext('2d');
+      yearlyChartRef.current = new Chart(ctx, {
         type: 'line',
         data: {
           labels: ['Year 1', 'Year 2', 'Year 3', 'Year 4', 'Year 5'],
@@ -213,8 +222,11 @@ function Budget() {
         },
         options: {
           responsive: true,
+          maintainAspectRatio: false,
           plugins: {
-            legend: { position: 'bottom' }
+            legend: {
+              position: 'bottom'
+            }
           }
         }
       });
@@ -238,6 +250,8 @@ function Budget() {
 
   const downloadPDF = () => {
     const element = document.querySelector('.analysis-container');
+    if (!element) return;
+
     const opt = {
       margin: [0.5, 0.5, 0.5, 0.5],
       filename: 'Financial_Analysis_Report.pdf',
@@ -258,33 +272,55 @@ function Budget() {
     html2pdf().set(opt).from(element).save();
   };
 
+  const totalExpenses = Object.values(expenses).reduce((sum, value) => sum + (parseFloat(value) || 0), 0);
+  const remainingIncome = monthlyIncome - totalExpenses;
+
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="budget-container">
       <div className="text-center mb-12" data-aos="fade-up">
         <h1 className="text-4xl font-bold text-gray-800 mb-4">Financial Planner</h1>
         <p className="text-lg text-gray-600">Enter your monthly income and expenses to analyze your spending and make smart financial decisions.</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        <div className="bg-white rounded-lg shadow-lg p-6" data-aos="fade-right">
-          <h2 className="text-xl font-semibold mb-4">Monthly Income</h2>
-          <input
-            type="number"
-            className="w-full p-2 border rounded"
-            value={monthlyIncome}
-            onChange={(e) => setMonthlyIncome(parseFloat(e.target.value) || 0)}
-            placeholder="Enter monthly income"
-          />
+      <div className="budget-grid">
+        <div className="budget-form" data-aos="fade-right">
+          <div className="income-section">
+            <h2 className="text-xl font-semibold mb-4">Monthly Income</h2>
+            <input
+              type="number"
+              className="budget-input"
+              value={monthlyIncome}
+              onChange={(e) => setMonthlyIncome(parseFloat(e.target.value) || 0)}
+              placeholder="Enter monthly income"
+            />
+          </div>
 
-          <h2 className="text-xl font-semibold mt-6 mb-4">Budget Distribution</h2>
+          <h2 className="text-xl font-semibold mb-4">Budget Distribution</h2>
           {Object.entries(expenses).map(([category, value]) => (
-            <div key={category} className="mb-4">
-              <label className="block text-sm font-medium text-gray-700">
-                {category.charAt(0).toUpperCase() + category.slice(1)}
-              </label>
+            <div key={category} className="budget-item">
+              <div 
+                className="category-color"
+                style={{ 
+                  backgroundColor: {
+                    charity: '#52741F',
+                    food: '#00B2F6',
+                    housing: '#FF6B6B',
+                    utilities: '#4ECDC4',
+                    maintenance: '#FF9F43',
+                    transportation: '#F368E0',
+                    education: '#FFD93D',
+                    entertainment: '#6C5CE7',
+                    debt: '#E69DB8',
+                    health: '#C599B6',
+                    savings: '#00B894',
+                    others: '#A569BD'
+                  }[category]
+                }}
+              />
+              <span className="capitalize">{category}</span>
               <input
                 type="number"
-                className="w-full p-2 border rounded"
+                className="budget-input"
                 value={value}
                 onChange={(e) => handleExpenseChange(category, e.target.value)}
                 placeholder={`Enter ${category} expense`}
@@ -292,12 +328,12 @@ function Budget() {
             </div>
           ))}
 
-          <div className="mt-6 p-4 bg-blue-50 rounded-lg">
-            <div className="flex justify-between mb-2">
+          <div className="budget-summary">
+            <div>
               <span>Total Expenses:</span>
               <span>{totalExpenses.toFixed(2)} JOD</span>
             </div>
-            <div className="flex justify-between">
+            <div>
               <span>Remaining Income:</span>
               <span>{remainingIncome.toFixed(2)} JOD</span>
             </div>
@@ -311,8 +347,8 @@ function Budget() {
           </button>
         </div>
 
-        <div className="bg-white rounded-lg shadow-lg p-6" data-aos="fade-left">
-          <canvas id="budget-chart"></canvas>
+        <div className="chart-container" data-aos="fade-left">
+          <canvas ref={budgetCanvasRef}></canvas>
         </div>
       </div>
 
@@ -326,33 +362,36 @@ function Budget() {
       </div>
 
       {showAnalysis && (
-        <div className="analysis-container mt-8">
-          <div className="grid grid-cols-1 gap-8">
-            <div className="bg-white rounded-lg shadow-lg p-6">
-              <h2 className="text-2xl font-bold mb-4">Three-Thirds Financial Analysis</h2>
-              <div className="mb-6">
-                <h3 className="text-xl font-semibold mb-2">Category Breakdown</h3>
-                <ul className="list-disc pl-6">
-                  <li><span className="font-semibold">Obligations (1/3):</span> Housing, Transportation, Debt, Health, Education, Maintenance, Utilities</li>
-                  <li><span className="font-semibold">Personal (1/3):</span> Others, Entertainment, Charity, Food</li>
-                  <li><span className="font-semibold">Investment (1/3):</span> Savings</li>
-                </ul>
+        <div className="analysis-container" data-aos="fade-up">
+          <div className="analysis-grid">
+            <div className="analysis-section">
+              <div className="analysis-header">
+                <h2 className="text-2xl font-bold mb-4">Three-Thirds Financial Analysis</h2>
+                <div className="mb-6">
+                  <h3 className="text-xl font-semibold mb-2">Category Breakdown</h3>
+                  <ul className="list-disc pl-6">
+                    <li><span className="font-semibold">Obligations (1/3):</span> Housing, Transportation, Debt, Health, Education, Maintenance, Utilities</li>
+                    <li><span className="font-semibold">Personal (1/3):</span> Others, Entertainment, Charity, Food</li>
+                    <li><span className="font-semibold">Investment (1/3):</span> Savings</li>
+                  </ul>
+                </div>
               </div>
 
-              <div className="mb-8">
+              <div className="analysis-chart">
                 <h3 className="text-xl font-semibold mb-4">Current vs Ideal Distribution</h3>
-                <canvas id="comparison-chart"></canvas>
+                <canvas ref={comparisonCanvasRef}></canvas>
               </div>
 
-              <div className="mb-8">
+              <div className="analysis-chart">
                 <h3 className="text-xl font-semibold mb-4">5-Year Investment Projection</h3>
-                <canvas id="yearly-chart"></canvas>
+                <canvas ref={yearlyCanvasRef}></canvas>
               </div>
 
               <button
                 onClick={downloadPDF}
-                className="bg-blue-600 text-white py-2 px-6 rounded hover:bg-blue-700"
+                className="download-button"
               >
+                <i className="fas fa-file-download"></i>
                 Download PDF Report
               </button>
             </div>
