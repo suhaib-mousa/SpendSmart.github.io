@@ -112,3 +112,5 @@ function Budget() {
 
   // ... (continue with the rest of the component code, including all helper functions and JSX)
 }
+
+export default Budget;
