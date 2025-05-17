@@ -5,7 +5,6 @@ import Chart from 'chart.js/auto';
 import { saveBudgetAnalysis, getBudgetHistory } from '../services/api';
 import '../styles/Budget.css';
 
-// Standard expense percentages based on financial planning guidelines
 const recommendedPercentages = {
   housing: 30,
   transportation: 15,
@@ -19,7 +18,6 @@ const recommendedPercentages = {
   other: 5
 };
 
-// Questions configuration
 const questions = [
   {
     en: "Hello! I'm the SpendSmart Budget Assistant. I'll help you analyze your finances and provide personalized advice. What's your name?",
@@ -227,7 +225,8 @@ function Budget() {
       }
 
       try {
-        await saveBudgetAnalysis(updatedResponses);
+        const savedAnalysis = await saveBudgetAnalysis(updatedResponses);
+        await fetchBudgetHistory();
         setCurrentQuestion(prev => prev + 1);
         addBotMessage(questions[currentQuestion + 1][currentLanguage]);
         setTimeout(() => {
@@ -252,7 +251,6 @@ function Budget() {
     const remainingMoney = data.totalIncome - totalExpenses;
     const savingsShortfall = data.savingsGoal - remainingMoney;
 
-    // Calculate category-specific advice
     const categoryAdvice = [];
     Object.entries(data.expenses).forEach(([category, amount]) => {
       const recommendedAmount = (recommendedPercentages[category] / 100) * data.totalIncome;
@@ -267,14 +265,12 @@ function Budget() {
       }
     });
 
-    // Sort by highest overspending
     categoryAdvice.sort((a, b) => {
       const aAmount = data.expenses[a.category];
       const bAmount = data.expenses[b.category];
       return bAmount - aAmount;
     });
 
-    // Create analysis component
     const analysisComponent = (
       <div className="analysis-results">
         <div className="d-flex justify-content-between align-items-center mb-4">
@@ -368,10 +364,8 @@ function Budget() {
       </div>
     );
 
-    // Add analysis to messages
     setMessages(prev => [...prev, { component: analysisComponent }]);
     
-    // Create chart
     setTimeout(() => {
       if (chartRef.current) {
         const ctx = chartRef.current.getContext('2d');
@@ -464,7 +458,44 @@ function Budget() {
             {currentLanguage === 'ar' ? 'مساعد تحليل الميزانية' : 'Budget Analysis Assistant'}
           </p>
         </div>
+        {user && (
+          <button 
+            className="history-toggle"
+            onClick={() => setShowHistory(!showHistory)}
+          >
+            {showHistory ? 'Hide History' : 'View History'}
+          </button>
+        )}
       </div>
+
+      {showHistory && budgetHistory.length > 0 && (
+        <div className="history-panel">
+          <h3>Previous Reports</h3>
+          {budgetHistory.map((report, index) => (
+            <div key={report._id} className="history-item">
+              <div className="history-date">
+                {new Date(report.date).toLocaleDateString()}
+              </div>
+              <div className="history-stats">
+                <div className="history-stat">
+                  <span className="history-stat-label">Income:</span>
+                  <span className="history-stat-value">{report.totalIncome.toFixed(2)} JOD</span>
+                </div>
+                <div className="history-stat">
+                  <span className="history-stat-label">Expenses:</span>
+                  <span className="history-stat-value">{report.analysis.totalExpenses.toFixed(2)} JOD</span>
+                </div>
+                <div className="history-stat">
+                  <span className="history-stat-label">Remaining:</span>
+                  <span className={`history-stat-value ${report.analysis.remainingMoney >= 0 ? 'positive' : 'negative'}`}>
+                    {report.analysis.remainingMoney.toFixed(2)} JOD
+                  </span>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
 
       <div className="chat-messages" ref={messagesEndRef}>
         {messages.map((msg, index) => (
