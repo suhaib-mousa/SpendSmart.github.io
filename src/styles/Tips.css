@@ -15,103 +15,42 @@
   text-shadow: 0 1px 5px rgba(80, 3, 3, 0.8);
   background-size: cover;
   background-position: center;
-  position: relative;
-}
-
-.hero::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(
-    to bottom,
-    rgba(0, 0, 0, 0.3),
-    rgba(0, 0, 0, 0.7)
-  );
-  z-index: 1;
 }
 
 .hero-content {
   max-width: 600px;
-  position: relative;
-  z-index: 2;
 }
 
 .hero h1 {
   font-size: 4rem;
   font-weight: bold;
   color: white;
-  margin-bottom: 1.5rem;
 }
-
 .hero p {
   color: white;
-  font-size: 1.2rem;
-  line-height: 1.6;
-  margin-bottom: 2rem;
 }
-
 .tip-link {
   display: inline-block;
   text-decoration: none;
   padding: 0.75rem 1.5rem;
   font-weight: bold;
   border-radius: 2rem;
-  background-color: var(--primary-blue);
-  color: #ffffff;
-  transition: all 0.3s ease;
+  background-color: #7AB2D3;
+  color: #fffdfd;
+  transition: background 0.3s ease;
   margin-top: 1rem;
-  border: 2px solid transparent;
 }
 
 .tip-link:hover {
-  background-color: transparent;
-  border-color: #ffffff;
-  color: #ffffff;
-  transform: translateY(-2px);
+  background-color: #4A628A;
 }
 
 .swiper-block {
-  position: relative;
-  width: 70%;
-  z-index: 2;
-}
-
-.login-prompt {
   position: absolute;
-  top: -80px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 90%;
-  max-width: 500px;
-  z-index: 10;
-}
+  right: 2rem;
+  bottom: 15%;
+      width: 70%;
 
-.login-prompt .alert {
-  background: rgba(255, 255, 255, 0.95);
-  border: none;
-  border-radius: 15px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  backdrop-filter: blur(10px);
-}
-
-.login-prompt h5 {
-  color: var(--dark-blue);
-  font-weight: 600;
-}
-
-.login-prompt .btn {
-  padding: 0.5rem 2rem;
-  border-radius: 50px;
-  font-weight: 500;
-  transition: all 0.3s ease;
-}
-
-.login-prompt .btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .swiper {
@@ -126,38 +65,12 @@
   height: 100%;
   cursor: pointer;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-  transition: all 0.4s ease;
-  position: relative;
-  overflow: hidden;
-}
-
-.tip-slide::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(
-    to bottom,
-    rgba(0, 0, 0, 0.2),
-    rgba(0, 0, 0, 0.5)
-  );
-  z-index: 1;
-  transition: all 0.4s ease;
+  transition: transform 0.4s ease;
 }
 
 .swiper-slide-active {
-  box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.7);
   transform: scale(1.05);
-}
-
-.swiper-slide-active::before {
-  background: linear-gradient(
-    to bottom,
-    rgba(0, 0, 0, 0.1),
-    rgba(0, 0, 0, 0.3)
-  );
 }
 
 .hidden-slide {
@@ -168,36 +81,25 @@
 
 .swiper-nav {
   position: absolute;
-  bottom: -60px;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  gap: 1rem;
-  z-index: 1000;
+    bottom: 69px;
+    left: 30%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 1rem;
+    z-index: 1000;
 }
 
 .swiper-button-prev,
 .swiper-button-next {
-  position: relative;
-  left: auto;
-  right: auto;
-  color: #ffffff;
-  background-color: var(--primary-blue);
-  border: 2px solid rgba(255, 255, 255, 0.2);
-  border-radius: 50%;
+  color: #e2e5e8;
+  background-color: #7AB2D3;
+  border: 1px solid;
+  border-radius: 100%;
   width: 50px;
   height: 50px;
-  display: flex;
+  display: flex !important;
   justify-content: center;
   align-items: center;
-  transition: all 0.3s ease;
-}
-
-.swiper-button-prev:hover,
-.swiper-button-next:hover {
-  background-color: var(--dark-blue);
-  border-color: #ffffff;
-  transform: translateY(-2px);
 }
 
 .swiper-button-prev::after,
@@ -207,73 +109,28 @@
 
 /* Animations */
 .text-left {
-  animation: slide-in-left 0.4s ease-out;
+  animation: slide-in-left 0.4s;
 }
 
 .text-right {
-  animation: slide-in-right 0.4s ease-out;
+  animation: slide-in-right 0.4s;
 }
 
 @keyframes slide-in-left {
   0% {
-    opacity: 0;
     transform: translateX(-20%);
   }
   100% {
-    opacity: 1;
     transform: translateX(0);
   }
 }
 
 @keyframes slide-in-right {
   0% {
-    opacity: 0;
     transform: translateX(20%);
   }
   100% {
-    opacity: 1;
     transform: translateX(0);
-  }
-}
-
-/* Loading and Error States */
-.loading-container,
-.error-container {
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: #f8f9fa;
-}
-
-.spinner-border {
-  width: 3rem;
-  height: 3rem;
-  color: var(--primary-blue);
-}
-
-.alert-danger {
-  background-color: #fff;
-  border: none;
-  border-radius: 15px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  padding: 2rem;
-}
-
-/* Responsive Design */
-@media (max-width: 1200px) {
-  .swiper {
-    height: 16rem;
-  }
-}
-
-@media (max-width: 992px) {
-  .hero h1 {
-    font-size: 3rem;
-  }
-
-  .swiper-block {
-    width: 90%;
   }
 }
 
@@ -281,52 +138,45 @@
   .hero {
     flex-direction: column;
     text-align: center;
-    padding: 4rem 1rem;
-  }
-
-  .hero-content {
-    margin-bottom: 3rem;
-  }
-
-  .hero h1 {
-    font-size: 2.5rem;
   }
 
   .swiper-block {
-    width: 100%;
-  }
-
-  .login-prompt {
-    position: relative;
-    top: 0;
-    margin-bottom: 2rem;
-  }
-
-  .swiper {
-    height: 14rem;
+    width: 90%;
+    position: static;
+    margin-top: 2rem;
   }
 
   .swiper-nav {
-    bottom: -50px;
+    bottom: -40px;
+    position: static;
+    transform: none;
+    justify-content: center;
   }
 }
+.swiper-button-prev, .swiper-rtl .swiper-button-next {
+    left: var(--swiper-navigation-sides-offset, -60px);
+    right: auto;
+}
+.swiper-button-next, .swiper-rtl .swiper-button-prev {
+    right: var(--swiper-navigation-sides-offset, -60px);
+    left: auto;
+}
+/* Add this to your Tips.css file if not present */
+.hidden-slide {
+  opacity: 0 !important; /* Use !important to ensure it's not overridden */
+  /* Or another visible change like: */
+  /* transform: scale(0.8) !important; */
+  /* filter: grayscale(100%) !important; */
+}
 
-@media (max-width: 576px) {
-  .hero h1 {
-    font-size: 2rem;
-  }
+.navbar-tips {
+  background-color: transparent !important;
+  box-shadow: none;
+}
 
-  .hero p {
-    font-size: 1rem;
-  }
-
-  .swiper {
-    height: 12rem;
-  }
-
-  .swiper-button-prev,
-  .swiper-button-next {
-    width: 40px;
-    height: 40px;
-  }
+.navbar 
+{
+    position: fixed !important;
+    box-shadow: none !important;
+    width: 100% !important;
 }

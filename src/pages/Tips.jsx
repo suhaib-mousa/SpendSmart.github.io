@@ -7,6 +7,7 @@ import { toast } from 'react-hot-toast';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import '../styles/Tips.css';
+let mainTip;
 
 const Tips = () => {
   const [tips, setTips] = useState([]);
@@ -14,17 +15,12 @@ const Tips = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [hiddenSlides, setHiddenSlides] = useState([]);
-  const [user, setUser] = useState(null);
   
   const prevRef = useRef(null);
   const nextRef = useRef(null);
   const swiperRef = useRef(null);
 
   useEffect(() => {
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
     fetchTips();
   }, []);
 
@@ -42,8 +38,8 @@ const Tips = () => {
   const fetchTips = async () => {
     try {
       setLoading(true);
-      const data = await getTips();
-      const mainTip = data.shift();
+      let data = await getTips();
+      mainTip = data.shift();
       setTips(data);
       if (mainTip) {
         setCurrentTip(mainTip);
@@ -60,7 +56,9 @@ const Tips = () => {
 
   const handleSlideChange = (swiper) => {
     const realIndex = swiper.realIndex;
+    console.log(realIndex)
     const newTip = realIndex - 1 === -1 ? mainTip : tips[realIndex - 1];
+    console.log(newTip);
     setCurrentTip(newTip);
     
     const newHiddenSlides = [];
@@ -94,7 +92,7 @@ const Tips = () => {
   }
 
   // Limit tips for non-authenticated users
-  const displayedTips = user ? tips : tips.slice(0, 2);
+  const displayedTips = tips;
 
   return (
     <div className="tips-wrapper">
@@ -110,19 +108,6 @@ const Tips = () => {
         )}
 
         <div className="swiper-block">
-          {!user && (
-            <div className="login-prompt">
-              <div className="alert alert-info text-center">
-                <h5 className="mb-2">Want to see more tips?</h5>
-                <p className="mb-3">Log in to access all financial tips and resources!</p>
-                <div className="d-flex justify-content-center gap-2">
-                  <Link to="/login" className="btn btn-primary">Log In</Link>
-                  <Link to="/signup" className="btn btn-outline-primary">Sign Up</Link>
-                </div>
-              </div>
-            </div>
-          )}
-
           <Swiper
             modules={[Navigation]}
             slidesPerView={5}
@@ -152,7 +137,9 @@ const Tips = () => {
                 }}
               ></SwiperSlide>
             ))}
-            <SwiperSlide style={{ opacity: 0 }}></SwiperSlide>
+            <SwiperSlide style={{ opacity: 0 , 
+                  boxShadow: 'none'}}>
+            </SwiperSlide>
           </Swiper>
           <div className="swiper-nav">
             <div ref={prevRef} className="swiper-button-prev visible-button"></div>
