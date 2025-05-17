@@ -29,6 +29,7 @@ function Planner() {
     others: 0
   });
   const [showAnalysis, setShowAnalysis] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   
   // Chart refs
   const budgetChartRef = useRef(null);
@@ -259,20 +260,37 @@ function Planner() {
       return;
     }
 
+    if (isSaving) {
+      return;
+    }
+
     try {
-      // Save the data first
-      await savePlannerEntry({
-        monthlyIncome,
-        expenses
+      setIsSaving(true);
+
+      // Check if there's already an entry with the same values
+      const hasMatchingEntry = plannerHistory.some(entry => {
+        return entry.monthlyIncome === monthlyIncome &&
+          Object.entries(entry.expenses).every(([key, value]) => 
+            Math.abs(value - expenses[key]) < 0.01
+          );
       });
+
+      if (!hasMatchingEntry) {
+        // Only save if there's no matching entry
+        await savePlannerEntry({
+          monthlyIncome,
+          expenses
+        });
+        await fetchPlannerHistory();
+        toast.success('Data saved successfully!');
+      }
       
-      // Then show analysis and fetch updated history
       setShowAnalysis(true);
-      fetchPlannerHistory();
-      toast.success('Data saved successfully!');
     } catch (error) {
       console.error('Error saving plan:', error);
       toast.error('Failed to save financial plan');
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -410,8 +428,13 @@ function Planner() {
             <h2>Ready to Analyze?</h2>
             <p>{user ? 'View detailed insights to optimize your budget.' : 'Log in to save your data and view detailed insights.'}</p>
             <div className="cta-buttons">
-              <button className="save-button" onClick={handleStartAnalysis}>
-                <i className="fas fa-chart-pie"></i> {showAnalysis ? 'Hide Analysis' : 'Start Analysis'}
+              <button 
+                className="save-button" 
+                onClick={handleStartAnalysis}
+                disabled={isSaving}
+              >
+                <i className="fas fa-chart-pie"></i> 
+                {isSaving ? 'Processing...' : showAnalysis ? 'Hide Analysis' : 'Start Analysis'}
               </button>
               {user && (
                 <button className="save-button" onClick={() => setShowHistory(!showHistory)}>
