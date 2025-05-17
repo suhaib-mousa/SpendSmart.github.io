@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation } from 'swiper/modules';
 import { getTips } from '../services/api';
@@ -13,12 +14,17 @@ const Tips = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [hiddenSlides, setHiddenSlides] = useState([]);
+  const [user, setUser] = useState(null);
   
   const prevRef = useRef(null);
   const nextRef = useRef(null);
   const swiperRef = useRef(null);
 
   useEffect(() => {
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
     fetchTips();
   }, []);
 
@@ -87,6 +93,9 @@ const Tips = () => {
     );
   }
 
+  // Limit tips for non-authenticated users
+  const displayedTips = user ? tips : tips.slice(0, 2);
+
   return (
     <div className="tips-wrapper">
       <div id="hero" className="hero d-flex justify-content-between align-items-end">
@@ -101,6 +110,19 @@ const Tips = () => {
         )}
 
         <div className="swiper-block">
+          {!user && (
+            <div className="login-prompt">
+              <div className="alert alert-info text-center">
+                <h5 className="mb-2">Want to see more tips?</h5>
+                <p className="mb-3">Log in to access all financial tips and resources!</p>
+                <div className="d-flex justify-content-center gap-2">
+                  <Link to="/login" className="btn btn-primary">Log In</Link>
+                  <Link to="/signup" className="btn btn-outline-primary">Sign Up</Link>
+                </div>
+              </div>
+            </div>
+          )}
+
           <Swiper
             modules={[Navigation]}
             slidesPerView={5}
@@ -119,7 +141,7 @@ const Tips = () => {
             onSlideChange={handleSlideChange}
             initialSlide={0}
           >
-            {tips.map((tip, index) => (
+            {displayedTips.map((tip, index) => (
               <SwiperSlide
                 key={tip._id}
                 className={`tip-slide ${hiddenSlides.includes(index) ? 'hidden-slide' : ''}`}
