@@ -60,9 +60,13 @@ function Planner() {
   }, []);
 
   useEffect(() => {
-    requestAnimationFrame(() => {
-      updateCharts();
-    });
+    if (showAnalysis) {
+      requestAnimationFrame(() => {
+        updateCharts();
+      });
+    } else {
+      destroyCharts();
+    }
   }, [monthlyIncome, expenses, showAnalysis]);
 
   const fetchPlannerHistory = async () => {
@@ -285,7 +289,7 @@ function Planner() {
         toast.success('Data saved successfully!');
       }
       
-      setShowAnalysis(true);
+      setShowAnalysis(!showAnalysis);
     } catch (error) {
       console.error('Error saving plan:', error);
       toast.error('Failed to save financial plan');
