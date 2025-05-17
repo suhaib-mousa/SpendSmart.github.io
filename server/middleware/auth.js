@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken';
+import User from '../models/User.js';
 
-const auth = (req, res, next) => {
+const auth = async (req, res, next) => {
   try {
     console.log('Auth middleware started');
     const token = req.header('Authorization')?.replace('Bearer ', '');
@@ -13,7 +14,19 @@ const auth = (req, res, next) => {
     console.log('Token received:', token);
     const verified = jwt.verify(token, process.env.JWT_SECRET);
     console.log('Token verified, user:', verified);
-    req.user = verified;
+    
+    // Get full user data from database
+    const user = await User.findById(verified.userId);
+    if (!user) {
+      return res.status(401).json({ message: 'User not found' });
+    }
+
+    // Add user data to request
+    req.user = {
+      id: user._id,
+      firstName: user.firstName,
+      lastName: user.lastName
+    };
     
     next();
   } catch (error) {

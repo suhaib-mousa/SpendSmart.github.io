@@ -49,7 +49,7 @@ router.post('/', auth, async (req, res) => {
       review.date = Date.now();
     } else {
       console.log('Creating new review');
-      // Create new review
+      // Create new review with user reference
       review = new Review({
         deal,
         user: req.user.id,
