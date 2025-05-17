@@ -37,9 +37,10 @@ const Tips = () => {
     try {
       setLoading(true);
       const data = await getTips();
+      const mainTip = data.shift();
       setTips(data);
-      if (data.length > 0) {
-        setCurrentTip(data[0]);
+      if (mainTip) {
+        setCurrentTip(mainTip);
       }
       setError(null);
     } catch (err) {
@@ -53,7 +54,7 @@ const Tips = () => {
 
   const handleSlideChange = (swiper) => {
     const realIndex = swiper.realIndex;
-    const newTip = tips[realIndex];
+    const newTip = realIndex - 1 === -1 ? mainTip : tips[realIndex - 1];
     setCurrentTip(newTip);
     
     const newHiddenSlides = [];
