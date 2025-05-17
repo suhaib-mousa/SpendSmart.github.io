@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import Chart from 'chart.js/auto';
 import html2pdf from 'html2pdf.js';
@@ -23,10 +23,12 @@ function Budget() {
   });
   const [totalExpenses, setTotalExpenses] = useState(0);
   const [remainingIncome, setRemainingIncome] = useState(0);
-  const [budgetChart, setBudgetChart] = useState(null);
-  const [comparisonChart, setComparisonChart] = useState(null);
-  const [yearlyChart, setYearlyChart] = useState(null);
   const [showAnalysis, setShowAnalysis] = useState(false);
+
+  // Use refs instead of state for chart instances
+  const budgetChartRef = useRef(null);
+  const comparisonChartRef = useRef(null);
+  const yearlyChartRef = useRef(null);
 
   useEffect(() => {
     AOS.init({
@@ -34,6 +36,22 @@ function Budget() {
       once: true
     });
     loadData();
+
+    // Cleanup function to destroy charts when component unmounts
+    return () => {
+      if (budgetChartRef.current) {
+        budgetChartRef.current.destroy();
+        budgetChartRef.current = null;
+      }
+      if (comparisonChartRef.current) {
+        comparisonChartRef.current.destroy();
+        comparisonChartRef.current = null;
+      }
+      if (yearlyChartRef.current) {
+        yearlyChartRef.current.destroy();
+        yearlyChartRef.current = null;
+      }
+    };
   }, []);
 
   useEffect(() => {
@@ -52,16 +70,20 @@ function Budget() {
     const total = Object.values(expenses).reduce((sum, value) => sum + parseFloat(value || 0), 0);
     setTotalExpenses(total);
     setRemainingIncome(monthlyIncome - total);
-    updateCharts();
+    requestAnimationFrame(() => {
+      updateCharts();
+    });
   };
 
   const updateCharts = () => {
     // Update budget chart
     const ctx = document.getElementById('budget-chart')?.getContext('2d');
     if (ctx) {
-      if (budgetChart) budgetChart.destroy();
+      if (budgetChartRef.current) {
+        budgetChartRef.current.destroy();
+      }
       
-      const newBudgetChart = new Chart(ctx, {
+      budgetChartRef.current = new Chart(ctx, {
         type: 'doughnut',
         data: {
           labels: Object.keys(expenses).map(key => key.charAt(0).toUpperCase() + key.slice(1)),
@@ -81,12 +103,13 @@ function Budget() {
           }
         }
       });
-      setBudgetChart(newBudgetChart);
     }
 
     // Update analysis charts if showing analysis
     if (showAnalysis) {
-      updateAnalysisCharts();
+      requestAnimationFrame(() => {
+        updateAnalysisCharts();
+      });
     }
   };
 
@@ -127,9 +150,11 @@ function Budget() {
     // Update comparison chart
     const comparisonCtx = document.getElementById('comparison-chart')?.getContext('2d');
     if (comparisonCtx) {
-      if (comparisonChart) comparisonChart.destroy();
+      if (comparisonChartRef.current) {
+        comparisonChartRef.current.destroy();
+      }
       
-      const newComparisonChart = new Chart(comparisonCtx, {
+      comparisonChartRef.current = new Chart(comparisonCtx, {
         type: 'bar',
         data: {
           labels: ['Obligations', 'Personal', 'Investment'],
@@ -153,20 +178,21 @@ function Budget() {
           }
         }
       });
-      setComparisonChart(newComparisonChart);
     }
 
     // Update yearly projection chart
     const yearlyCtx = document.getElementById('yearly-chart')?.getContext('2d');
     if (yearlyCtx) {
-      if (yearlyChart) yearlyChart.destroy();
+      if (yearlyChartRef.current) {
+        yearlyChartRef.current.destroy();
+      }
 
       const yearlyProjection = {
         current: Array.from({ length: 5 }, (_, i) => actual.investment * (i + 1) * 12),
         ideal: Array.from({ length: 5 }, (_, i) => ideal.investment * (i + 1) * 12)
       };
       
-      const newYearlyChart = new Chart(yearlyCtx, {
+      yearlyChartRef.current = new Chart(yearlyCtx, {
         type: 'line',
         data: {
           labels: ['Year 1', 'Year 2', 'Year 3', 'Year 4', 'Year 5'],
@@ -192,7 +218,6 @@ function Budget() {
           }
         }
       });
-      setYearlyChart(newYearlyChart);
     }
   };
 
