@@ -73,6 +73,31 @@ router.post('/', auth, async (req, res) => {
   }
 });
 
+// Update a review
+router.patch('/:id', auth, async (req, res) => {
+  try {
+    const { rating, comment } = req.body;
+    
+    const review = await Review.findOne({
+      _id: req.params.id,
+      user: req.user.id
+    });
+
+    if (!review) {
+      return res.status(404).json({ message: 'Review not found or unauthorized' });
+    }
+
+    review.rating = rating;
+    review.comment = comment;
+    review.date = Date.now();
+
+    const updatedReview = await review.save();
+    res.json(updatedReview);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+});
+
 // Delete a review
 router.delete('/:id', auth, async (req, res) => {
   try {
@@ -85,7 +110,7 @@ router.delete('/:id', auth, async (req, res) => {
       return res.status(404).json({ message: 'Review not found or unauthorized' });
     }
 
-    await review.remove();
+    await review.deleteOne();
     res.json({ message: 'Review deleted' });
   } catch (error) {
     res.status(500).json({ message: error.message });
