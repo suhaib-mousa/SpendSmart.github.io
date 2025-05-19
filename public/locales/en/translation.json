@@ -1,0 +1,53 @@
+{
+  "nav": {
+    "home": "Home",
+    "budgeting": "Budgeting",
+    "budget_analysis": "Budget Analysis",
+    "financial_planner": "Financial Planner",
+    "discounts": "Discounts",
+    "tips": "Tips",
+    "login": "Log In",
+    "signup": "Sign Up"
+  },
+  "budget": {
+    "title": "Financial Planner",
+    "subtitle": "Enter your monthly income and expenses to analyze your spending and make smart financial decisions",
+    "monthly_income": "Monthly Income",
+    "budget_distribution": "Budget Distribution",
+    "categories": {
+      "charity": "Charity",
+      "food": "Food",
+      "housing": "Housing",
+      "utilities": "Utilities",
+      "maintenance": "Maintenance",
+      "transportation": "Transportation",
+      "education": "Education",
+      "entertainment": "Entertainment",
+      "debt": "Debt",
+      "health": "Health",
+      "savings": "Savings",
+      "others": "Others"
+    },
+    "total_expenses": "Total Expenses",
+    "remaining_income": "Remaining Income",
+    "ready_analyze": "Ready to Analyze?",
+    "save_data": "Save Data",
+    "start_analysis": "Start Analysis",
+    "amount_placeholder": "Amount in JOD"
+  },
+  "analysis": {
+    "title": "Three-Thirds Financial Analysis",
+    "category_breakdown": "Category Breakdown",
+    "obligations": "Obligations",
+    "personal": "Personal",
+    "investment": "Investment",
+    "chart_explanation": "What This Chart Shows",
+    "chart_description": "This chart compares your actual monthly spending across three categories—Obligations, Personal, and Investment—against the ideal \"One-Third Rule\". It helps you identify where your spending might need adjustment.",
+    "current_vs_ideal": "Your Current vs Ideal Distribution",
+    "projection_title": "What This Projection Means",
+    "projection_description": "This 5-year projection compares your current investment habit with the ideal one-third rule. The first line shows how much you'd save if you continue as you are. The second line shows the potential if you align your investments with the recommended portion of your income.",
+    "investment_projection": "5-Year Investment Projection",
+    "financial_insights": "Financial Insights",
+    "download_pdf": "Download PDF"
+  }
+}
