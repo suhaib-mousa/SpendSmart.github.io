@@ -9,45 +9,64 @@
     "login": "Log In",
     "signup": "Sign Up"
   },
-  "budget": {
-    "title": "Financial Planner",
-    "subtitle": "Enter your monthly income and expenses to analyze your spending and make smart financial decisions",
-    "monthly_income": "Monthly Income",
-    "budget_distribution": "Budget Distribution",
-    "categories": {
-      "charity": "Charity",
-      "food": "Food",
-      "housing": "Housing",
-      "utilities": "Utilities",
-      "maintenance": "Maintenance",
-      "transportation": "Transportation",
-      "education": "Education",
-      "entertainment": "Entertainment",
-      "debt": "Debt",
-      "health": "Health",
-      "savings": "Savings",
-      "others": "Others"
+  "home": {
+    "hero": {
+      "title": "Spend Smart, Live Better",
+      "subtitle": "Take control of your finances with Jordan's premier budget management and discount discovery platform.",
+      "start_saving": "Start Saving Now",
+      "explore_discounts": "Explore Discounts"
     },
-    "total_expenses": "Total Expenses",
-    "remaining_income": "Remaining Income",
-    "ready_analyze": "Ready to Analyze?",
-    "save_data": "Save Data",
-    "start_analysis": "Start Analysis",
-    "amount_placeholder": "Amount in JOD"
-  },
-  "analysis": {
-    "title": "Three-Thirds Financial Analysis",
-    "category_breakdown": "Category Breakdown",
-    "obligations": "Obligations",
-    "personal": "Personal",
-    "investment": "Investment",
-    "chart_explanation": "What This Chart Shows",
-    "chart_description": "This chart compares your actual monthly spending across three categories—Obligations, Personal, and Investment—against the ideal \"One-Third Rule\". It helps you identify where your spending might need adjustment.",
-    "current_vs_ideal": "Your Current vs Ideal Distribution",
-    "projection_title": "What This Projection Means",
-    "projection_description": "This 5-year projection compares your current investment habit with the ideal one-third rule. The first line shows how much you'd save if you continue as you are. The second line shows the potential if you align your investments with the recommended portion of your income.",
-    "investment_projection": "5-Year Investment Projection",
-    "financial_insights": "Financial Insights",
-    "download_pdf": "Download PDF"
+    "why_section": {
+      "title": "Why SpendSmart",
+      "subtitle": "SpendSmart empowers you to make smarter financial decisions with tools designed specifically for Jordan's market.",
+      "features": {
+        "budget": {
+          "title": "Take Control of Your Budget",
+          "description": "Set financial goals, track expenses, and monitor your progress with our intuitive budgeting tools."
+        },
+        "discounts": {
+          "title": "Discover Discounts",
+          "description": "Access the latest deals and discounts across Jordan, updated in real-time and tailored to your preferences."
+        },
+        "tips": {
+          "title": "Financial Tips",
+          "description": "Learn essential financial advice, tips, and strategies to help you make informed decisions and save money."
+        }
+      }
+    },
+    "features": {
+      "title": "Powerful Features",
+      "subtitle": "Discover all the tools SpendSmart offers to help you manage your finances and save money.",
+      "budgeting": {
+        "title": "Personalized Budgeting Tools",
+        "description": "Create custom budgets based on your income and expenses. Set financial goals and track your progress with visual charts and reports. Get insights into your spending patterns and identify areas where you can save.",
+        "learn_more": "Learn More"
+      },
+      "recommendations": {
+        "title": "Smart Recommendation System",
+        "description": "Our AI-powered system analyzes your spending habits and suggests ways to save money. Get personalized recommendations for budget adjustments and discover deals that match your interests and needs.",
+        "learn_more": "Learn More"
+      },
+      "database": {
+        "title": "Comprehensive Discount Database",
+        "description": "Browse and filter discounts by category, location, and expiration date. Find the best deals in Jordan for restaurants, retail, services, and more. Save your favorite deals and get notified when similar offers become available.",
+        "learn_more": "Learn More"
+      },
+      "community": {
+        "title": "Community & Reviews",
+        "description": "Connect with other budget-conscious individuals in Jordan. Share your experiences, tips, and reviews of local businesses. Learn from others' financial journeys and contribute your own insights to help the community.",
+        "learn_more": "Learn More"
+      },
+      "education": {
+        "title": "Educational Resources",
+        "description": "Access a wealth of articles, videos, and guides about budgeting, saving, and financial wellness. Learn practical tips for managing your finances in Jordan's economic environment. Stay updated on financial news and trends that affect your wallet.",
+        "learn_more": "Learn More"
+      }
+    },
+    "cta": {
+      "title": "Ready to Start Saving?",
+      "subtitle": "Join thousands of users in Jordan who are taking control of their finances and discovering amazing deals with SpendSmart.",
+      "signup": "Sign Up for Free"
+    }
   }
 }
