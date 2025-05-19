@@ -1,7 +1,10 @@
+```jsx
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { toast } from 'react-hot-toast';
 import { logout } from '../services/auth';
+import LanguageSwitcher from './LanguageSwitcher';
 
 const Navbar = () => {
   const location = useLocation();
@@ -10,6 +13,7 @@ const Navbar = () => {
   const [user, setUser] = useState(null);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const isTipsPage = location.pathname === '/tips';
+  const { t } = useTranslation();
 
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
@@ -62,7 +66,7 @@ const Navbar = () => {
                 className={`nav-link ${location.pathname === '/' ? 'active' : ''}`} 
                 to="/"
               >
-                Home
+                {t('nav.home')}
               </Link>
             </li>
             <li className="nav-item dropdown" ref={dropdownRef}>
@@ -70,7 +74,7 @@ const Navbar = () => {
                 className={`nav-link dropdown-toggle btn btn-link ${location.pathname.includes('/budget') || location.pathname.includes('/planner') ? 'active' : ''}`}
                 onClick={toggleDropdown}
               >
-                Budgeting
+                {t('nav.budgeting')}
               </button>
               <ul className={`dropdown-menu ${dropdownOpen ? 'show' : ''}`}>
                 <li>
@@ -79,7 +83,7 @@ const Navbar = () => {
                     to="/budget"
                     onClick={() => setDropdownOpen(false)}
                   >
-                    Budget Analysis
+                    {t('nav.budget_analysis')}
                   </Link>
                 </li>
                 <li>
@@ -88,7 +92,7 @@ const Navbar = () => {
                     to="/planner"
                     onClick={() => setDropdownOpen(false)}
                   >
-                    Financial Planner
+                    {t('nav.financial_planner')}
                   </Link>
                 </li>
               </ul>
@@ -98,7 +102,7 @@ const Navbar = () => {
                 className={`nav-link ${location.pathname === '/discounts' ? 'active' : ''}`}
                 to="/discounts"
               >
-                Discounts
+                {t('nav.discounts')}
               </Link>
             </li>
             <li className="nav-item">
@@ -106,19 +110,20 @@ const Navbar = () => {
                 className={`nav-link ${location.pathname === '/tips' ? 'active' : ''}`}
                 to="/tips"
               >
-                Tips
+                {t('nav.tips')}
               </Link>
             </li>
           </ul>
-          <div className="ms-lg-4 mt-3 mt-lg-0">
+          <div className="ms-lg-4 mt-3 mt-lg-0 d-flex align-items-center">
+            <LanguageSwitcher />
             {user ? (
-              <div className="d-flex align-items-center">
+              <div className="d-flex align-items-center ms-3">
                 <span className="me-3">Welcome, {user.firstName}!</span>
                 <button 
                   onClick={handleLogout} 
                   className="btn btn-outline-primary"
                 >
-                  Sign Out
+                  {t('nav.logout')}
                 </button>
               </div>
             ) : (
@@ -127,13 +132,13 @@ const Navbar = () => {
                   to="/login" 
                   className={`btn btn-outline-primary me-2 ${location.pathname === '/login' ? 'active' : ''}`}
                 >
-                  Log In
+                  {t('nav.login')}
                 </Link>
                 <Link 
                   to="/signup" 
                   className={`btn btn-primary ${location.pathname === '/signup' ? 'active' : ''}`}
                 >
-                  Sign Up
+                  {t('nav.signup')}
                 </Link>
               </>
             )}
@@ -145,3 +150,4 @@ const Navbar = () => {
 };
 
 export default Navbar;
+```
