@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import '../styles/Discounts.css';
@@ -22,6 +23,7 @@ function Discounts() {
   const [user, setUser] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   useEffect(() => {
     AOS.init({
@@ -257,13 +259,13 @@ function Discounts() {
         <div className="container">
           <div className="row align-items-center">
             <div className="col-lg-6" data-aos="fade-right">
-              <h1>Find the Best Deals</h1>
-              <p>Discover amazing discounts and offers across Jordan</p>
+              <h1>{t('discounts.hero.title')}</h1>
+              <p>{t('discounts.hero.subtitle')}</p>
               {user && (
                 <div className="search-box">
                   <input 
                     type="text" 
-                    placeholder="Search for deals, locations, or categories..." 
+                    placeholder={t('discounts.hero.search_placeholder')}
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                   />
@@ -288,7 +290,7 @@ function Discounts() {
                   value={selectedLocation} 
                   onChange={(e) => setSelectedLocation(e.target.value)}
                 >
-                  <option value="">All Locations</option>
+                  <option value="">{t('discounts.filters.all_locations')}</option>
                   {locations.map(location => (
                     <option key={location} value={location}>{location}</option>
                   ))}
@@ -300,23 +302,24 @@ function Discounts() {
                   value={selectedPriceRange} 
                   onChange={(e) => setPriceRange(e.target.value)}
                 >
-                  <option value="">Price Range</option>
-                  <option value="under50">Under 50 JD</option>
-                  <option value="50to100">50-100 JD</option>
-                  <option value="100to200">100-200 JD</option>
-                  <option value="over200">Over 200 JD</option>
+                  <option value="">{t('discounts.filters.price_range.label')}</option>
+                  <option value="under50">{t('discounts.filters.price_range.under50')}</option>
+                  <option value="50to100">{t('discounts.filters.price_range.50to100')}</option>
+                  <option value="100to200">{t('discounts.filters.price_range.100to200')}</option>
+                  <option value="over200">{t('discounts.filters.price_range.over200')}</option>
                 </select>
               </div>
               <div className="col-md-3">
                 <select 
                   className="form-select" 
                   value={selectedDiscount} 
+                  
                   onChange={(e) => setDiscount(e.target.value)}
                 >
-                  <option value="">Discount Range</option>
-                  <option value="under25">Under 25%</option>
-                  <option value="25to50">25-50%</option>
-                  <option value="over50">Over 50%</option>
+                  <option value="">{t('discounts.filters.discount_range.label')}</option>
+                  <option value="under25">{t('discounts.filters.discount_range.under25')}</option>
+                  <option value="25to50">{t('discounts.filters.discount_range.25to50')}</option>
+                  <option value="over50">{t('discounts.filters.discount_range.over50')}</option>
                 </select>
               </div>
               <div className="col-md-3">
@@ -329,7 +332,7 @@ function Discounts() {
                     setDiscount('');
                   }}
                 >
-                  Clear Filters
+                  {t('discounts.filters.clear')}
                 </button>
               </div>
             </div>
@@ -342,9 +345,9 @@ function Discounts() {
         <div className="container">
           {!user && (
             <div className="alert alert-info text-center mb-4" role="alert">
-              <h4 className="alert-heading mb-2">Limited Preview</h4>
+              <h4 className="alert-heading mb-2">{t('discounts.preview.title')}</h4>
               <p className="mb-0">
-                <Link to="/login" className="alert-link">Log in</Link> or <Link to="/signup" className="alert-link">sign up</Link> to see all available deals and unlock advanced features!
+                <Link to="/login" className="alert-link">{t('nav.login')}</Link> {t('nav.or')} <Link to="/signup" className="alert-link">{t('nav.signup')}</Link> {t('discounts.preview.message')}
               </p>
             </div>
           )}
@@ -355,8 +358,8 @@ function Discounts() {
                 <div className="deal-card" onClick={() => handleDealClick(deal)}>
                   <div className="deal-image">
                     <img src={deal.image} alt={deal.title} />
-                    <div className="deal-tag">{deal.discount} OFF</div>
-                    {deal.isNew && <div className="badge-new">NEW</div>}
+                    <div className="deal-tag">{deal.discount} {t('discounts.deal_card.save')}</div>
+                    {deal.isNew && <div className="badge-new">{t('discounts.deal_card.new')}</div>}
                   </div>
                   <div className="deal-details">
                     <h3>{deal.title}</h3>
@@ -366,7 +369,7 @@ function Discounts() {
                         <span className="original">{deal.originalPrice} JD</span>
                         <span className="current">{deal.currentPrice} JD</span>
                       </span>
-                      <span className="saved">Save {deal.originalPrice - deal.currentPrice} JD</span>
+                      <span className="saved">{t('discounts.deal_card.save')} {deal.originalPrice - deal.currentPrice} JD</span>
                     </div>
                   </div>
                 </div>
@@ -375,8 +378,8 @@ function Discounts() {
             
             {displayedDeals.length === 0 && (
               <div className="col-12 text-center py-5">
-                <h3>No deals found matching your criteria</h3>
-                <p>Try adjusting your filters or search term</p>
+                <h3>{t('discounts.messages.no_deals')}</h3>
+                <p>{t('discounts.messages.adjust_filters')}</p>
               </div>
             )}
           </div>
@@ -393,7 +396,7 @@ function Discounts() {
                 <div className="relative overflow-hidden">
                   <img src={selectedDeal.image} alt={selectedDeal.title} className="w-full h-64 object-cover" />
                   <div className="absolute top-0 right-0 p-4">
-                    <span className="discount-badge">{selectedDeal.discount} OFF</span>
+                    <span className="discount-badge">{selectedDeal.discount} {t('discounts.deal_card.save')}</span>
                   </div>
                   <button onClick={closeModal} className="close absolute top-4 right-4 bg-light rounded-full w-8 h-8 flex items-center justify-center shadow-md">
                     <i className="fas fa-times"></i>
@@ -403,7 +406,7 @@ function Discounts() {
                 <div className="p-6">
                   <div className="flex justify-between items-start mb-4">
                     <h2 className="text-2xl font-bold">{selectedDeal.title}</h2>
-                    {selectedDeal.isNew && <div className="badge-new">NEW</div>}
+                    {selectedDeal.isNew && <div className="badge-new">{t('discounts.deal_card.new')}</div>}
                     
                     <div>
                       <div className="star-rating">
@@ -418,12 +421,12 @@ function Discounts() {
                     <span className="category-badge">{selectedDeal.category?.name || 'Uncategorized'}</span>
                     <span className="location-badge">{selectedDeal.location}</span>
                     <span className="text-gray-500 text-sm py-1 px-2 bg-gray-100 rounded-md">
-                      Expires on {new Date(selectedDeal.validUntil).toLocaleDateString()}
+                      {t('discounts.deal_modal.expires')} {new Date(selectedDeal.validUntil).toLocaleDateString()}
                     </span>
                   </div>
 
                   <div className="mb-6">
-                    <h3 className="text-lg font-semibold mb-2">About This Discount</h3>
+                    <h3 className="text-lg font-semibold mb-2">{t('discounts.deal_modal.about')}</h3>
                     <p className="text-gray-700 mb-4">{selectedDeal.description}</p>
                     <div className="flex items-center text-gray-700">
                       <i className="fas fa-map-marker-alt mr-2 text-red-500"></i>
@@ -432,17 +435,17 @@ function Discounts() {
                   </div>
 
                   <div className="border-t border-gray-200 pt-6 mb-6">
-                    <h3 className="text-lg font-semibold mb-4">Reviews & Feedback</h3>
+                    <h3 className="text-lg font-semibold mb-4">{t('discounts.deal_modal.reviews')}</h3>
                     
                     {user && (
                       <div className="review-form bg-gray-50 p-4 rounded-lg mb-4">
                         {!userReview || isEditing ? (
                           <form onSubmit={handleReviewSubmit}>
                             <h4 className="font-medium mb-3">
-                              {userReview ? 'Edit Your Review' : 'Add Your Review'}
+                              {userReview ? t('discounts.deal_modal.edit_review') : t('discounts.deal_modal.add_review')}
                             </h4>
                             <div className="mb-3">
-                              <label className="block text-gray-700 text-sm font-medium mb-1">Rating</label>
+                              <label className="block text-gray-700 text-sm font-medium mb-1">{t('discounts.deal_modal.rating')}</label>
                               <div className="star-input-container flex">
                                 {[1, 2, 3, 4, 5].map((star) => (
                                   <span
@@ -456,7 +459,7 @@ function Discounts() {
                               </div>
                             </div>
                             <div className="mb-3">
-                              <label className="block text-gray-700 text-sm font-medium mb-1">Your Review</label>
+                              <label className="block text-gray-700 text-sm font-medium mb-1">{t('discounts.deal_modal.comment')}</label>
                               <textarea
                                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                                 rows="3"
@@ -467,7 +470,7 @@ function Discounts() {
                             </div>
                             <div className="flex gap-3">
                               <input type="submit" className="btn btn-primary mx-2"
-                                value={userReview ? 'Update Review' : 'Submit Review'}
+                                value={userReview ? t('discounts.deal_modal.update') : t('discounts.deal_modal.submit')}
                               />
                               {isEditing && (
                                 <div 
@@ -475,7 +478,7 @@ function Discounts() {
                                   className="btn btn-secondary"
                                   onClick={handleCancelEdit}
                                 >
-                                  Cancel
+                                  {t('discounts.deal_modal.cancel')}
                                 </div>
                               )}
                             </div>
@@ -483,7 +486,7 @@ function Discounts() {
                         ) : (
                           <div>
                             <div className="flex justify-between items-start">
-                              <h4 className="font-medium mb-3">Your Review</h4>
+                              <h4 className="font-medium mb-3">{t('discounts.deal_modal.your_review')}</h4>
                               <div className='d-flex float-end'>
                                 <div 
                                   onClick={handleEditClick}
@@ -516,7 +519,7 @@ function Discounts() {
 
                     <div className="other-reviews">
                       <h4 className="font-medium mb-3">
-                        {user ? 'Other Reviews' : 'Reviews'}
+                        {user ? t('discounts.deal_modal.other_reviews') : t('discounts.deal_modal.reviews')}
                       </h4>
                       {dealReviews.length > 0 ? (
                         dealReviews.map((review) => (
@@ -544,15 +547,15 @@ function Discounts() {
                           )
                         ))
                       ) : (
-                        <p className="text-gray-500">No reviews yet. Be the first to review!</p>
+                        <p className="text-gray-500">{t('discounts.deal_modal.no_reviews')}</p>
                       )}
                     </div>
 
                     {!user && (
                       <div className="text-center mt-4">
-                        <p className="mb-3">Please log in to leave a review</p>
+                        <p className="mb-3">{t('discounts.deal_modal.login_prompt')}</p>
                         <Link to="/login" className="btn btn-primary">
-                          Log In
+                          {t('nav.login')}
                         </Link>
                       </div>
                     )}
