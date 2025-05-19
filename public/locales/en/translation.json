@@ -11,6 +11,66 @@
     "logout": "Sign Out",
     "welcome": "Welcome, {{name}}!"
   },
+  "home": {
+    "hero": {
+      "title": "Spend Smart, Live Better",
+      "subtitle": "Take control of your finances with Jordan's premier budget management and discount discovery platform.",
+      "start_saving": "Start Saving Now",
+      "explore_discounts": "Explore Discounts"
+    },
+    "why_section": {
+      "title": "Why SpendSmart",
+      "subtitle": "SpendSmart empowers you to make smarter financial decisions with tools designed specifically for Jordan's market.",
+      "features": {
+        "budget": {
+          "title": "Take Control of Your Budget",
+          "description": "Set financial goals, track expenses, and monitor your progress with our intuitive budgeting tools."
+        },
+        "discounts": {
+          "title": "Discover Discounts",
+          "description": "Access the latest deals and discounts across Jordan, updated in real-time and tailored to your preferences."
+        },
+        "tips": {
+          "title": "Financial Tips",
+          "description": "Learn essential financial advice, tips, and strategies to help you make informed decisions and save money."
+        }
+      }
+    },
+    "features": {
+      "title": "Powerful Features",
+      "subtitle": "Discover all the tools SpendSmart offers to help you manage your finances and save money.",
+      "budgeting": {
+        "title": "Personalized Budgeting Tools",
+        "description": "Create custom budgets based on your income and expenses. Set financial goals and track your progress with visual charts and reports.",
+        "learn_more": "Learn More"
+      },
+      "recommendations": {
+        "title": "Smart Recommendation System",
+        "description": "Our AI-powered system analyzes your spending habits and suggests ways to save money.",
+        "learn_more": "Learn More"
+      },
+      "database": {
+        "title": "Comprehensive Discount Database",
+        "description": "Browse and filter discounts by category, location, and expiration date.",
+        "learn_more": "Learn More"
+      },
+      "community": {
+        "title": "Community & Reviews",
+        "description": "Connect with other budget-conscious individuals in Jordan.",
+        "learn_more": "Learn More"
+      },
+      "education": {
+        "title": "Educational Resources",
+        "description": "Access a wealth of articles, videos, and guides about budgeting, saving, and financial wellness.",
+        "learn_more": "Learn More"
+      }
+    },
+    "cta": {
+      "title": "Ready to Start Saving?",
+      "subtitle": "Join thousands of users in Jordan who are taking control of their finances and discovering amazing deals with SpendSmart.",
+      "signup": "Sign Up for Free"
+    }
+  },
   "footer": {
     "copyright": "© 2025 University Of Jordan, SpendSmart",
     "links": {
