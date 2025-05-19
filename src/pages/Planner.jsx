@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import Chart from 'chart.js/auto';
 import html2pdf from 'html2pdf.js';
 import { toast } from 'react-hot-toast';
@@ -10,6 +11,7 @@ import '../styles/Planner.css';
 
 function Planner() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [user, setUser] = useState(null);
   const [plannerHistory, setPlannerHistory] = useState([]);
   const [showHistory, setShowHistory] = useState(false);
@@ -163,51 +165,51 @@ function Planner() {
   };
 
   const updateBudgetChart = () => {
-  if (budgetCanvasRef.current) {
-    if (budgetChartRef.current) {
-      budgetChartRef.current.destroy();
-    }
+    if (budgetCanvasRef.current) {
+      if (budgetChartRef.current) {
+        budgetChartRef.current.destroy();
+      }
 
-    const ctx = budgetCanvasRef.current.getContext('2d');
-    budgetChartRef.current = new Chart(ctx, {
-      type: 'doughnut',
-      data: {
-        labels: Object.keys(expenses).map(key => key.charAt(0).toUpperCase() + key.slice(1)),
-        datasets: [{
-          data: Object.values(expenses),
-          backgroundColor: [
-            '#52741F', '#00B2F6', '#FF6B6B', '#4ECDC4', '#FF9F43',
-            '#F368E0', '#FFD93D', '#6C5CE7', '#E69DB8', '#C599B6',
-            '#00B894', '#A569BD'
-          ]
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: {
-            position: 'bottom',
-            labels: {
-              padding: 20
+      const ctx = budgetCanvasRef.current.getContext('2d');
+      budgetChartRef.current = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: Object.keys(expenses).map(key => t(`planner.budget.categories.${key}`)),
+          datasets: [{
+            data: Object.values(expenses),
+            backgroundColor: [
+              '#52741F', '#00B2F6', '#FF6B6B', '#4ECDC4', '#FF9F43',
+              '#F368E0', '#FFD93D', '#6C5CE7', '#E69DB8', '#C599B6',
+              '#00B894', '#A569BD'
+            ]
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: {
+                padding: 20
+              }
             }
           }
         }
-      }
-    });
-  }
-};
+      });
+    }
+  };
 
-const destroyAnalysisCharts = () => {
-  if (comparisonChartRef.current) {
-    comparisonChartRef.current.destroy();
-    comparisonChartRef.current = null;
-  }
-  if (yearlyChartRef.current) {
-    yearlyChartRef.current.destroy();
-    yearlyChartRef.current = null;
-  }
-};
+  const destroyAnalysisCharts = () => {
+    if (comparisonChartRef.current) {
+      comparisonChartRef.current.destroy();
+      comparisonChartRef.current = null;
+    }
+    if (yearlyChartRef.current) {
+      yearlyChartRef.current.destroy();
+      yearlyChartRef.current = null;
+    }
+  };
 
   const updateAnalysisCharts = () => {
     const obligationsCategories = ['housing', 'transportation', 'debt', 'health', 'education', 'maintenance', 'utilities'];
@@ -243,7 +245,6 @@ const destroyAnalysisCharts = () => {
       };
     }
 
-    // Update comparison chart
     if (comparisonCanvasRef.current) {
       if (comparisonChartRef.current) {
         comparisonChartRef.current.destroy();
@@ -253,15 +254,15 @@ const destroyAnalysisCharts = () => {
       comparisonChartRef.current = new Chart(ctx, {
         type: 'bar',
         data: {
-          labels: ['Obligations', 'Personal', 'Investment'],
+          labels: [t('planner.analysis.obligations'), t('planner.analysis.personal'), t('planner.analysis.investment')],
           datasets: [
             {
-              label: 'Your Spending',
+              label: t('planner.analysis.your_spending'),
               data: [actual.obligations, actual.personal, actual.investment],
               backgroundColor: '#2A4B7C'
             },
             {
-              label: 'Ideal Distribution',
+              label: t('planner.analysis.ideal_distribution'),
               data: [ideal.obligations, ideal.personal, ideal.investment],
               backgroundColor: '#00B894'
             }
@@ -279,7 +280,6 @@ const destroyAnalysisCharts = () => {
       });
     }
 
-    // Update yearly projection chart
     if (yearlyCanvasRef.current) {
       if (yearlyChartRef.current) {
         yearlyChartRef.current.destroy();
@@ -294,16 +294,16 @@ const destroyAnalysisCharts = () => {
       yearlyChartRef.current = new Chart(ctx, {
         type: 'line',
         data: {
-          labels: ['Year 1', 'Year 2', 'Year 3', 'Year 4', 'Year 5'],
+          labels: Array.from({ length: 5 }, (_, i) => t('planner.analysis.year', { year: i + 1 })),
           datasets: [
             {
-              label: 'Your Investment (Current)',
+              label: t('planner.analysis.current_investment'),
               data: yearlyProjection.current,
               borderColor: '#2A4B7C',
               fill: false
             },
             {
-              label: 'Ideal Investment',
+              label: t('planner.analysis.ideal_investment'),
               data: yearlyProjection.ideal,
               borderColor: '#00B894',
               fill: false
@@ -332,7 +332,7 @@ const destroyAnalysisCharts = () => {
 
   const handleStartAnalysis = async () => {
     if (!user) {
-      toast.error('Please log in to view analysis');
+      toast.error(t('planner.errors.login_required'));
       navigate('/login');
       return;
     }
@@ -344,7 +344,6 @@ const destroyAnalysisCharts = () => {
     try {
       setIsSaving(true);
 
-      // Check if there's already an entry with the same values
       const hasMatchingEntry = plannerHistory.some(entry => {
         return entry.monthlyIncome === monthlyIncome &&
           Object.entries(entry.expenses).every(([key, value]) => 
@@ -353,19 +352,18 @@ const destroyAnalysisCharts = () => {
       });
 
       if (!hasMatchingEntry) {
-        // Only save if there's no matching entry
         await savePlannerEntry({
           monthlyIncome,
           expenses
         });
         await fetchPlannerHistory();
-        toast.success('Data saved successfully!');
+        toast.success(t('planner.success.data_saved'));
       }
       
       setShowAnalysis(!showAnalysis);
     } catch (error) {
       console.error('Error saving plan:', error);
-      toast.error('Failed to save financial plan');
+      toast.error(t('planner.errors.save_failed'));
     } finally {
       setIsSaving(false);
     }
@@ -413,23 +411,23 @@ const destroyAnalysisCharts = () => {
   return (
     <div className="budget-container">
       <div className="main-container">
-        <h1 className="page-title">Financial Planner</h1>
-        <p className="subheading">Enter your monthly income and expenses to analyze your spending and make smart financial decisions.</p>
+        <h1 className="page-title">{t('planner.title')}</h1>
+        <p className="subheading">{t('planner.subtitle')}</p>
         
         <div className="left-content">
           <div className="budget-section income-box">
-            <h2 className="section-title">Monthly Income</h2>
+            <h2 className="section-title">{t('planner.income.title')}</h2>
             <input
               type="number"
               className="amount-input"
               value={monthlyIncome}
               onChange={(e) => setMonthlyIncome(parseFloat(e.target.value) || 0)}
-              placeholder="Amount in JOD"
+              placeholder={t('planner.income.placeholder')}
             />
           </div>
 
           <div className="budget-section">
-            <h2 className="section-title">Budget Distribution</h2>
+            <h2 className="section-title">{t('planner.budget.title')}</h2>
             {Object.entries(expenses).map(([category, value]) => (
               <div key={category} className="budget-item">
                 <div 
@@ -451,13 +449,13 @@ const destroyAnalysisCharts = () => {
                     }[category]
                   }}
                 />
-                <span className="capitalize">{category}</span>
+                <span className="capitalize">{t(`planner.budget.categories.${category}`)}</span>
                 <input
                   type="number"
                   className="amount-input"
                   value={value}
                   onChange={(e) => handleExpenseChange(category, e.target.value)}
-                  placeholder={`Enter ${category} expense`}
+                  placeholder={t('planner.budget.enter_expense', { category: t(`planner.budget.categories.${category}`) })}
                 />
                 <span className="percentage">
                   {((value / monthlyIncome) * 100 || 0).toFixed(1)}%
@@ -467,26 +465,26 @@ const destroyAnalysisCharts = () => {
           </div>
 
           <div className="total-section">
-            <span>Total Expenses:</span>
+            <span>{t('planner.totals.expenses')}:</span>
             <span>{totalExpenses.toFixed(2)} JOD</span>
           </div>
 
           <div className="remaining-income">
-            <span>Remaining Income:</span>
+            <span>{t('planner.totals.remaining')}:</span>
             <span>{remainingIncome.toFixed(2)} JOD</span>
           </div>
 
           {user && showHistory && plannerHistory.length > 0 && (
             <div className="history-section budget-section">
-              <h2 className="section-title">Planning History</h2>
+              <h2 className="section-title">{t('planner.history.title')}</h2>
               {plannerHistory.map((entry, index) => (
                 <div key={entry._id} className="history-item">
-                  <h3>Plan {index + 1} - {new Date(entry.date).toLocaleDateString()}</h3>
+                  <h3>{t('planner.history.plan', { number: index + 1, date: new Date(entry.date).toLocaleDateString() })}</h3>
                   <div className="history-details">
-                    <p>Monthly Income: {entry.monthlyIncome.toFixed(2)} JOD</p>
-                    <p>Total Expenses: {entry.analysis.totalExpenses.toFixed(2)} JOD</p>
-                    <p>Savings Rate: {entry.analysis.savingsRate.toFixed(1)}%</p>
-                    <p>Debt to Income Ratio: {entry.analysis.debtToIncomeRatio.toFixed(1)}%</p>
+                    <p>{t('planner.history.monthly_income')}: {entry.monthlyIncome.toFixed(2)} JOD</p>
+                    <p>{t('planner.history.total_expenses')}: {entry.analysis.totalExpenses.toFixed(2)} JOD</p>
+                    <p>{t('planner.history.savings_rate')}: {entry.analysis.savingsRate.toFixed(1)}%</p>
+                    <p>{t('planner.history.debt_ratio')}: {entry.analysis.debtToIncomeRatio.toFixed(1)}%</p>
                   </div>
                 </div>
               ))}
@@ -502,8 +500,8 @@ const destroyAnalysisCharts = () => {
 
         <div className="cta-section">
           <div className="cta-content">
-            <h2>Ready to Analyze?</h2>
-            <p>{user ? 'View detailed insights to optimize your budget.' : 'Log in to save your data and view detailed insights.'}</p>
+            <h2>{t('planner.cta.title')}</h2>
+            <p>{user ? t('planner.cta.logged_in') : t('planner.cta.login_prompt')}</p>
             <div className="cta-buttons">
               <button 
                 className="save-button" 
@@ -511,11 +509,11 @@ const destroyAnalysisCharts = () => {
                 disabled={isSaving}
               >
                 <i className="fas fa-chart-pie"></i> 
-                {isSaving ? 'Processing...' : showAnalysis ? 'Hide Analysis' : 'Start Analysis'}
+                {isSaving ? t('planner.cta.processing') : showAnalysis ? t('planner.cta.hide_analysis') : t('planner.cta.start_analysis')}
               </button>
               {user && (
                 <button className="save-button" onClick={() => setShowHistory(!showHistory)}>
-                  <i className="fas fa-history"></i> {showHistory ? 'Hide History' : 'View History'}
+                  <i className="fas fa-history"></i> {showHistory ? t('planner.cta.hide_history') : t('planner.cta.view_history')}
                 </button>
               )}
             </div>
@@ -525,20 +523,20 @@ const destroyAnalysisCharts = () => {
         {showAnalysis && user && (
           <div className="analysis-container">
             <div className="analysis-header">
-              <h2>Three-Thirds Financial Analysis</h2>
+              <h2>{t('planner.analysis.title')}</h2>
               <div className="analysis-section">
-                <h3>Category Breakdown</h3>
+                <h3>{t('planner.analysis.breakdown_title')}</h3>
                 <ul>
-                  <li><span className="font-bold">Obligations (1/3):</span> Housing, Transportation, Debt, Health, Education, Maintenance, Utilities</li>
-                  <li><span className="font-bold">Personal (1/3):</span> Others, Entertainment, Charity, Food</li>
-                  <li><span className="font-bold">Investment (1/3):</span> Savings</li>
+                  <li><span className="font-bold">{t('planner.analysis.obligations')} (1/3):</span> {t('planner.analysis.obligations_list')}</li>
+                  <li><span className="font-bold">{t('planner.analysis.personal')} (1/3):</span> {t('planner.analysis.personal_list')}</li>
+                  <li><span className="font-bold">{t('planner.analysis.investment')} (1/3):</span> {t('planner.analysis.investment_list')}</li>
                 </ul>
               </div>
             </div>
 
             {insights && (
               <div className="insights-box">
-                <h3>Financial Insights</h3>
+                <h3>{t('planner.insights.title')}</h3>
                 <div className="insights-content">
                   <p className="main-message">{insights.mainMessage}</p>
                   {insights.tips.map((tip, index) => (
@@ -554,17 +552,17 @@ const destroyAnalysisCharts = () => {
             )}
 
             <div className="analysis-chart">
-              <h3>Current vs Ideal Distribution</h3>
+              <h3>{t('planner.analysis.comparison_title')}</h3>
               <canvas ref={comparisonCanvasRef}></canvas>
             </div>
 
             <div className="analysis-chart">
-              <h3>5-Year Investment Projection</h3>
+              <h3>{t('planner.analysis.projection_title')}</h3>
               <canvas ref={yearlyCanvasRef}></canvas>
             </div>
 
             <button className="save-button" onClick={downloadPDF} ref={downloadBtnRef}>
-              <i className="fas fa-file-download"></i> Download PDF Report
+              <i className="fas fa-file-download"></i> {t('planner.analysis.download_pdf')}
             </button>
           </div>
         )}
