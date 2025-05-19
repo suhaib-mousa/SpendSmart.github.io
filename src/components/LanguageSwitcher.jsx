@@ -1,4 +1,3 @@
-```jsx
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -29,4 +28,3 @@ const LanguageSwitcher = () => {
 };
 
 export default LanguageSwitcher;
-```
