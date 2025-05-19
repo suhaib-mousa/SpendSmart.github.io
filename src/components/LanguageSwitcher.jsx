@@ -12,16 +12,16 @@ const LanguageSwitcher = () => {
   return (
     <div className="language-switcher">
       <button
-        className={`lang-btn ${i18n.language === 'en' ? 'active' : ''}`}
-        onClick={() => changeLanguage('en')}
-      >
-        English
-      </button>
-      <button
         className={`lang-btn ${i18n.language === 'ar' ? 'active' : ''}`}
         onClick={() => changeLanguage('ar')}
       >
         العربية
+      </button>
+      <button
+        className={`lang-btn ${i18n.language === 'en' ? 'active' : ''}`}
+        onClick={() => changeLanguage('en')}
+      >
+        English
       </button>
     </div>
   );
