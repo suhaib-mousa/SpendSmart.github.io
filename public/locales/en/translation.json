@@ -11,6 +11,78 @@
     "logout": "Sign Out",
     "welcome": "Welcome, {{name}}!"
   },
+  "planner": {
+    "title": "Financial Planner",
+    "subtitle": "Enter your monthly income and expenses to analyze your spending and make smart financial decisions.",
+    "income": {
+      "title": "Monthly Income",
+      "placeholder": "Amount in JOD"
+    },
+    "budget": {
+      "title": "Budget Distribution",
+      "categories": {
+        "charity": "Charity",
+        "food": "Food",
+        "housing": "Housing",
+        "utilities": "Utilities",
+        "maintenance": "Maintenance",
+        "transportation": "Transportation",
+        "education": "Education",
+        "entertainment": "Entertainment",
+        "debt": "Debt",
+        "health": "Health",
+        "savings": "Savings",
+        "others": "Others"
+      },
+      "enter_expense": "Enter {{category}} expense"
+    },
+    "totals": {
+      "expenses": "Total Expenses",
+      "remaining": "Remaining Income"
+    },
+    "analysis": {
+      "title": "Three-Thirds Financial Analysis",
+      "breakdown": {
+        "title": "Category Breakdown",
+        "obligations": "Obligations (1/3)",
+        "obligations_items": "Housing, Transportation, Debt, Health, Education, Maintenance, Utilities",
+        "personal": "Personal (1/3)",
+        "personal_items": "Others, Entertainment, Charity, Food",
+        "investment": "Investment (1/3)",
+        "investment_items": "Savings"
+      }
+    },
+    "insights": {
+      "title": "Financial Insights",
+      "comparison": {
+        "title": "Current vs Ideal Distribution"
+      },
+      "projection": {
+        "title": "5-Year Investment Projection"
+      }
+    },
+    "actions": {
+      "analyze": "Start Analysis",
+      "hide_analysis": "Hide Analysis",
+      "processing": "Processing...",
+      "view_history": "View History",
+      "hide_history": "Hide History",
+      "download": "Download PDF Report"
+    },
+    "cta": {
+      "title": "Ready to Analyze?",
+      "subtitle_auth": "View detailed insights to optimize your budget.",
+      "subtitle_guest": "Log in to save your data and view detailed insights."
+    },
+    "history": {
+      "title": "Planning History",
+      "plan": "Plan",
+      "monthly_income": "Monthly Income",
+      "total_expenses": "Total Expenses",
+      "savings_rate": "Savings Rate",
+      "debt_ratio": "Debt to Income Ratio"
+    }
+  },
   "home": {
     "hero": {
       "title": "Spend Smart, Live Better",

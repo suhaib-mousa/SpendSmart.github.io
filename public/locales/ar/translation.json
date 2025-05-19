@@ -11,6 +11,78 @@
     "logout": "تسجيل الخروج",
     "welcome": "مرحباً، {{name}}!"
   },
+  "planner": {
+    "title": "المخطط المالي",
+    "subtitle": "أدخل دخلك الشهري ونفقاتك لتحليل إنفاقك واتخاذ قرارات مالية ذكية",
+    "income": {
+      "title": "الدخل الشهري",
+      "placeholder": "المبلغ بالدينار الأردني"
+    },
+    "budget": {
+      "title": "توزيع الميزانية",
+      "categories": {
+        "charity": "الصدقات",
+        "food": "الطعام",
+        "housing": "السكن",
+        "utilities": "المرافق",
+        "maintenance": "الصيانة",
+        "transportation": "المواصلات",
+        "education": "التعليم",
+        "entertainment": "الترفيه",
+        "debt": "الديون",
+        "health": "الصحة",
+        "savings": "المدخرات",
+        "others": "أخرى"
+      },
+      "enter_expense": "أدخل نفقات {{category}}"
+    },
+    "totals": {
+      "expenses": "إجمالي النفقات",
+      "remaining": "الدخل المتبقي"
+    },
+    "analysis": {
+      "title": "تحليل الأثلاث المالية",
+      "breakdown": {
+        "title": "تقسيم الفئات",
+        "obligations": "الالتزامات (الثلث الأول)",
+        "obligations_items": "السكن، المواصلات، الديون، الصحة، التعليم، الصيانة، المرافق",
+        "personal": "الشخصية (الثلث الثاني)",
+        "personal_items": "أخرى، الترفيه، الصدقات، الطعام",
+        "investment": "الاستثمار (الثلث الثالث)",
+        "investment_items": "المدخرات"
+      }
+    },
+    "insights": {
+      "title": "التحليلات المالية",
+      "comparison": {
+        "title": "التوزيع الحالي مقابل المثالي"
+      },
+      "projection": {
+        "title": "توقعات الاستثمار لخمس سنوات"
+      }
+    },
+    "actions": {
+      "analyze": "بدء التحليل",
+      "hide_analysis": "إخفاء التحليل",
+      "processing": "جاري المعالجة...",
+      "view_history": "عرض السجل",
+      "hide_history": "إخفاء السجل",
+      "download": "تحميل تقرير PDF"
+    },
+    "cta": {
+      "title": "جاهز للتحليل؟",
+      "subtitle_auth": "اعرض تحليلات مفصلة لتحسين ميزانيتك",
+      "subtitle_guest": "سجل دخولك لحفظ بياناتك وعرض التحليلات المفصلة"
+    },
+    "history": {
+      "title": "سجل التخطيط",
+      "plan": "الخطة",
+      "monthly_income": "الدخل الشهري",
+      "total_expenses": "إجمالي النفقات",
+      "savings_rate": "معدل الادخار",
+      "debt_ratio": "نسبة الدين إلى الدخل"
+    }
+  },
   "home": {
     "hero": {
       "title": "أنفق بذكاء، عش بشكل أفضل",
