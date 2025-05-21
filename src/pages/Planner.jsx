@@ -33,7 +33,8 @@ function Planner() {
   const [showAnalysis, setShowAnalysis] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [insights, setInsights] = useState(null);
-  
+  const [error, setError] = useState('');
+
   // Chart refs
   const budgetChartRef = useRef(null);
   const comparisonChartRef = useRef(null);
@@ -64,6 +65,15 @@ function Planner() {
 
   useEffect(() => {
     updateBudgetChart();
+  }, [monthlyIncome, expenses]);
+
+  useEffect(() => {
+    const total = Object.values(expenses).reduce((sum, val) => sum + (parseFloat(val) || 0), 0);
+    if (total > monthlyIncome) {
+      setError('Total expenses exceed your salary!');
+    } else {
+      setError('');
+    }
   }, [monthlyIncome, expenses]);
 
   useEffect(() => {
@@ -165,40 +175,59 @@ function Planner() {
   };
 
   const updateBudgetChart = () => {
-    if (budgetCanvasRef.current) {
-      if (budgetChartRef.current) {
-        budgetChartRef.current.destroy();
-      }
+  if (budgetCanvasRef.current) {
+    if (budgetChartRef.current) {
+      budgetChartRef.current.destroy();
+    }
 
-      const ctx = budgetCanvasRef.current.getContext('2d');
-      budgetChartRef.current = new Chart(ctx, {
-        type: 'doughnut',
-        data: {
-          labels: Object.keys(expenses).map(key => t(`planner.budget.categories.${key}`)),
-          datasets: [{
-            data: Object.values(expenses),
-            backgroundColor: [
-              '#52741F', '#00B2F6', '#FF6B6B', '#4ECDC4', '#FF9F43',
-              '#F368E0', '#FFD93D', '#6C5CE7', '#E69DB8', '#C599B6',
-              '#00B894', '#A569BD'
-            ]
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: {
-              position: 'bottom',
-              labels: {
-                padding: 20
-              }
+    const ctx = budgetCanvasRef.current.getContext('2d');
+
+    const totalExpenses = Object.values(expenses).reduce((sum, val) => sum + (parseFloat(val) || 0), 0);
+    const remaining = monthlyIncome > totalExpenses ? monthlyIncome - totalExpenses : 0;
+
+    const labels = [...Object.keys(expenses).map(key => t(`planner.budget.categories.${key}`))];
+    const data = [...Object.values(expenses).map(v => parseFloat(v) || 0)];
+
+    if (remaining > 0) {
+      labels.push(t('planner.budget.remaining')); // Add "Remaining" label translation
+      data.push(remaining);
+    }
+
+    const backgroundColors = [
+      '#52741F', '#00B2F6', '#FF6B6B', '#4ECDC4', '#FF9F43',
+      '#F368E0', '#FFD93D', '#6C5CE7', '#E69DB8', '#C599B6',
+      '#00B894', '#A569BD'
+    ];
+
+    if (remaining > 0) {
+      backgroundColors.push('#CCCCCC'); // Grey for remaining
+    }
+
+    budgetChartRef.current = new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels,
+        datasets: [{
+          data,
+          backgroundColor: backgroundColors.slice(0, labels.length)
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'bottom',
+            labels: {
+              padding: 20
             }
           }
         }
-      });
-    }
-  };
+      }
+    });
+  }
+};
+
 
   const destroyAnalysisCharts = () => {
     if (comparisonChartRef.current) {
@@ -417,6 +446,8 @@ function Planner() {
         <div className="left-content">
           <div className="budget-section income-box">
             <h2 className="section-title">{t('planner.income.title')}</h2>
+            {error && <div className="error-message" style={{ color: 'red', marginTop: '10px' }}>{error}</div>}
+
             <input
               type="number"
               className="amount-input"
@@ -503,14 +534,21 @@ function Planner() {
             <h2>{t('planner.cta.title')}</h2>
             <p>{user ? t('planner.cta.logged_in') : t('planner.cta.login_prompt')}</p>
             <div className="cta-buttons">
-              <button 
+             <button 
                 className="save-button" 
                 onClick={handleStartAnalysis}
-                disabled={isSaving}
+                disabled={isSaving || !!error}
+                title={error || ''}
               >
                 <i className="fas fa-chart-pie"></i> 
-                {isSaving ? t('planner.cta.processing') : showAnalysis ? t('planner.cta.hide_analysis') : t('planner.cta.start_analysis')}
+                {isSaving 
+                  ? t('planner.cta.processing') 
+                  : error 
+                    ? error 
+                    : (showAnalysis ? t('planner.cta.hide_analysis') : t('planner.cta.start_analysis'))
+                }
               </button>
+
               {user && (
                 <button className="save-button" onClick={() => setShowHistory(!showHistory)}>
                   <i className="fas fa-history"></i> {showHistory ? t('planner.cta.hide_history') : t('planner.cta.view_history')}
