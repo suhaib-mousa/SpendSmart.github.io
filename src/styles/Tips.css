@@ -2,6 +2,7 @@
   min-height: 100vh;
   position: relative;
   overflow: hidden;
+  direction: ltr !important;
 }
 
 #hero  {
@@ -39,6 +40,8 @@
   color: #fffdfd;
   transition: background 0.3s ease;
   margin-top: 1rem;
+  position: relative;
+    z-index: 1;
 }
 
 .tip-link:hover {
