@@ -99,36 +99,42 @@ function Planner() {
   };
 
   const generateInsights = () => {
+    // 1) compute totals
     const obligationsCategories = ['housing','transportation','debt','health','education','maintenance','utilities'];
-    const personalCategories   = ['others','entertainment','charity','food'];
-    const investmentCategories = ['savings'];
+    const personalCategories    = ['others','entertainment','charity','food'];
+    const investmentCategories  = ['savings'];
 
     const actual = {
-      obligations: obligationsCategories.reduce((sum,cat)=> sum + (expenses[cat]||0), 0),
-      personal:    personalCategories.reduce((sum,cat)=> sum + (expenses[cat]||0), 0),
-      investment:  investmentCategories.reduce((sum,cat)=> sum + (expenses[cat]||0), 0)
+      obligations: obligationsCategories.reduce((s,cat)=> s + (expenses[cat]||0), 0),
+      personal:    personalCategories.reduce((s,cat)=> s + (expenses[cat]||0), 0),
+      investment:  investmentCategories.reduce((s,cat)=> s + (expenses[cat]||0), 0)
     };
 
-    const idealPortion = monthlyIncome / 3;
-    let ideal = { obligations: 0, personal: 0, investment: 0 };
+    const totalExpenses = Object.values(expenses)
+      .reduce((sum,v)=> sum + (parseFloat(v)||0), 0);
+
+    // 2) pick rule based on totalExpenses
+    let ideal = { obligations:0, personal:0, investment:0 };
     let mainMessage = '';
 
-    // 1) Determine which rule applies and set the exact same noteMessage as your HTML page
-    if (actual.obligations <= idealPortion) {
-      ideal = {
-        obligations: idealPortion,
-        personal:    idealPortion,
-        investment:  idealPortion
-      };
-      mainMessage = "Your obligations are within one-third of your income, so the One-Third Rule applies.";
+    if (totalExpenses > monthlyIncome) {
+      mainMessage = t('planner.insights.main_messages.over_budget');
     }
-    else if (actual.obligations > idealPortion && actual.obligations <= monthlyIncome / 2) {
+    else if (totalExpenses <= monthlyIncome / 3) {
+      ideal = {
+        obligations: monthlyIncome/3,
+        personal:    monthlyIncome/3,
+        investment:  monthlyIncome/3
+      };
+      mainMessage = t('planner.insights.main_messages.one_third_rule');
+    }
+    else if (totalExpenses <= monthlyIncome / 2) {
       ideal = {
         obligations: monthlyIncome * 0.5,
         personal:    monthlyIncome * 0.3,
         investment:  monthlyIncome * 0.2
       };
-      mainMessage = "Your obligations exceed one-third but are less than or equal to half of your income. Using 50% Obligations, 30% Personal, 20% Investment rule.";
+      mainMessage = t('planner.insights.main_messages.fifty_thirty_twenty');
     }
     else {
       ideal = {
@@ -136,49 +142,40 @@ function Planner() {
         personal:    monthlyIncome * 0.25,
         investment:  monthlyIncome * 0.15
       };
-      mainMessage = "Your obligations exceed half of your income. Using 60% Obligations, 25% Personal, 15% Investment rule.";
+      mainMessage = t('planner.insights.main_messages.sixty_twenty_fifteen');
     }
 
-    // 2) Build exactly the same tips with emojis and bullets
+    // 3) build tips exactly as before
     const tips = [];
-
     if (actual.personal > ideal.personal) {
       const extra = actual.personal - ideal.personal;
       tips.push({
         type: 'warning',
-        message: `💡 You're overspending on personal expenses by ${extra.toFixed(1)} JOD.`,
+        message: t('planner.insights.tips.overspending', { amount: extra.toFixed(1) }),
         details: [
-          'Try saving a portion. Unexpected costs can come any time, so prepare.',
-          `Saving this amount monthly can accumulate to ${(extra * 12).toFixed(1)} JOD annually!`
+          t('planner.insights.tips.saving_advice'),
+          t('planner.insights.tips.annual_saving', { amount: (extra*12).toFixed(1) })
         ]
       });
     }
-
     if (actual.investment < ideal.investment * 0.9) {
       tips.push({
         type: 'alert',
-        message: '📉 Your savings are below the expected amount.',
-        details: [
-          'Try allocating at least 1 JOD per day. Consistency builds wealth!'
-        ]
+        message: t('planner.insights.tips.low_savings'),
+        details: [ t('planner.insights.tips.daily_saving') ]
       });
     }
-
     if (actual.investment >= ideal.investment && actual.personal < ideal.personal * 0.9) {
       tips.push({
         type: 'success',
-        message: '🎯 Excellent job! You’re saving more than expected and spending wisely on personal needs.',
-        details: [
-          'Keep it up! Consider investing your savings in long-term plans.'
-        ]
+        message: t('planner.insights.tips.excellent'),
+        details: [ t('planner.insights.tips.keep_up') ]
       });
     }
-
-    // 3) If no tips at all, show the “perfect” message
     if (tips.length === 0) {
       tips.push({
         type: 'success',
-        message: '✅ Your spending habits are well aligned with your income. Keep maintaining this balance!',
+        message: t('planner.insights.tips.perfect'),
         details: []
       });
     }

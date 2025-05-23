@@ -116,14 +116,21 @@
       "title": "Financial Insights",
       "main_messages": {
         "within_one_third": "Your essential expenses are within the recommended one-third of your income. Great job maintaining a balanced budget!",
-        "exceed_half": "Your essential expenses exceed half of your income. Consider reviewing your obligations."
+        "exceed_half": "Your essential expenses exceed half of your income. Consider reviewing your obligations.",
+         "over_budget":            "⚠️ Your total expenses exceed your income!",
+        "one_third_rule":       "Your obligations are within one-third of your income, so the One-Third Rule applies.",
+        "fifty_thirty_twenty":  "Your obligations exceed one-third but are less than or equal to half of your income. Using 50% Obligations, 30% Personal, 20% Investment rule.",
+        "sixty_twenty_fifteen": "Your obligations exceed half of your income. Using 60% Obligations, 25% Personal, 15% Investment rule."
       },
       "tips": {
-        "overspending": "You're overspending on personal expenses by {{amount}} JOD monthly",
-        "low_savings": "Your savings are below the recommended level",
-        "saving_advice": "Review entertainment and dining expenses",
-        "annual_saving": "You could save {{amount}} JOD annually by adjusting spending",
-        "daily_saving": "Consider saving at least 1 JOD daily to build your financial safety net"
+        "overspending":     "💡 You're overspending on personal expenses by {{amount}} JOD.",
+        "saving_advice":    "Try saving a portion. Unexpected costs can come any time, so prepare.",
+        "annual_saving":    "Saving this amount monthly can accumulate to {{amount}} JOD annually!",
+        "low_savings":      "📉 Your savings are below the expected amount.",
+        "daily_saving":     "Try allocating at least 1 JOD per day. Consistency builds wealth!",
+        "excellent":        "🎯 Excellent job! You’re saving more than expected and spending wisely on personal needs.",
+        "keep_up":          "Keep it up! Consider investing your savings in long-term plans.",
+        "perfect":          "✅ Your spending habits are well aligned with your income. Keep maintaining this balance!"  
       }
     },
 
