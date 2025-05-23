@@ -117,7 +117,13 @@ const Navbar = () => {
             <LanguageSwitcher />
             {user ? (
               <div className="d-flex align-items-center ms-3">
-                <span className="me-3">Welcome, {user.firstName}!</span>
+                <span className="me-3">
+                  {t('nav.welcome', {name:user.firstName})}
+             
+                </span>
+
+
+                
                 <button 
                   onClick={handleLogout} 
                   className="btn btn-outline-primary"

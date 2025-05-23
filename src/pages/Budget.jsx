@@ -4,6 +4,7 @@ import { toast } from 'react-hot-toast';
 import Chart from 'chart.js/auto';
 import { saveBudgetAnalysis, getBudgetHistory } from '../services/api';
 import '../styles/Budget.css';
+import { useTranslation } from 'react-i18next';
 
 const recommendedPercentages = {
   housing: 30,

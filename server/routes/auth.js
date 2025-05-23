@@ -3,6 +3,7 @@ import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
 import crypto from 'crypto';
 import { sendResetPasswordEmail } from '../config/email.js';
+import { t } from '../config/i18n.js';
 
 const router = express.Router();
 
@@ -14,7 +15,7 @@ router.post('/register', async (req, res) => {
     // Check if user exists
     let user = await User.findOne({ email });
     if (user) {
-      return res.status(400).json({ message: 'User already exists' });
+      return res.status(400).json({ message:  t('auth.errors.user_exists') });
     }
 
     // Create new user
@@ -44,7 +45,7 @@ router.post('/register', async (req, res) => {
       }
     });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ message: t('errors.server_error') });
   }
 });
 

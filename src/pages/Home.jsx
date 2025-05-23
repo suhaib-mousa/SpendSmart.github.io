@@ -102,8 +102,9 @@ function Home() {
                 </div>
                 <h3>{t('home.features.budgeting.title')}</h3>
                 <p>{t('home.features.budgeting.description')}</p>
-                <Link to="/budget" className="btn btn-outline-primary">
-                  {t('home.features.budgeting.learn_more')} <i className="fas fa-chevron-right ms-1"></i>
+                
+                 <Link to="/planner" className="btn btn-outline-primary">
+                  {t('home.features.recommendations.learn_more')} <i className="fas fa-chevron-right ms-1"></i>
                 </Link>
               </div>
               <div className="col-lg-6" data-aos="fade-left" data-aos-duration="1000">
@@ -121,8 +122,8 @@ function Home() {
                 </div>
                 <h3>{t('home.features.recommendations.title')}</h3>
                 <p>{t('home.features.recommendations.description')}</p>
-                <Link to="/planner" className="btn btn-outline-primary">
-                  {t('home.features.recommendations.learn_more')} <i className="fas fa-chevron-right ms-1"></i>
+               <Link to="/budget" className="btn btn-outline-primary">
+                  {t('home.features.budgeting.learn_more')} <i className="fas fa-chevron-right ms-1"></i>
                 </Link>
               </div>
               <div className="col-lg-6" data-aos="fade-right" data-aos-duration="1000">

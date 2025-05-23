@@ -9,7 +9,8 @@
     "login": "Log In",
     "signup": "Sign Up",
     "logout": "Sign Out",
-    "welcome": "Welcome, {{name}}!"
+    "welcome": "Welcome, {{name}}!",
+    "or": "or" 
   },
   "discounts": {
     "hero": {
@@ -92,40 +93,68 @@
       "expenses": "Total Expenses",
       "remaining": "Remaining Income"
     },
-    "analysis": {
-      "title": "Three-Thirds Financial Analysis",
-      "breakdown": {
-        "title": "Category Breakdown",
-        "obligations": "Obligations (1/3)",
-        "obligations_items": "Housing, Transportation, Debt, Health, Education, Maintenance, Utilities",
-        "personal": "Personal (1/3)",
-        "personal_items": "Others, Entertainment, Charity, Food",
-        "investment": "Investment (1/3)",
-        "investment_items": "Savings"
-      }
+   
+   "analysis": {
+      "title": "Financial Analysis",
+      "breakdown_title": "Category Breakdown",
+      "obligations": "Obligations",
+      "personal": "Personal",
+      "investment": "Investment",
+      "obligations_list": "Housing, Transportation, Debt, Health, Education, Maintenance, Utilities",
+      "personal_list": "Others, Entertainment, Charity, Food",
+      "investment_list": "Savings",
+      "comparison_title": "Current vs Ideal Spending Comparison",
+      "projection_title": "5-Year Investment Projection",
+      "download_pdf": "Download PDF",
+      "year": "Year {{year}}",
+      "ideal_distribution": "Ideal Distribution",
+      "current_investment": "Current Investment",
+      "ideal_investment": "Ideal Investment",
+      "your_spending": "Your Spending"
     },
-    "insights": {
+  "insights": {
       "title": "Financial Insights",
-      "comparison": {
-        "title": "Current vs Ideal Distribution"
+      "main_messages": {
+        "within_one_third": "Your essential expenses are within the recommended one-third of your income. Great job maintaining a balanced budget!",
+        "exceed_half": "Your essential expenses exceed half of your income. Consider reviewing your obligations."
       },
-      "projection": {
-        "title": "5-Year Investment Projection"
+      "tips": {
+        "overspending": "You're overspending on personal expenses by {{amount}} JOD monthly",
+        "low_savings": "Your savings are below the recommended level",
+        "saving_advice": "Review entertainment and dining expenses",
+        "annual_saving": "You could save {{amount}} JOD annually by adjusting spending",
+        "daily_saving": "Consider saving at least 1 JOD daily to build your financial safety net"
       }
     },
+
     "actions": {
-      "analyze": "Start Analysis",
       "hide_analysis": "Hide Analysis",
       "processing": "Processing...",
       "view_history": "View History",
       "hide_history": "Hide History",
       "download": "Download PDF Report"
     },
-    "cta": {
-      "title": "Ready to Analyze?",
-      "subtitle_auth": "View detailed insights to optimize your budget.",
-      "subtitle_guest": "Log in to save your data and view detailed insights."
+    
+    "errors": {
+      "login_required": "Login required to access this feature",
+       "over_budget": "Total expenses exceed your salary!",
+      "save_failed": "Failed to save data"
     },
+    "success": {
+      "data_saved": "Data saved successfully"
+    },
+   "cta": {
+    "title": "Ready to Analyze?",
+    "subtitle_auth": "View detailed insights to optimize your budget",
+    "subtitle_guest": "What you really need is a monthly budget - a solid plan for spending every dinar you earn. Because you work hard for that income! Make it work for you. Log in to save your data and view detailed insights.",
+    "login_prompt": "What you really need is a monthly budget - a solid plan for spending every dinar you earn. Because you work hard for that income! Make it work for you. Log in to save your data and view detailed insights.",
+    "start_analysis": "Start Analysis",
+    "logged_in": "What you really need is a monthly budget - a solid plan for spending every dinar you earn. Because you work hard for that income! Make it work for you",
+    "view_history": "View History",
+    "hide_history": "Hide History",
+    "hide_analysis": "Hide Analysis",
+    "processing": "Processing..."
+  },
     "history": {
       "title": "Planning History",
       "plan": "Plan",
@@ -134,7 +163,8 @@
       "savings_rate": "Savings Rate",
       "debt_ratio": "Debt to Income Ratio"
     }
-  },
+      },
+  
   "home": {
     "hero": {
       "title": "Spend Smart, Live Better",

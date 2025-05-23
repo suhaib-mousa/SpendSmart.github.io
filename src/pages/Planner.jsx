@@ -97,6 +97,66 @@ function Planner() {
       toast.error('Failed to load planning history');
     }
   };
+  const generateInsights = () => {
+  const obligationsCategories = ['housing', 'transportation', 'debt', 'health', 'education', 'maintenance', 'utilities'];
+  const personalCategories = ['others', 'entertainment', 'charity', 'food'];
+  const investmentCategories = ['savings'];
+
+  const actual = {
+    obligations: obligationsCategories.reduce((sum, cat) => sum + (expenses[cat] || 0), 0),
+    personal: personalCategories.reduce((sum, cat) => sum + (expenses[cat] || 0), 0),
+    investment: investmentCategories.reduce((sum, cat) => sum + (expenses[cat] || 0), 0)
+  };
+
+  const idealPortion = monthlyIncome / 3;
+  let ideal = { obligations: 0, personal: 0, investment: 0 };
+  let mainMessage = '';
+
+  if (actual.obligations <= idealPortion) {
+    ideal = {
+      obligations: idealPortion,
+      personal: idealPortion,
+      investment: idealPortion
+    };
+    mainMessage = t('planner.insights.main_messages.within_one_third');
+  } else if (actual.obligations > idealPortion && actual.obligations <= monthlyIncome / 2) {
+    ideal = {
+      obligations: monthlyIncome * 0.5,
+      personal: monthlyIncome * 0.3,
+      investment: monthlyIncome * 0.2
+    };
+    mainMessage = t('planner.insights.main_messages.exceed_half');
+  }
+
+  let tips = [];
+
+  if (actual.personal > ideal.personal) {
+    const extra = actual.personal - ideal.personal;
+    tips.push({
+      type: 'warning',
+      message: t('planner.insights.tips.overspending', { amount: extra.toFixed(1) }),
+      details: [
+        t('planner.insights.tips.saving_advice'),
+        t('planner.insights.tips.annual_saving', { amount: (extra * 12).toFixed(1) })
+      ]
+    });
+  }
+
+  if (actual.investment < ideal.investment * 0.9) {
+    tips.push({
+      type: 'alert',
+      message: t('planner.insights.tips.low_savings'),
+      details: [
+        t('planner.insights.tips.daily_saving')
+      ]
+    });
+  }
+
+  setInsights({
+    mainMessage,
+    tips
+  });
+};
 
   const destroyCharts = () => {
     if (budgetChartRef.current) {
@@ -113,67 +173,7 @@ function Planner() {
     }
   };
 
-  const generateInsights = () => {
-    const obligationsCategories = ['housing', 'transportation', 'debt', 'health', 'education', 'maintenance', 'utilities'];
-    const personalCategories = ['others', 'entertainment', 'charity', 'food'];
-    const investmentCategories = ['savings'];
-
-    const actual = {
-      obligations: obligationsCategories.reduce((sum, cat) => sum + (expenses[cat] || 0), 0),
-      personal: personalCategories.reduce((sum, cat) => sum + (expenses[cat] || 0), 0),
-      investment: investmentCategories.reduce((sum, cat) => sum + (expenses[cat] || 0), 0)
-    };
-
-    const idealPortion = monthlyIncome / 3;
-    let ideal = { obligations: 0, personal: 0, investment: 0 };
-    let mainMessage = '';
-
-    if (actual.obligations <= idealPortion) {
-      ideal = {
-        obligations: idealPortion,
-        personal: idealPortion,
-        investment: idealPortion
-      };
-      mainMessage = "Your obligations are within one-third of your income. Using 33% for each category.";
-    } else if (actual.obligations > idealPortion && actual.obligations <= monthlyIncome / 2) {
-      ideal = {
-        obligations: monthlyIncome * 0.5,
-        personal: monthlyIncome * 0.3,
-        investment: monthlyIncome * 0.2
-      };
-      mainMessage = "Your obligations exceed half of your income. Using 60% Obligations, 25% Personal, 15% Investment rule.";
-    }
-
-    let tips = [];
-
-    if (actual.personal > ideal.personal) {
-      const extra = actual.personal - ideal.personal;
-      tips.push({
-        type: 'warning',
-        message: `You're overspending on personal expenses by ${extra.toFixed(1)} JOD.`,
-        details: [
-          'Try saving a portion. Unexpected costs can come any time, so prepare.',
-          `Saving this amount monthly can accumulate to ${(extra * 12).toFixed(1)} JOD annually!`
-        ]
-      });
-    }
-
-    if (actual.investment < ideal.investment * 0.9) {
-      tips.push({
-        type: 'alert',
-        message: 'Your savings are below the expected amount.',
-        details: [
-          'Try allocating at least 1 JOD per day. Consistency builds wealth!'
-        ]
-      });
-    }
-
-    setInsights({
-      mainMessage,
-      tips
-    });
-  };
-
+  
   const updateBudgetChart = () => {
   if (budgetCanvasRef.current) {
     if (budgetChartRef.current) {
@@ -572,22 +572,22 @@ function Planner() {
               </div>
             </div>
 
-            {insights && (
-              <div className="insights-box">
-                <h3>{t('planner.insights.title')}</h3>
-                <div className="insights-content">
-                  <p className="main-message">{insights.mainMessage}</p>
-                  {insights.tips.map((tip, index) => (
-                    <div key={index} className={`tip-box ${tip.type}`}>
-                      <p className="tip-message">{tip.message}</p>
-                      {tip.details.map((detail, i) => (
-                        <p key={i} className="tip-detail">- {detail}</p>
-                      ))}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
+     {insights && (
+      <div className="insights-box">
+        <h3>{t('planner.insights.title')}</h3>
+        <div className="insights-content">
+          <p className="main-message">{insights.mainMessage}</p>
+          {insights.tips.map((tip, index) => (
+            <div key={index} className={`tip-box ${tip.type}`}>
+              <p className="tip-message">{tip.message}</p>
+              {tip.details.map((detail, i) => (
+                <p key={i} className="tip-detail">- {detail}</p>
+              ))}
+            </div>
+          ))}
+        </div>
+      </div>
+    )}
 
             <div className="analysis-chart">
               <h3>{t('planner.analysis.comparison_title')}</h3>
