@@ -97,66 +97,88 @@ function Planner() {
       toast.error('Failed to load planning history');
     }
   };
+
   const generateInsights = () => {
-  const obligationsCategories = ['housing', 'transportation', 'debt', 'health', 'education', 'maintenance', 'utilities'];
-  const personalCategories = ['others', 'entertainment', 'charity', 'food'];
-  const investmentCategories = ['savings'];
+    const obligationsCategories = ['housing', 'transportation', 'debt', 'health', 'education', 'maintenance', 'utilities'];
+    const personalCategories = ['others', 'entertainment', 'charity', 'food'];
+    const investmentCategories = ['savings'];
 
-  const actual = {
-    obligations: obligationsCategories.reduce((sum, cat) => sum + (expenses[cat] || 0), 0),
-    personal: personalCategories.reduce((sum, cat) => sum + (expenses[cat] || 0), 0),
-    investment: investmentCategories.reduce((sum, cat) => sum + (expenses[cat] || 0), 0)
+    const actual = {
+      obligations: obligationsCategories.reduce((sum, cat) => sum + (expenses[cat] || 0), 0),
+      personal: personalCategories.reduce((sum, cat) => sum + (expenses[cat] || 0), 0),
+      investment: investmentCategories.reduce((sum, cat) => sum + (expenses[cat] || 0), 0)
+    };
+
+    const idealPortion = monthlyIncome / 3;
+    let ideal = { obligations: 0, personal: 0, investment: 0 };
+    let mainMessage = '';
+
+    // Enhanced rule validation
+    if (actual.obligations <= idealPortion) {
+      ideal = {
+        obligations: idealPortion,
+        personal: idealPortion,
+        investment: idealPortion
+      };
+      mainMessage = t('planner.insights.main_messages.within_one_third');
+    } else if (actual.obligations > idealPortion && actual.obligations <= monthlyIncome / 2) {
+      ideal = {
+        obligations: monthlyIncome * 0.5,
+        personal: monthlyIncome * 0.3,
+        investment: monthlyIncome * 0.2
+      };
+      mainMessage = t('planner.insights.main_messages.exceed_half');
+    } else {
+      ideal = {
+        obligations: monthlyIncome * 0.6,
+        personal: monthlyIncome * 0.25,
+        investment: monthlyIncome * 0.15
+      };
+      mainMessage = t('planner.insights.main_messages.critical');
+    }
+
+    let tips = [];
+
+    // Enhanced tips generation
+    if (actual.personal > ideal.personal) {
+      const extra = actual.personal - ideal.personal;
+      tips.push({
+        type: 'warning',
+        message: t('planner.insights.tips.overspending', { amount: extra.toFixed(1) }),
+        details: [
+          t('planner.insights.tips.saving_advice'),
+          t('planner.insights.tips.annual_saving', { amount: (extra * 12).toFixed(1) })
+        ]
+      });
+    }
+
+    if (actual.investment < ideal.investment * 0.9) {
+      tips.push({
+        type: 'alert',
+        message: t('planner.insights.tips.low_savings'),
+        details: [
+          t('planner.insights.tips.daily_saving')
+        ]
+      });
+    }
+
+    if (actual.investment >= ideal.investment && actual.personal < ideal.personal * 0.9) {
+      tips.push({
+        type: 'success',
+        message: t('planner.insights.tips.excellent'),
+        details: [
+          t('planner.insights.tips.keep_up')
+        ]
+      });
+    }
+
+    setInsights({
+      mainMessage,
+      tips,
+      actual,
+      ideal
+    });
   };
-
-  const idealPortion = monthlyIncome / 3;
-  let ideal = { obligations: 0, personal: 0, investment: 0 };
-  let mainMessage = '';
-
-  if (actual.obligations <= idealPortion) {
-    ideal = {
-      obligations: idealPortion,
-      personal: idealPortion,
-      investment: idealPortion
-    };
-    mainMessage = t('planner.insights.main_messages.within_one_third');
-  } else if (actual.obligations > idealPortion && actual.obligations <= monthlyIncome / 2) {
-    ideal = {
-      obligations: monthlyIncome * 0.5,
-      personal: monthlyIncome * 0.3,
-      investment: monthlyIncome * 0.2
-    };
-    mainMessage = t('planner.insights.main_messages.exceed_half');
-  }
-
-  let tips = [];
-
-  if (actual.personal > ideal.personal) {
-    const extra = actual.personal - ideal.personal;
-    tips.push({
-      type: 'warning',
-      message: t('planner.insights.tips.overspending', { amount: extra.toFixed(1) }),
-      details: [
-        t('planner.insights.tips.saving_advice'),
-        t('planner.insights.tips.annual_saving', { amount: (extra * 12).toFixed(1) })
-      ]
-    });
-  }
-
-  if (actual.investment < ideal.investment * 0.9) {
-    tips.push({
-      type: 'alert',
-      message: t('planner.insights.tips.low_savings'),
-      details: [
-        t('planner.insights.tips.daily_saving')
-      ]
-    });
-  }
-
-  setInsights({
-    mainMessage,
-    tips
-  });
-};
 
   const destroyCharts = () => {
     if (budgetChartRef.current) {
@@ -173,61 +195,59 @@ function Planner() {
     }
   };
 
-  
   const updateBudgetChart = () => {
-  if (budgetCanvasRef.current) {
-    if (budgetChartRef.current) {
-      budgetChartRef.current.destroy();
-    }
+    if (budgetCanvasRef.current) {
+      if (budgetChartRef.current) {
+        budgetChartRef.current.destroy();
+      }
 
-    const ctx = budgetCanvasRef.current.getContext('2d');
+      const ctx = budgetCanvasRef.current.getContext('2d');
 
-    const totalExpenses = Object.values(expenses).reduce((sum, val) => sum + (parseFloat(val) || 0), 0);
-    const remaining = monthlyIncome > totalExpenses ? monthlyIncome - totalExpenses : 0;
+      const totalExpenses = Object.values(expenses).reduce((sum, val) => sum + (parseFloat(val) || 0), 0);
+      const remaining = monthlyIncome > totalExpenses ? monthlyIncome - totalExpenses : 0;
 
-    const labels = [...Object.keys(expenses).map(key => t(`planner.budget.categories.${key}`))];
-    const data = [...Object.values(expenses).map(v => parseFloat(v) || 0)];
+      const labels = [...Object.keys(expenses).map(key => t(`planner.budget.categories.${key}`))];
+      const data = [...Object.values(expenses).map(v => parseFloat(v) || 0)];
 
-    if (remaining > 0) {
-      labels.push(t('planner.budget.remaining')); // Add "Remaining" label translation
-      data.push(remaining);
-    }
+      if (remaining > 0) {
+        labels.push(t('planner.budget.remaining'));
+        data.push(remaining);
+      }
 
-    const backgroundColors = [
-      '#52741F', '#00B2F6', '#FF6B6B', '#4ECDC4', '#FF9F43',
-      '#F368E0', '#FFD93D', '#6C5CE7', '#E69DB8', '#C599B6',
-      '#00B894', '#A569BD'
-    ];
+      const backgroundColors = [
+        '#52741F', '#00B2F6', '#FF6B6B', '#4ECDC4', '#FF9F43',
+        '#F368E0', '#FFD93D', '#6C5CE7', '#E69DB8', '#C599B6',
+        '#00B894', '#A569BD'
+      ];
 
-    if (remaining > 0) {
-      backgroundColors.push('#CCCCCC'); // Grey for remaining
-    }
+      if (remaining > 0) {
+        backgroundColors.push('#CCCCCC');
+      }
 
-    budgetChartRef.current = new Chart(ctx, {
-      type: 'doughnut',
-      data: {
-        labels,
-        datasets: [{
-          data,
-          backgroundColor: backgroundColors.slice(0, labels.length)
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: {
-            position: 'bottom',
-            labels: {
-              padding: 20
+      budgetChartRef.current = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels,
+          datasets: [{
+            data,
+            backgroundColor: backgroundColors.slice(0, labels.length)
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: {
+                padding: 20
+              }
             }
           }
         }
-      }
-    });
-  }
-};
-
+      });
+    }
+  };
 
   const destroyAnalysisCharts = () => {
     if (comparisonChartRef.current) {
@@ -565,29 +585,38 @@ function Planner() {
               <div className="analysis-section">
                 <h3>{t('planner.analysis.breakdown_title')}</h3>
                 <ul>
-                  <li><span className="font-bold">{t('planner.analysis.obligations')} (1/3):</span> {t('planner.analysis.obligations_list')}</li>
-                  <li><span className="font-bold">{t('planner.analysis.personal')} (1/3):</span> {t('planner.analysis.personal_list')}</li>
-                  <li><span className="font-bold">{t('planner.analysis.investment')} (1/3):</span> {t('planner.analysis.investment_list')}</li>
+                  <li>
+                    <span className="font-bold">{t('planner.analysis.obligations')} (1/3):</span> 
+                    {t('planner.analysis.obligations_list')}
+                  </li>
+                  <li>
+                    <span className="font-bold">{t('planner.analysis.personal')} (1/3):</span> 
+                    {t('planner.analysis.personal_list')}
+                  </li>
+                  <li>
+                    <span className="font-bold">{t('planner.analysis.investment')} (1/3):</span> 
+                    {t('planner.analysis.investment_list')}
+                  </li>
                 </ul>
               </div>
             </div>
 
-     {insights && (
-      <div className="insights-box">
-        <h3>{t('planner.insights.title')}</h3>
-        <div className="insights-content">
-          <p className="main-message">{insights.mainMessage}</p>
-          {insights.tips.map((tip, index) => (
-            <div key={index} className={`tip-box ${tip.type}`}>
-              <p className="tip-message">{tip.message}</p>
-              {tip.details.map((detail, i) => (
-                <p key={i} className="tip-detail">- {detail}</p>
-              ))}
-            </div>
-          ))}
-        </div>
-      </div>
-    )}
+            {insights && (
+              <div className="insights-box">
+                <h3>{t('planner.insights.title')}</h3>
+                <div className="insights-content">
+                  <p className="main-message">{insights.mainMessage}</p>
+                  {insights.tips.map((tip, index) => (
+                    <div key={index} className={`tip-box ${tip.type}`}>
+                      <p className="tip-message">{tip.message}</p>
+                      {tip.details.map((detail, i) => (
+                        <p key={i} className="tip-detail">- {detail}</p>
+                      ))}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
 
             <div className="analysis-chart">
               <h3>{t('planner.analysis.comparison_title')}</h3>
@@ -599,7 +628,11 @@ function Planner() {
               <canvas ref={yearlyCanvasRef}></canvas>
             </div>
 
-            <button className="save-button" onClick={downloadPDF} ref={downloadBtnRef}>
+            <button 
+              className="save-button" 
+              onClick={downloadPDF} 
+              ref={downloadBtnRef}
+            >
               <i className="fas fa-file-download"></i> {t('planner.analysis.download_pdf')}
             </button>
           </div>
