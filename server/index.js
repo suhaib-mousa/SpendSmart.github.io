@@ -23,8 +23,8 @@ connectDB();
 const corsOptions = {
   origin: process.env.NODE_ENV === 'production' 
     ? [
+        'https://spendsmart-github-io.netlify.app', // Will be your Netlify URL
         'https://your-frontend-domain.vercel.app',
-        'https://your-frontend-domain.netlify.app',
         'https://your-frontend-domain.onrender.com'
       ]
     : ['http://localhost:5173', 'http://localhost:3000'],

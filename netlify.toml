@@ -11,7 +11,7 @@
   status = 200
 
 [context.production.environment]
-  VITE_API_URL = "https://your-backend-url.com/api"
+  VITE_API_URL = "https://spendsmart-github-io.onrender.com/api"
 
 [context.deploy-preview.environment]
-  VITE_API_URL = "https://your-backend-url.com/api" 
+  VITE_API_URL = "https://spendsmart-github-io.onrender.com/api" 
