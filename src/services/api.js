@@ -10,14 +10,21 @@ const api = axios.create({
   timeout: 10000,
 });
 
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token');
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
+// Add request interceptor
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
   }
-  return config;
-});
+);
 
+// Add response interceptor
 api.interceptors.response.use(
   (response) => response,
   (error) => {
@@ -56,100 +63,56 @@ export const getDeals = async () => {
 };
 
 export const getDealReviews = async (dealId) => {
-  try {
-    const response = await api.get(`/reviews/deal/${dealId}`);
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
+  const response = await api.get(`/reviews/deal/${dealId}`);
+  return response.data;
 };
 
 export const getUserReview = async (dealId) => {
-  try {
-    const response = await api.get(`/reviews/user/${dealId}`);
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
+  const response = await api.get(`/reviews/user/${dealId}`);
+  return response.data;
 };
 
 export const createReview = async (reviewData) => {
-  try {
-    const response = await api.post('/reviews', reviewData);
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
+  const response = await api.post('/reviews', reviewData);
+  return response.data;
 };
 
 export const updateReview = async (reviewId, reviewData) => {
-  try {
-    const response = await api.patch(`/reviews/${reviewId}`, reviewData);
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
+  const response = await api.patch(`/reviews/${reviewId}`, reviewData);
+  return response.data;
 };
 
 export const deleteReview = async (reviewId) => {
-  try {
-    const response = await api.delete(`/reviews/${reviewId}`);
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
+  const response = await api.delete(`/reviews/${reviewId}`);
+  return response.data;
 };
 
 export const getCategories = async () => {
-  try {
-    const response = await api.get('/categories');
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
+  const response = await api.get('/categories');
+  return response.data;
 };
 
 export const getTips = async () => {
-  try {
-    const response = await api.get('/tips');
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
+  const response = await api.get('/tips');
+  return response.data;
 };
 
 export const savePlannerEntry = async (plannerData) => {
-  try {
-    const response = await api.post('/planner', plannerData);
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
+  const response = await api.post('/planner', plannerData);
+  return response.data;
 };
 
 export const getPlannerHistory = async () => {
-  try {
-    const response = await api.get('/planner');
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
+  const response = await api.get('/planner');
+  return response.data;
 };
 
 export const saveBudgetAnalysis = async (budgetData) => {
-  try {
-    const response = await api.post('/budget', budgetData);
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
+  const response = await api.post('/budget', budgetData);
+  return response.data;
 };
 
 export const getBudgetHistory = async () => {
-  try {
-    const response = await api.get('/budget');
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
+  const response = await api.get('/budget');
+  return response.data;
 };
