@@ -2,6 +2,7 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import { initReactI18next } from 'react-i18next';
 import i18n from '../i18n';
+import Navbar from './Navbar';
 
 // Initialize i18next for tests
 i18n.use(initReactI18next).init({
@@ -12,7 +13,18 @@ i18n.use(initReactI18next).init({
   },
   resources: {
     en: {
-      translation: {}
+      translation: {
+        'nav.home': 'Home',
+        'nav.budgeting': 'Budgeting',
+        'nav.budget_analysis': 'Budget Analysis',
+        'nav.financial_planner': 'Financial Planner',
+        'nav.discounts': 'Discounts',
+        'nav.tips': 'Tips',
+        'nav.login': 'Log In',
+        'nav.signup': 'Sign Up',
+        'nav.logout': 'Sign Out',
+        'nav.welcome': 'Welcome, {{name}}'
+      }
     }
   }
 });
@@ -20,7 +32,21 @@ i18n.use(initReactI18next).init({
 // Mock react-i18next
 jest.mock('react-i18next', () => ({
   useTranslation: () => ({
-    t: (str) => str,
+    t: (key, params) => {
+      const translations = {
+        'nav.home': 'Home',
+        'nav.budgeting': 'Budgeting',
+        'nav.budget_analysis': 'Budget Analysis',
+        'nav.financial_planner': 'Financial Planner',
+        'nav.discounts': 'Discounts',
+        'nav.tips': 'Tips',
+        'nav.login': 'Log In',
+        'nav.signup': 'Sign Up',
+        'nav.logout': 'Sign Out',
+        'nav.welcome': params ? `Welcome, ${params.name}` : 'Welcome'
+      };
+      return translations[key] || key;
+    },
     i18n: {
       changeLanguage: () => new Promise(() => {}),
       language: 'en'
@@ -62,18 +88,18 @@ describe('Navbar Component', () => {
 
   test('renders navigation links', () => {
     renderNavbar();
-    expect(screen.getByText('nav.home')).toBeInTheDocument();
-    expect(screen.getByText('nav.budgeting')).toBeInTheDocument();
-    expect(screen.getByText('nav.discounts')).toBeInTheDocument();
-    expect(screen.getByText('nav.tips')).toBeInTheDocument();
+    expect(screen.getByText('Home')).toBeInTheDocument();
+    expect(screen.getByText('Budgeting')).toBeInTheDocument();
+    expect(screen.getByText('Discounts')).toBeInTheDocument();
+    expect(screen.getByText('Tips')).toBeInTheDocument();
   });
 
   test('renders login and signup buttons when user is not logged in', () => {
     mockLocalStorage.getItem.mockReturnValue(null);
     renderNavbar();
     
-    expect(screen.getByText('nav.login')).toBeInTheDocument();
-    expect(screen.getByText('nav.signup')).toBeInTheDocument();
+    expect(screen.getByText('Log In')).toBeInTheDocument();
+    expect(screen.getByText('Sign Up')).toBeInTheDocument();
   });
 
   test('renders user name and logout button when user is logged in', () => {
@@ -85,17 +111,17 @@ describe('Navbar Component', () => {
     
     renderNavbar();
     
-    expect(screen.getByText('nav.welcome, {"name":"John"}')).toBeInTheDocument();
-    expect(screen.getByText('nav.logout')).toBeInTheDocument();
+    expect(screen.getByText('Welcome, John')).toBeInTheDocument();
+    expect(screen.getByText('Sign Out')).toBeInTheDocument();
   });
 
   test('toggles dropdown menu when clicking budgeting link', () => {
     renderNavbar();
     
-    const dropdownButton = screen.getByText('nav.budgeting');
+    const dropdownButton = screen.getByText('Budgeting');
     fireEvent.click(dropdownButton);
     
-    expect(screen.getByText('nav.budget_analysis')).toBeInTheDocument();
-    expect(screen.getByText('nav.financial_planner')).toBeInTheDocument();
+    expect(screen.getByText('Budget Analysis')).toBeInTheDocument();
+    expect(screen.getByText('Financial Planner')).toBeInTheDocument();
   });
 });
