@@ -12,7 +12,10 @@
     "seed": "node server/seed.js",
     "test": "jest",
     "test:watch": "jest --watch",
-    "test:coverage": "jest --coverage"
+    "test:coverage": "jest --coverage",
+    "start": "node server/index.js",
+    "build:frontend": "vite build",
+    "serve:frontend": "vite preview"
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^6.4.0",
