@@ -44,7 +44,7 @@ app.use('/api/tips', tipRoutes);
 app.use('/api/planner', plannerRoutes);
 app.use('/api/budget', budgetRoutes);
 
-const PORT = process.env.PORT || 5001; // Changed default port to 5001
+const PORT = process.env.PORT || 5000; // Default port for development
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
