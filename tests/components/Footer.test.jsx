@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
-import Footer from '../src/components/Footer';
+import Footer from '../../src/components/Footer';
 
 // Mock react-i18next
 jest.mock('react-i18next', () => ({

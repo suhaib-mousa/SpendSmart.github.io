@@ -1,8 +1,8 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import { initReactI18next } from 'react-i18next';
-import i18n from '../src/i18n';
-import Navbar from '../src/components/Navbar';
+import i18n from '../../src/i18n';
+import Navbar from '../../src/components/Navbar';
 
 // Initialize i18next for tests
 i18n.use(initReactI18next).init({

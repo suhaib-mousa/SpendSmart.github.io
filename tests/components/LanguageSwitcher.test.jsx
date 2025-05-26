@@ -1,5 +1,5 @@
 import { render, screen, fireEvent } from '@testing-library/react';
-import LanguageSwitcher from '../src/components/LanguageSwitcher';
+import LanguageSwitcher from '../../src/components/LanguageSwitcher';
 
 const mockChangeLanguage = jest.fn();
 

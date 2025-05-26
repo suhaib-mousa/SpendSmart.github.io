@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { login, register, forgotPassword, resetPassword, logout } from '../src/services/auth';
+import { login, register, forgotPassword, resetPassword, logout } from '../../src/services/auth';
 
 jest.mock('axios');
 
