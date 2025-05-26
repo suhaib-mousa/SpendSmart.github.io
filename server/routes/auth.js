@@ -2,7 +2,7 @@ import express from 'express';
 import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
 import crypto from 'crypto';
-import { sendResetPasswordEmail } from '../config/email.js';
+// import { sendResetPasswordEmail } from '../config/email.js'; // Disabled for production
 import { t } from '../config/i18n.js';
 
 const router = express.Router();
