@@ -1,10 +1,10 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
-import Budget from '../pages/Budget';
-import { saveBudgetAnalysis, getBudgetHistory } from '../services/api';
+import Budget from '../src/pages/Budget';
+import { saveBudgetAnalysis, getBudgetHistory } from '../src/services/api';
 
 // Mock the API calls
-jest.mock('../services/api', () => ({
+jest.mock('../src/services/api', () => ({
   saveBudgetAnalysis: jest.fn(),
   getBudgetHistory: jest.fn()
 }));

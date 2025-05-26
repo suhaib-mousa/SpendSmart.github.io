@@ -12,7 +12,7 @@ import {
   getPlannerHistory,
   saveBudgetAnalysis,
   getBudgetHistory
-} from './api';
+} from '../src/services/api';
 
 jest.mock('axios');
 
