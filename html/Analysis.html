@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Three-Thirds Financial Analysis</title>
+
+    <!-- مكتبات الرسوم البيانية -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+
+    <!-- مكتبة تحميل PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+    <!-- Font Awesome للأيقونات -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<link rel="icon" href="Media/budg.png">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f9f9fb;
+            margin: 0;
+            padding: 2rem;
+            color: #333;
+        }
+
+        .report-container {
+            max-width: 900px;
+            margin: auto;
+        }
+
+        .box {
+            background: white;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border-radius: 15px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+        }
+
+        .box-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            color: #2b6777;
+        }
+
+        .advice {
+            background-color: #e3f6f5;
+            padding: 1rem;
+            border-radius: 10px;
+            color: #114e60;
+            white-space: pre-line;
+        }
+
+        .highlight {
+            color: #2A4B7C;
+            font-weight: bold;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        .comparison-table td, .comparison-table th {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+
+        .adjustment-box {
+            background-color: #ffe6e6;
+            border-left: 6px solid #ff4d4d;
+            padding: 1rem;
+            margin-top: 1rem;
+            border-radius: 10px;
+            color: #7c1c1c;
+            white-space: pre-line;
+            font-weight: 500;
+        }
+
+        .advice-box {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .advice-box.positive {
+            background-color: #e7fbe7;
+            color: #2d662d;
+            border: 1px solid #a4d6a4;
+        }
+
+        .advice-box.negative {
+            background-color: #fdecea;
+            color: #a94442;
+            border: 1px solid #f5c6cb;
+        }
+
+        .adjustment-box {
+            margin-top: 15px;
+            background-color: #fff3cd;
+            border: 1px solid #ffeeba;
+            padding: 15px;
+            border-radius: 8px;
+            color: #856404;
+            white-space: pre-line;
+        }
+
+        .download-button {
+            background-color: #2A4B7C;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin: 1rem auto;
+        }
+
+        .download-button:hover {
+            background-color: #1E3A6B;
+        }
+
+        .download-button i {
+            font-size: 18px;
+        }
+        canvas {
+    max-width: 100% !important;
+    height: auto !important;
+}
+
+    </style>
+</head>
+<body>
+    <div class="report-container">
+        <h1>Three-Thirds Financial Analysis</h1>
+
+        <!-- Category Breakdown -->
+        <div class="box">
+            <div class="box-title">Category Breakdown</div>
+            <ul>
+                <li><span class="highlight">Obligations (1/3):</span> Housing, Transportation, Debt, Health, Education, Maintenance, Utilities.</li>
+                <li><span class="highlight">Personal (1/3):</span> Others, Entertainment, Charity, Food.</li>
+                <li><span class="highlight">Investment (1/3):</span> Savings.</li>
+            </ul>
+
+            <div class="box">
+                <div class="box-title">What This Chart Shows</div>
+                <p>This chart compares your actual monthly spending across three categories—Obligations, Personal, and Investment—against the ideal “One-Third Rule”. It helps you identify where your spending might need adjustment.</p>
+            </div>
+        </div>
+
+        <!-- Chart Comparison -->
+        <div class="box">
+            <div class="box-title">Your Current vs Ideal Distribution</div>
+            <canvas id="comparisonChart"></canvas>
+        </div>
+
+        <!-- Projection Meaning -->
+        <div class="box">
+            <div class="box-title">What This Projection Means</div>
+            <p>This 5-year projection compares your current investment habit with the ideal one-third rule. The first line shows how much you'd save if you continue as you are. The second line shows the potential if you align your investments with the recommended portion of your income.</p>
+        </div>
+
+        <!-- 5-Year Projection -->
+        <div class="box">
+            <div class="box-title">5-Year Investment Projection</div>
+            <canvas id="yearlyChart"></canvas>
+        </div>
+
+        <!-- Advice -->
+        <div class="box">
+            <div class="box-title">Financial Insights</div>
+            <div id="adviceMessage" class="advice"></div>
+        </div>
+
+        <!-- زر التحميل -->
+        <div class="box" style="text-align: center;">
+            <button onclick="downloadPDF()" class="download-button">
+                <i class="fas fa-file-download"></i> Download PDF
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const data = JSON.parse(localStorage.getItem("budgetData"));
+        if (!data) window.location.href = "index.html";
+
+        const obligationsCategories = ['housing', 'transportation', 'debt', 'health', 'education', 'maintenance', 'utilities'];
+        const personalCategories = ['others', 'entertainment', 'charity', 'food'];
+        const investmentCategories = ['savings'];
+
+        const totalIncome = parseFloat(data.income) || 0;
+        const idealPortion = totalIncome / 3;
+
+        const actual = {
+            obligations: obligationsCategories.reduce((sum, cat) => sum + (parseFloat(data.expenses[cat]) || 0), 0),
+            personal: personalCategories.reduce((sum, cat) => sum + (parseFloat(data.expenses[cat]) || 0), 0),
+            investment: investmentCategories.reduce((sum, cat) => sum + (parseFloat(data.expenses[cat]) || 0), 0)
+        };
+
+        let ideal = { obligations: 0, personal: 0, investment: 0 };
+        let noteMessage = '';
+
+        if (actual.obligations <= idealPortion) {
+            ideal = {
+                obligations: idealPortion,
+                personal: idealPortion,
+                investment: idealPortion
+            };
+            noteMessage = "Your obligations are within one-third of your income, so the One-Third Rule applies.";
+        } else if (actual.obligations > idealPortion && actual.obligations <= totalIncome / 2) {
+            ideal = {
+                obligations: totalIncome * 0.5,
+                personal: totalIncome * 0.3,
+                investment: totalIncome * 0.2
+            };
+            noteMessage = "Your obligations exceed one-third but are less than or equal to half of your income. Using 50% Obligations, 30% Personal, 20% Investment rule.";
+        } else {
+            ideal = {
+                obligations: totalIncome * 0.6,
+                personal: totalIncome * 0.25,
+                investment: totalIncome * 0.15
+            };
+            noteMessage = "Your obligations exceed half of your income. Using 60% Obligations, 25% Personal, 15% Investment rule.";
+        }
+
+        new Chart(document.getElementById("comparisonChart"), {
+            type: "bar",
+            data: {
+                labels: ["Obligations", "Personal", "Investment"],
+                datasets: [
+                    {
+                        label: "Your Spending",
+                        data: [actual.obligations, actual.personal, actual.investment],
+                        backgroundColor: "#2A4B7C"
+                    },
+                    {
+                        label: "Ideal Distribution",
+                        data: [ideal.obligations, ideal.personal, ideal.investment],
+                        backgroundColor: "#00B894"
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { position: "bottom" }
+                }
+            }
+        });
+
+        const yearlyProjection = {
+            current: Array.from({ length: 5 }, (_, i) => actual.investment * (i + 1) * 12),
+            ideal: Array.from({ length: 5 }, (_, i) => ideal.investment * (i + 1) * 12)
+        };
+
+        new Chart(document.getElementById("yearlyChart"), {
+            type: "line",
+            data: {
+                labels: ["Year 1", "Year 2", "Year 3", "Year 4", "Year 5"],
+                datasets: [
+                    {
+                        label: "Your Investment (Current)",
+                        data: yearlyProjection.current,
+                        borderColor: "#2A4B7C",
+                        fill: false
+                    },
+                    {
+                        label: "Ideal Investment",
+                        data: yearlyProjection.ideal,
+                        borderColor: "#00B894",
+                        fill: false
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { position: "bottom" }
+                }
+            }
+        });
+
+        const adviceMessage = document.getElementById("adviceMessage");
+        adviceMessage.textContent = noteMessage;
+
+        let tips = "";
+
+        if (actual.personal > ideal.personal) {
+            const extra = actual.personal - ideal.personal;
+            tips += `💡 You're overspending on personal expenses by ${extra.toFixed(1)} JOD.\n`;
+            tips += `   - Try saving a portion. Unexpected costs can come any time, so prepare.\n`;
+            tips += `   - Saving this amount monthly can accumulate to ${(extra * 12).toFixed(1)} JOD annually!\n\n`;
+        }
+
+        if (actual.investment < ideal.investment * 0.9) {
+            tips += `📉 Your savings are below the expected amount.\n`;
+            tips += `   - Try allocating at least 1 JOD per day. Consistency builds wealth!\n\n`;
+        }
+
+        if (actual.investment >= ideal.investment && actual.personal < ideal.personal * 0.9) {
+            tips += `🎯 Excellent job! You're saving more than expected and spending wisely on personal needs.\n`;
+            tips += `   - Keep it up! Consider investing your savings in long-term plans.\n`;
+        }
+
+        if (tips === "") {
+            tips = "✅ Your spending habits are well aligned with your income. Keep maintaining this balance!";
+        }
+
+        adviceMessage.textContent += "\n\n" + tips;
+  
+    function downloadPDF() {
+        const element = document.querySelector('.report-container');
+        const button = document.querySelector('.download-button');
+
+        // اخفاء الزر مؤقتًا
+        button.style.display = 'none';
+
+        const opt = {
+            margin:       [0.5, 0.5, 0.5, 0.5],
+            filename:     'Financial_Analysis_Report.pdf',
+            image:        { type: 'jpeg', quality: 1 },
+            html2canvas:  {
+                scale: 3,
+                useCORS: true,
+                allowTaint: true,
+                scrollY: 0
+            },
+            jsPDF: {
+                unit: 'cm',
+                format: 'a4',
+                orientation: 'portrait'
+            },
+            pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+        };
+
+        // توليد وحفظ PDF، ثم إظهار الزر مرة ثانية
+        html2pdf().set(opt).from(element).save().then(() => {
+            button.style.display = 'inline-flex';
+        });
+    }
+
+
+    </script>
+</body>
+</html>
