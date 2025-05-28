@@ -16,6 +16,7 @@ function Discounts() {
   const [selectedLocation, setSelectedLocation] = useState('');
   const [selectedPriceRange, setPriceRange] = useState('');
   const [selectedDiscount, setDiscount] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('');
   const [rating, setRating] = useState(0);
   const [reviewComment, setReviewComment] = useState('');
   const [loading, setLoading] = useState(true);
@@ -57,6 +58,7 @@ function Discounts() {
       document.body.classList.remove('modal-open');
     };
   }, [selectedDeal, user]);
+
 
   const fetchDeals = async () => {
     try {
@@ -188,6 +190,9 @@ function Discounts() {
     }
   };
 
+  // Get unique categories for filter
+  const categories = [...new Set(deals.map(deal => deal.category?.name).filter(Boolean))];
+  
   // Get unique locations for filter
   const locations = [...new Set(deals.map(deal => deal.location))];
 
@@ -202,7 +207,8 @@ function Discounts() {
                          deal.location.toLowerCase().includes(searchTerm.toLowerCase());
     
     const matchesLocation = !selectedLocation || deal.location === selectedLocation;
-    
+    const matchesCategory = !selectedCategory || (deal.category?.name === selectedCategory);
+
     const matchesPriceRange = () => {
       if (!selectedPriceRange) return true;
       const price = deal.currentPrice;
@@ -215,18 +221,23 @@ function Discounts() {
       }
     };
 
+    // FIXED: Properly handle discount values
     const matchesDiscount = () => {
       if (!selectedDiscount) return true;
-      const discountPercent = parseInt(deal.discount);
+      
+      // Convert discount to number safely
+      const discountValue = parseFloat(deal.discount);
+      if (isNaN(discountValue)) return false;
+      
       switch(selectedDiscount) {
-        case 'under25': return discountPercent < 25;
-        case '25to50': return discountPercent >= 25 && discountPercent <= 50;
-        case 'over50': return discountPercent > 50;
+        case 'under25': return discountValue < 25;
+        case '25to50': return discountValue >= 25 && discountValue <= 50;
+        case 'over50': return discountValue > 50;
         default: return true;
       }
     };
 
-    return matchesSearch && matchesLocation && matchesPriceRange() && matchesDiscount();
+    return matchesSearch && matchesLocation && matchesCategory && matchesPriceRange() && matchesDiscount();
   });
 
   // Limit deals for non-authenticated users
@@ -283,8 +294,9 @@ function Discounts() {
       {user && (
         <section className="filters-section">
           <div className="container">
-            <div className="row g-3">
-              <div className="col-md-3">
+            <div className="row row-cols-1 row-cols-md-2 row-cols-lg-5 g-3">
+              {/* Location Filter */}
+              <div className="col">
                 <select 
                   className="form-select" 
                   value={selectedLocation} 
@@ -296,7 +308,25 @@ function Discounts() {
                   ))}
                 </select>
               </div>
-              <div className="col-md-3">
+              
+              {/* Category Filter */}
+                        <div className="col">
+                <select 
+                  className="form-select" 
+                  value={selectedCategory} 
+                  onChange={(e) => setSelectedCategory(e.target.value)}
+                >
+                  <option value="">{t('discounts.filters.all_categories')}</option>
+                  {categories.map(category => (
+                    <option key={category} value={category}>
+                      {t(`discounts.filters.categories.${category}`)}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Price Range Filter */}
+              <div className="col">
                 <select 
                   className="form-select" 
                   value={selectedPriceRange} 
@@ -309,11 +339,12 @@ function Discounts() {
                   <option value="over200">{t('discounts.filters.price_range.over200')}</option>
                 </select>
               </div>
-              <div className="col-md-3">
+              
+              {/* Discount Filter - FIXED */}
+              <div className="col">
                 <select 
                   className="form-select" 
                   value={selectedDiscount} 
-                  
                   onChange={(e) => setDiscount(e.target.value)}
                 >
                   <option value="">{t('discounts.filters.discount_range.label')}</option>
@@ -322,12 +353,15 @@ function Discounts() {
                   <option value="over50">{t('discounts.filters.discount_range.over50')}</option>
                 </select>
               </div>
-              <div className="col-md-3">
+              
+              {/* Clear Button */}
+              <div className="col">
                 <button 
                   className="btn btn-outline-primary w-100"
                   onClick={() => {
                     setSearchTerm('');
                     setSelectedLocation('');
+                    setSelectedCategory('');
                     setPriceRange('');
                     setDiscount('');
                   }}

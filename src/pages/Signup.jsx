@@ -136,13 +136,7 @@ function Signup() {
               <label className="form-label" htmlFor="confirmPassword">Confirm Password</label>
             </div>
 
-            <div className="auth-links">
-              <label className="remember-me">
-                <input type="checkbox" required />
-                <span>I agree to the Terms and Conditions</span>
-              </label>
-            </div>
-
+          
             <button type="submit" className="submit-button" disabled={loading}>
               {loading ? 'Signing up...' : 'Sign Up'}
             </button>
