@@ -19,6 +19,17 @@
       "search_placeholder": "Search for deals, locations, or categories..."
     },
     "filters": {
+
+      "all_categories": "All Categories",
+    "categories": {
+      "Wellness": "Wellness",
+      "Fashion": "Fashion",
+      "Activities": "Activities",
+      "Technology": "Technology",
+      "Outdoor": "Outdoor"
+    },
+
+
       "all_locations": "All Locations",
       "price_range": {
         "label": "Price Range",
@@ -207,22 +218,22 @@
       },
       "recommendations": {
         "title": "Smart Recommendation System",
-        "description": "Our AI-powered system analyzes your spending habits and suggests ways to save money.",
+        "description": "Our AI-powered system analyzes your spending habits and suggests ways to save money. Get personalized recommendations for budget adjustments and discover deals that match your interests and needs.",
         "learn_more": "Learn More"
       },
       "database": {
         "title": "Comprehensive Discount Database",
-        "description": "Browse and filter discounts by category, location, and expiration date.",
+        "description": "Browse and filter discounts by category, location, and expiration date. Find the best deals in Jordan for restaurants, retail, services, and more. Save your favorite deals and get notified when similar offers become available",
         "learn_more": "Learn More"
       },
       "community": {
         "title": "Community & Reviews",
-        "description": "Connect with other budget-conscious individuals in Jordan.",
+        "description": "onnect with other budget-conscious individuals in Jordan. Share your experiences, tips, and reviews of local businesses. Learn from others' financial journeys and contribute your own insights to help the community",
         "learn_more": "Learn More"
       },
       "education": {
         "title": "Educational Resources",
-        "description": "Access a wealth of articles, videos, and guides about budgeting, saving, and financial wellness.",
+        "description": "Access a wealth of videos guides about budgeting, saving, and financial wellness. Learn practical tips for managing your finances in Jordan's economic environment. Stay updated on financial news and trends that affect your wallet.",
         "learn_more": "Learn More"
       }
     },
