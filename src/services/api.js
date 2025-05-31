@@ -45,6 +45,7 @@ api.interceptors.response.use(
 export const getDeals = async () => {
   try {
     const response = await api.get('/deals');
+    console.log(response)
     return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {

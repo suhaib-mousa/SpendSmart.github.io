@@ -224,7 +224,7 @@ function Planner() {
       ];
 
       if (remaining > 0) {
-        backgroundColors.push('#CCCCCC');
+        backgroundColors.push('#B7E0FF');
       }
 
       budgetChartRef.current = new Chart(ctx, {

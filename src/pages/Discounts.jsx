@@ -36,14 +36,14 @@ function Discounts() {
   ], []);
 
   const locations = useMemo(() => [
-    'Amman,Jordan',
-    'Irbid,Jordan',
-    'Zarqa,Jordan',
-    'Aqaba,Jordan',
-    'Madaba,Jordan',
-    'Salt,Jordan',
-    'Ajloun,Jordan',
-    'Jerash,Jordan'
+    'Amman, Jordan',
+    'Irbid, Jordan',
+    'Zarqa, Jordan',
+    'Aqaba, Jordan',
+    'Madaba, Jordan',
+    'Salt, Jordan',
+    'Ajloun, Jordan',
+    'Jerash, Jordan'
   ], []);
 
   useEffect(() => {
