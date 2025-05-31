@@ -11,8 +11,7 @@ module.exports = {
     '^swiper/css/navigation$': 'identity-obj-proxy'
   },
   transform: {
-    '^.+\\.(js|jsx)$': 'babel-jest',
-    '^.+$': 'babel-jest'
+    '^.+\\.(js|jsx)$': 'babel-jest'
   },
   transformIgnorePatterns: [
     'node_modules/(?!(swiper|ssr-window|dom7)/)'
@@ -20,5 +19,8 @@ module.exports = {
   moduleFileExtensions: ['js', 'jsx'],
   testMatch: ['<rootDir>/tests/**/*.test.[jt]s?(x)'],
   moduleDirectories: ['node_modules', '<rootDir>/src'],
-  rootDir: '.'
-};
+  rootDir: '.',
+  testEnvironmentOptions: {
+    url: 'http://localhost'
+  }
+}
