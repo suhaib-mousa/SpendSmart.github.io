@@ -34,17 +34,21 @@ function Planner() {
   const [isSaving, setIsSaving] = useState(false);
   const [insights, setInsights] = useState(null);
   const [error, setError] = useState('');
+  const [selectedHistoryForComparison, setSelectedHistoryForComparison] = useState([]);
+  const [showComparison, setShowComparison] = useState(false);
 
   // Chart refs
   const budgetChartRef = useRef(null);
   const comparisonChartRef = useRef(null);
   const yearlyChartRef = useRef(null);
   const downloadBtnRef = useRef(null);
+  const historyComparisonChartRef = useRef(null);
   
   // Chart canvas refs
   const budgetCanvasRef = useRef(null);
   const comparisonCanvasRef = useRef(null);
   const yearlyCanvasRef = useRef(null);
+  const historyComparisonCanvasRef = useRef(null);
 
   useEffect(() => {
     AOS.init({
@@ -88,10 +92,18 @@ function Planner() {
     }
   }, [showAnalysis]);
 
+  useEffect(() => {
+    if (showComparison && selectedHistoryForComparison.length > 0) {
+      updateHistoryComparisonChart();
+    }
+  }, [showComparison, selectedHistoryForComparison]);
+
   const fetchPlannerHistory = async () => {
     try {
       const data = await getPlannerHistory();
-      setPlannerHistory(data);
+      // ترتيب السجل من الأحدث إلى الأقدم
+      const sortedData = data.sort((a, b) => new Date(b.date) - new Date(a.date));
+      setPlannerHistory(sortedData);
     } catch (error) {
       console.error('Error fetching history:', error);
       toast.error('Failed to load planning history');
@@ -195,6 +207,10 @@ function Planner() {
     if (yearlyChartRef.current) {
       yearlyChartRef.current.destroy();
       yearlyChartRef.current = null;
+    }
+    if (historyComparisonChartRef.current) {
+      historyComparisonChartRef.current.destroy();
+      historyComparisonChartRef.current = null;
     }
   };
 
@@ -375,6 +391,77 @@ function Planner() {
     }
   };
 
+  const updateHistoryComparisonChart = () => {
+    if (historyComparisonCanvasRef.current) {
+      if (historyComparisonChartRef.current) {
+        historyComparisonChartRef.current.destroy();
+      }
+
+      const ctx = historyComparisonCanvasRef.current.getContext('2d');
+      
+      // تحضير البيانات للمقارنة
+      const datasets = [];
+      const categories = Object.keys(expenses);
+      const labels = [];
+      
+      // إضافة البيانات الحالية للمقارنة
+      const currentData = categories.map(cat => expenses[cat]);
+      datasets.push({
+        label: 'التحليل الحالي',
+        data: currentData,
+        backgroundColor: '#2A4B7C'
+      });
+      
+      // إضافة البيانات التاريخية المختارة للمقارنة
+      selectedHistoryForComparison.forEach((historyIndex, i) => {
+        const historyEntry = plannerHistory[historyIndex];
+        const historyData = categories.map(cat => historyEntry.expenses[cat] || 0);
+        
+        // تدرج الألوان للبيانات التاريخية
+        const colors = ['#00B894', '#FF6B6B', '#FFD93D', '#6C5CE7', '#F368E0'];
+        
+        datasets.push({
+          label: `تحليل ${formatGregorianDate(historyEntry.date)}`,
+          data: historyData,
+          backgroundColor: colors[i % colors.length]
+        });
+      });
+
+      // إنشاء التسميات
+      labels.push(...categories.map(cat => t(`planner.budget.categories.${cat}`)));
+      
+      historyComparisonChartRef.current = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: datasets
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'bottom'
+            },
+            title: {
+              display: true,
+              text: 'مقارنة بين التحليلات التاريخية'
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              title: {
+                display: true,
+                text: 'المبلغ (دينار)'
+              }
+            }
+          }
+        }
+      });
+    }
+  };
+
   const handleExpenseChange = (category, value) => {
     setExpenses(prev => ({
       ...prev,
@@ -406,7 +493,8 @@ function Planner() {
       if (!hasMatchingEntry) {
         await savePlannerEntry({
           monthlyIncome,
-          expenses
+          expenses,
+          date: new Date().toISOString() // حفظ التاريخ الحالي بالتوقيت العالمي
         });
         await fetchPlannerHistory();
         toast.success(t('planner.success.data_saved'));
@@ -441,7 +529,7 @@ function Planner() {
       },
       jsPDF: {
         unit: 'cm',
-        format: 'a3', // Wider and taller page size
+        format: 'a3',
         orientation: 'portrait'
       },
       pagebreak: { mode: ['avoid-all'] }
@@ -458,8 +546,44 @@ function Planner() {
       });
   };
 
+  const toggleHistorySelection = (index) => {
+    if (selectedHistoryForComparison.includes(index)) {
+      setSelectedHistoryForComparison(prev => prev.filter(i => i !== index));
+    } else {
+      setSelectedHistoryForComparison(prev => [...prev, index]);
+    }
+  };
+
+  const toggleComparisonView = () => {
+    setShowComparison(!showComparison);
+    if (!showComparison && selectedHistoryForComparison.length > 0) {
+      updateHistoryComparisonChart();
+    }
+  };
+
   const totalExpenses = Object.values(expenses).reduce((sum, value) => sum + (parseFloat(value) || 0), 0);
   const remainingIncome = monthlyIncome - totalExpenses;
+
+  // دالة لتنسيق التاريخ الميلادي بشكل واضح
+  const formatGregorianDate = (dateString) => {
+    if (!dateString) return 'بدون تاريخ';
+    
+    try {
+      const date = new Date(dateString);
+      const options = { 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric',
+        calendar: 'gregory',
+        hour: '2-digit',
+        minute: '2-digit'
+      };
+      return date.toLocaleDateString('ar-EG', options);
+    } catch (e) {
+      console.error('Error formatting date:', e);
+      return 'تاريخ غير صالح';
+    }
+  };
 
   return (
     <div className="budget-container">
@@ -513,7 +637,7 @@ function Planner() {
                   placeholder={t('planner.budget.enter_expense', { category: t(`planner.budget.categories.${category}`) })}
                 />
                 <span className="percentage">
-                  {((value / monthlyIncome) * 100 || 0).toFixed(1)}%
+                  {monthlyIncome > 0 ? ((value / monthlyIncome) * 100 || 0).toFixed(1) : 0}%
                 </span>
               </div>
             ))}
@@ -532,17 +656,62 @@ function Planner() {
           {user && showHistory && plannerHistory.length > 0 && (
             <div className="history-section budget-section">
               <h2 className="section-title">{t('planner.history.title')}</h2>
-              {plannerHistory.map((entry, index) => (
-                <div key={entry._id} className="history-item">
-                  <h3>{t('planner.history.plan', { number: index + 1, date: new Date(entry.date).toLocaleDateString() })}</h3>
-                  <div className="history-details">
-                    <p>{t('planner.history.monthly_income')}: {entry.monthlyIncome.toFixed(2)} JOD</p>
-                    <p>{t('planner.history.total_expenses')}: {entry.analysis.totalExpenses.toFixed(2)} JOD</p>
-                    <p>{t('planner.history.savings_rate')}: {entry.analysis.savingsRate.toFixed(1)}%</p>
-                    <p>{t('planner.history.debt_ratio')}: {entry.analysis.debtToIncomeRatio.toFixed(1)}%</p>
+              
+              <div className="history-actions">
+                <button 
+                  className="comparison-button"
+                  onClick={toggleComparisonView}
+                  disabled={selectedHistoryForComparison.length === 0}
+                >
+                  {showComparison ? 'إخفاء المقارنة' : 'عرض المقارنة'}
+                </button>
+                <span className="comparison-hint">
+                  {selectedHistoryForComparison.length > 0 
+                    ? `تم اختيار ${selectedHistoryForComparison.length} تحليل للمقارنة` 
+                    : 'اختر تحليلين أو أكثر للمقارنة'}
+                </span>
+              </div>
+              
+              {plannerHistory.map((entry, index) => {
+                // تنسيق التاريخ الميلادي بشكل واضح
+                const formattedDate = formatGregorianDate(entry.date);
+                const isSelected = selectedHistoryForComparison.includes(index);
+                
+                return (
+                  <div 
+                    key={entry._id} 
+                    className={`history-item ${isSelected ? 'selected' : ''}`}
+                    onClick={() => toggleHistorySelection(index)}
+                  >
+                    <div className="history-header">
+                      <h3>{t('planner.history.plan', { number: index + 1 })}</h3>
+                      <span className="history-date">{formattedDate}</span>
+                    </div>
+                    
+                    <div className="history-details">
+                      <p>{t('planner.history.monthly_income')}: {entry.monthlyIncome.toFixed(2)} JOD</p>
+                      <p>{t('planner.history.total_expenses')}: {entry.analysis.totalExpenses.toFixed(2)} JOD</p>
+                      <p>{t('planner.history.savings_rate')}: {entry.analysis.savingsRate.toFixed(1)}%</p>
+                      <p>{t('planner.history.debt_ratio')}: {entry.analysis.debtToIncomeRatio.toFixed(1)}%</p>
+                    </div>
+                    
+                    <div className="history-summary">
+                      <div className="summary-item">
+                        <span>التوفير</span>
+                        <span>{entry.expenses.savings.toFixed(2)} JOD</span>
+                      </div>
+                      <div className="summary-item">
+                        <span>السكن</span>
+                        <span>{entry.expenses.housing.toFixed(2)} JOD</span>
+                      </div>
+                      <div className="summary-item">
+                        <span>الطعام</span>
+                        <span>{entry.expenses.food.toFixed(2)} JOD</span>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>
@@ -558,7 +727,7 @@ function Planner() {
             <h2>{t('planner.cta.title')}</h2>
             <p>{user ? t('planner.cta.logged_in') : t('planner.cta.login_prompt')}</p>
             <div className="cta-buttons">
-             <button 
+              <button 
                 className="save-button" 
                 onClick={handleStartAnalysis}
                 disabled={isSaving || !!error}
@@ -639,6 +808,36 @@ function Planner() {
             >
               <i className="fas fa-file-download"></i> {t('planner.analysis.download_pdf')}
             </button>
+          </div>
+        )}
+
+        {showComparison && selectedHistoryForComparison.length > 0 && (
+          <div className="history-comparison-container">
+            <h2>مقارنة بين التحليلات التاريخية</h2>
+            <div className="comparison-chart">
+              <canvas ref={historyComparisonCanvasRef}></canvas>
+            </div>
+            
+            <div className="comparison-summary">
+              <h3>ملخص المقارنة</h3>
+              <div className="summary-grid">
+                <div className="summary-header">
+                  <span>الفئة</span>
+                  {selectedHistoryForComparison.map(index => (
+                    <span key={index}>{formatGregorianDate(plannerHistory[index].date)}</span>
+                  ))}
+                </div>
+                
+                {Object.keys(expenses).map(category => (
+                  <div className="summary-row" key={category}>
+                    <span>{t(`planner.budget.categories.${category}`)}</span>
+                    {selectedHistoryForComparison.map(index => (
+                      <span key={index}>{plannerHistory[index].expenses[category].toFixed(2)}</span>
+                    ))}
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         )}
       </div>

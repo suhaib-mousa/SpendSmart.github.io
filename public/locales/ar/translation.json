@@ -19,14 +19,15 @@
       "search_placeholder": "ابحث عن العروض، المواقع، أو الفئات..."
     },
     "filters": {
-
-       "all_categories": "جميع التصنيفات",
+"all_categories": "كل الفئات",
     "categories": {
-      "Wellness": "الصحة ",
-      "Fashion": "الأزياء والموضة",
-      "Activities": "الأنشطة والترفيه",
-      "Technology": "الإلكترونيات والتقنية",
-      "Outdoor": "الرحلات والهواء الطلق"
+      "Restaurants": "مطاعم",
+      "Healthcare": "رعاية صحية",
+      "Education": "تعليم",
+      "Shopping": "تسوق",
+      "Entertainment": "ترفيه",
+      "Travel": "سفر",
+      "Beauty": "جمال"
     },
 
       "all_locations": "جميع المواقع",
@@ -83,6 +84,7 @@
     },
     "budget": {
       "title": "توزيع الميزانية",
+          "remaining": "المتبقي",
       "categories": {
         "charity": "الصدقات",
         "food": "الطعام",

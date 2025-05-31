@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import AOS from 'aos';
@@ -25,6 +25,26 @@ function Discounts() {
   const [isEditing, setIsEditing] = useState(false);
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const staticCategories = useMemo(() => [
+    'Restaurants',
+    'Healthcare',
+    'Education',
+    'Shopping',
+    'Entertainment',
+    'Travel',
+    'Beauty'
+  ], []);
+
+  const locations = useMemo(() => [
+    'Amman,Jordan',
+    'Irbid,Jordan',
+    'Zarqa,Jordan',
+    'Aqaba,Jordan',
+    'Madaba,Jordan',
+    'Salt,Jordan',
+    'Ajloun,Jordan',
+    'Jerash,Jordan'
+  ], []);
 
   useEffect(() => {
     AOS.init({
@@ -38,7 +58,7 @@ function Discounts() {
       setUser(JSON.parse(storedUser));
     }
   }, []);
-
+  
   useEffect(() => {
     if (selectedDeal) {
       document.body.classList.add('modal-open');
@@ -58,7 +78,6 @@ function Discounts() {
       document.body.classList.remove('modal-open');
     };
   }, [selectedDeal, user]);
-
 
   const fetchDeals = async () => {
     try {
@@ -190,57 +209,54 @@ function Discounts() {
     }
   };
 
-  // Get unique categories for filter
-  const categories = [...new Set(deals.map(deal => deal.category?.name).filter(Boolean))];
-  
-  // Get unique locations for filter
-  const locations = [...new Set(deals.map(deal => deal.location))];
+  const filteredDeals = useMemo(() => {
+    return deals.filter(deal => {
+      if (!user) return true;
 
-  // Filter deals based on search and filters
-  const filteredDeals = deals.filter(deal => {
-    // Skip filtering for non-authenticated users
-    if (!user) {
-      return true;
-    }
-
-    const matchesSearch = deal.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         deal.location.toLowerCase().includes(searchTerm.toLowerCase());
-    
-    const matchesLocation = !selectedLocation || deal.location === selectedLocation;
-    const matchesCategory = !selectedCategory || (deal.category?.name === selectedCategory);
-
-    const matchesPriceRange = () => {
-      if (!selectedPriceRange) return true;
-      const price = deal.currentPrice;
-      switch(selectedPriceRange) {
-        case 'under50': return price < 50;
-        case '50to100': return price >= 50 && price <= 100;
-        case '100to200': return price > 100 && price <= 200;
-        case 'over200': return price > 200;
-        default: return true;
-      }
-    };
-
-    // FIXED: Properly handle discount values
-    const matchesDiscount = () => {
-      if (!selectedDiscount) return true;
+      const title = deal.title || '';
+      const locationText = deal.location || '';
       
-      // Convert discount to number safely
-      const discountValue = parseFloat(deal.discount);
-      if (isNaN(discountValue)) return false;
+      const matchesSearch = 
+        title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        locationText.toLowerCase().includes(searchTerm.toLowerCase());
       
-      switch(selectedDiscount) {
-        case 'under25': return discountValue < 25;
-        case '25to50': return discountValue >= 25 && discountValue <= 50;
-        case 'over50': return discountValue > 50;
-        default: return true;
-      }
-    };
+      const matchesPriceRange = (price) => {
+        if (!selectedPriceRange) return true;
+        switch(selectedPriceRange) {
+          case 'under50': return price < 50;
+          case '50to100': return price >= 50 && price <= 100;
+          case '100to200': return price > 100 && price <= 200;
+          case 'over200': return price > 200;
+          default: return true;
+        }
+      };
+      
+      const discountStr = String(deal.discount).replace(/[^0-9.]/g, '');
+      const discountValue = parseFloat(discountStr) || 0;
 
-    return matchesSearch && matchesLocation && matchesCategory && matchesPriceRange() && matchesDiscount();
-  });
+      const matchesDiscount = (discountValue) => {
+        if (!selectedDiscount) return true;
+        switch(selectedDiscount) {
+          case 'under25': return discountValue < 25;
+          case '25to50': return discountValue >= 25 && discountValue <= 50;
+          case 'over50': return discountValue > 50;
+          default: return true;
+        }
+      };
+      
+      const matchesLocation = !selectedLocation || deal.location === selectedLocation;
+      const matchesCategory = !selectedCategory || (deal.category?.name === selectedCategory);
+      
+      return (
+        matchesSearch && 
+        matchesLocation && 
+        matchesCategory && 
+        matchesPriceRange(deal.currentPrice) && 
+        matchesDiscount(discountValue)
+      );
+    });
+  }, [deals, user, searchTerm, selectedLocation, selectedCategory, selectedPriceRange, selectedDiscount]);
 
-  // Limit deals for non-authenticated users
   const displayedDeals = user ? filteredDeals : filteredDeals.slice(0, 4);
 
   if (loading) {
@@ -265,7 +281,6 @@ function Discounts() {
 
   return (
     <div className="discounts-page">
-      {/* Hero Section */}
       <section className="hero-section">
         <div className="container">
           <div className="row align-items-center">
@@ -279,6 +294,9 @@ function Discounts() {
                     placeholder={t('discounts.hero.search_placeholder')}
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') e.preventDefault();
+                    }}
                   />
                 </div>
               )}
@@ -290,12 +308,10 @@ function Discounts() {
         </div>
       </section>
 
-      {/* Filters Section - Only show for authenticated users */}
       {user && (
         <section className="filters-section">
           <div className="container">
             <div className="row row-cols-1 row-cols-md-2 row-cols-lg-5 g-3">
-              {/* Location Filter */}
               <div className="col">
                 <select 
                   className="form-select" 
@@ -309,15 +325,14 @@ function Discounts() {
                 </select>
               </div>
               
-              {/* Category Filter */}
-                        <div className="col">
+              <div className="col">
                 <select 
                   className="form-select" 
                   value={selectedCategory} 
                   onChange={(e) => setSelectedCategory(e.target.value)}
                 >
                   <option value="">{t('discounts.filters.all_categories')}</option>
-                  {categories.map(category => (
+                  {staticCategories.map(category => (
                     <option key={category} value={category}>
                       {t(`discounts.filters.categories.${category}`)}
                     </option>
@@ -325,7 +340,6 @@ function Discounts() {
                 </select>
               </div>
 
-              {/* Price Range Filter */}
               <div className="col">
                 <select 
                   className="form-select" 
@@ -340,7 +354,6 @@ function Discounts() {
                 </select>
               </div>
               
-              {/* Discount Filter - FIXED */}
               <div className="col">
                 <select 
                   className="form-select" 
@@ -354,7 +367,6 @@ function Discounts() {
                 </select>
               </div>
               
-              {/* Clear Button */}
               <div className="col">
                 <button 
                   className="btn btn-outline-primary w-100"
@@ -374,7 +386,6 @@ function Discounts() {
         </section>
       )}
 
-      {/* All Deals Section */}
       <section className="all-deals-section">
         <div className="container">
           {!user && (
@@ -388,7 +399,7 @@ function Discounts() {
 
           <div className="row">
             {displayedDeals.map((deal, index) => (
-              <div className="col-lg-3 col-md-6 mb-4" key={deal._id} data-aos="fade-up" data-aos-delay={index * 100}>
+              <div className="col-12 col-sm-6 col-md-4 col-lg-3 mb-4" key={deal._id} data-aos="fade-up" data-aos-delay={index * 100}>
                 <div className="deal-card" onClick={() => handleDealClick(deal)}>
                   <div className="deal-image">
                     <img src={deal.image} alt={deal.title} />
@@ -420,7 +431,6 @@ function Discounts() {
         </div>
       </section>
 
-      {/* Deal Modal */}
       {selectedDeal && (
         <div className="modal show d-block" tabIndex="-1">
           <div className="modal-backdrop show" onClick={closeModal}></div>
@@ -438,7 +448,7 @@ function Discounts() {
                 </div>
 
                 <div className="p-6">
-                  <div className="flex justify-between items-start mb-4">
+                  <div className="flex flex-wrap justify-between items-start mb-4 gap-2">
                     <h2 className="text-2xl font-bold">{selectedDeal.title}</h2>
                     {selectedDeal.isNew && <div className="badge-new">{t('discounts.deal_card.new')}</div>}
                     
@@ -502,8 +512,8 @@ function Discounts() {
                                 required
                               ></textarea>
                             </div>
-                            <div className="flex gap-3">
-                              <input type="submit" className="btn btn-primary mx-2"
+                            <div className="flex flex-wrap gap-3">
+                              <input type="submit" className="btn btn-primary"
                                 value={userReview ? t('discounts.deal_modal.update') : t('discounts.deal_modal.submit')}
                               />
                               {isEditing && (
@@ -519,9 +529,9 @@ function Discounts() {
                           </form>
                         ) : (
                           <div>
-                            <div className="flex justify-between items-start">
+                            <div className="flex flex-wrap justify-between items-start">
                               <h4 className="font-medium mb-3">{t('discounts.deal_modal.your_review')}</h4>
-                              <div className='d-flex float-end'>
+                              <div className='d-flex'>
                                 <div 
                                   onClick={handleEditClick}
                                   className="btn btn-sm btn-outline-primary me-2"
@@ -559,7 +569,7 @@ function Discounts() {
                         dealReviews.map((review) => (
                           (!user || review.user !== user.id) && (
                             <div key={review._id} className="review-item p-3 bg-gray-50 rounded-lg mb-3">
-                              <div className="flex justify-between items-start">
+                              <div className="flex flex-wrap justify-between items-start">
                                 <div className="font-medium">{review.name}</div>
                                 <div className="text-gray-500 text-sm">
                                   {new Date(review.date).toLocaleDateString()}
