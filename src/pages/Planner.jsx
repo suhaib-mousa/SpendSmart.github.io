@@ -224,7 +224,7 @@ function Planner() {
       ];
 
       if (remaining > 0) {
-        backgroundColors.push('#CCCCCC');
+        backgroundColors.push('#B7E0FF');
       }
 
       budgetChartRef.current = new Chart(ctx, {
@@ -406,7 +406,8 @@ function Planner() {
       if (!hasMatchingEntry) {
         await savePlannerEntry({
           monthlyIncome,
-          expenses
+          expenses,
+          date: new Date().toISOString() // حفظ التاريخ الحالي بالتوقيت العالمي
         });
         await fetchPlannerHistory();
         toast.success(t('planner.success.data_saved'));
@@ -460,6 +461,18 @@ function Planner() {
 
   const totalExpenses = Object.values(expenses).reduce((sum, value) => sum + (parseFloat(value) || 0), 0);
   const remainingIncome = monthlyIncome - totalExpenses;
+
+  // دالة لتنسيق التاريخ الميلادي بشكل واضح
+  const formatGregorianDate = (dateString) => {
+    const date = new Date(dateString);
+    const options = { 
+      year: 'numeric', 
+      month: 'long', 
+      day: 'numeric',
+      calendar: 'gregory'
+    };
+    return date.toLocaleDateString('ar-EG', options);
+  };
 
   return (
     <div className="budget-container">
@@ -532,17 +545,22 @@ function Planner() {
           {user && showHistory && plannerHistory.length > 0 && (
             <div className="history-section budget-section">
               <h2 className="section-title">{t('planner.history.title')}</h2>
-              {plannerHistory.map((entry, index) => (
-                <div key={entry._id} className="history-item">
-                  <h3>{t('planner.history.plan', { number: index + 1, date: new Date(entry.date).toLocaleDateString() })}</h3>
-                  <div className="history-details">
-                    <p>{t('planner.history.monthly_income')}: {entry.monthlyIncome.toFixed(2)} JOD</p>
-                    <p>{t('planner.history.total_expenses')}: {entry.analysis.totalExpenses.toFixed(2)} JOD</p>
-                    <p>{t('planner.history.savings_rate')}: {entry.analysis.savingsRate.toFixed(1)}%</p>
-                    <p>{t('planner.history.debt_ratio')}: {entry.analysis.debtToIncomeRatio.toFixed(1)}%</p>
+              {plannerHistory.map((entry, index) => {
+                // تنسيق التاريخ الميلادي بشكل واضح
+                const formattedDate = formatGregorianDate(entry.date);
+                
+                return (
+                  <div key={entry._id} className="history-item">
+                    <h3>{t('planner.history.plan', { number: index + 1, date: formattedDate })}</h3>
+                    <div className="history-details">
+                      <p>{t('planner.history.monthly_income')}: {entry.monthlyIncome.toFixed(2)} JOD</p>
+                      <p>{t('planner.history.total_expenses')}: {entry.analysis.totalExpenses.toFixed(2)} JOD</p>
+                      <p>{t('planner.history.savings_rate')}: {entry.analysis.savingsRate.toFixed(1)}%</p>
+                      <p>{t('planner.history.debt_ratio')}: {entry.analysis.debtToIncomeRatio.toFixed(1)}%</p>
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>
@@ -558,7 +576,7 @@ function Planner() {
             <h2>{t('planner.cta.title')}</h2>
             <p>{user ? t('planner.cta.logged_in') : t('planner.cta.login_prompt')}</p>
             <div className="cta-buttons">
-             <button 
+              <button 
                 className="save-button" 
                 onClick={handleStartAnalysis}
                 disabled={isSaving || !!error}

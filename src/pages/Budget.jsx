@@ -208,7 +208,7 @@ function Budget() {
         startConversation();
       }
 
-      hasStartedRef.current = true; // ✅ Prevents any of the above from repeating
+      hasStartedRef.current = true;
     }
 
     return () => {
@@ -218,8 +218,16 @@ function Budget() {
     };
   }, []);
 
+  // تأثير للتمرير إلى أحدث رسالة
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages, isTyping]);
 
-
+  const scrollToBottom = () => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
 
   const setLanguage = (lang) => {
     setCurrentLanguage(lang);
@@ -385,7 +393,7 @@ function Budget() {
           <div key={index} className="category-advice">
             <h4 className="font-semibold">
               {currentLanguage === 'ar'
-                ? advice.category.charAt(0).toUpperCase() + advice.category.slice(1)
+                ? translateCategory(advice.category)
                 : advice.category.charAt(0).toUpperCase() + advice.category.slice(1)}
             </h4>
             <p>{advice.advice}</p>
@@ -415,7 +423,7 @@ function Budget() {
             {categoryAdvice.slice(0, 3).map((advice, index) => (
               <li key={index} className="mb-2">
                 {currentLanguage === 'ar'
-                  ? `${advice.category}: قلل الإنفاق بنسبة 50٪ للوصول إلى الميزانية الموصى بها البالغة ${((recommendedPercentages[advice.category] / 100) * data.totalIncome).toFixed(2)} دينار شهريًا.`
+                  ? `${translateCategory(advice.category)}: قلل الإنفاق بنسبة 50٪ للوصول إلى الميزانية الموصى بها البالغة ${((recommendedPercentages[advice.category] / 100) * data.totalIncome).toFixed(2)} دينار شهريًا.`
                   : `${advice.category.charAt(0).toUpperCase() + advice.category.slice(1)}: Reduce spending by 50% to reach the recommended budget of ${((recommendedPercentages[advice.category] / 100) * data.totalIncome).toFixed(2)} JOD monthly.`}
               </li>
             ))}
@@ -444,7 +452,7 @@ function Budget() {
           data: {
             labels: Object.keys(data.expenses).map(key => 
               currentLanguage === 'ar'
-                ? key.charAt(0).toUpperCase() + key.slice(1)
+                ? translateCategory(key)
                 : key.charAt(0).toUpperCase() + key.slice(1)
             ),
             datasets: [
@@ -595,7 +603,7 @@ function Budget() {
         </div>
       )}
 
-      <div className="chat-messages" ref={messagesEndRef}>
+      <div className="chat-messages">
         {messages.map((msg, index) => (
           <div
             key={index}
@@ -611,6 +619,7 @@ function Budget() {
             <span></span>
           </div>
         )}
+        <div ref={messagesEndRef} />
       </div>
 
       <form onSubmit={handleSubmit} className="chat-input">

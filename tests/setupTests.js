@@ -25,7 +25,20 @@ Object.defineProperty(window, 'matchMedia', {
   })),
 });
 
-// Global mock for react-hot-toast
+// Mock Chart.js
+jest.mock('chart.js', () => ({
+  Chart: jest.fn(),
+  registerables: [],
+  register: jest.fn(),
+}));
+
+// Mock AOS
+jest.mock('aos', () => ({
+  init: jest.fn(),
+  refresh: jest.fn(),
+}));
+
+// Mock react-hot-toast
 jest.mock('react-hot-toast', () => ({
   toast: {
     success: jest.fn(),
@@ -35,3 +48,21 @@ jest.mock('react-hot-toast', () => ({
   },
   Toaster: jest.fn(() => null)
 }));
+
+// Mock html2pdf
+jest.mock('html2pdf.js', () => ({
+  __esModule: true,
+  default: jest.fn()
+}));
+
+// Set up document.createRange for jsdom
+if (typeof document.createRange !== 'function') {
+  document.createRange = () => ({
+    setStart: () => {},
+    setEnd: () => {},
+    commonAncestorContainer: {
+      nodeName: 'BODY',
+      ownerDocument: document,
+    },
+  });
+}

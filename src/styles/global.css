@@ -152,3 +152,22 @@
   margin-right: auto !important;
   margin-left: 0 !important;
 }
+/* ✅ إخفاء شكل السكرول بدون منع التمرير */
+
+/* Chrome, Safari, Edge */
+::-webkit-scrollbar {
+  width: 0px;
+  height: 0px;
+}
+
+/* Firefox */
+body {
+  scrollbar-width: none;
+}
+
+/* تأكد من السماح بالتمرير */
+html, body {
+  overflow-x: auto;
+  overflow-y: auto;
+  height: auto;
+}

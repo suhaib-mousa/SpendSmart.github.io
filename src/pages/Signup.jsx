@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import { register } from '../services/auth';
@@ -12,6 +12,16 @@ function Signup() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    // إخفاء التمرير في الصفحة الرئيسية
+    document.body.style.overflow = 'hidden';
+    
+    // تنظيف عند إغلاق المكون
+    return () => {
+      document.body.style.overflow = 'visible';
+    };
+  }, []);
 
   const handleSignup = async (e) => {
     e.preventDefault();
@@ -41,8 +51,9 @@ function Signup() {
 
   return (
     <div className="auth-container">
-      <div className="login auth-cta-side">
-        <div className="auth-logo text-white">
+      {/* الجانب الأيسر - دعوة للتسجيل */}
+      <div className="auth-cta-side">
+        <div className="auth-logo">
           <Link to="/">
             <i className="fa-solid fa-wallet"> SpendSmart</i>
           </Link>
@@ -58,7 +69,8 @@ function Signup() {
         </div>
       </div>
 
-      <div className="login auth-form-side">        
+      {/* الجانب الأيمن - نموذج التسجيل */}
+      <div className="auth-form-side">
         <div className="auth-form-container">
           <div className="auth-title">
             <h1>Sign Up for an Account</h1>
@@ -66,34 +78,31 @@ function Signup() {
           </div>
 
           <form className="auth-form" onSubmit={handleSignup}>
-            <div className="row">
-              <div className="col-6">
-                <div className="form-group">
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="firstName"
-                    placeholder=" "
-                    value={firstName}
-                    onChange={(e) => setFirstName(e.target.value)}
-                    required
-                  />
-                  <label className="form-label" htmlFor="firstName">First name</label>
-                </div>
+            <div className="form-row">
+              <div className="form-group">
+                <input
+                  type="text"
+                  className="form-control"
+                  id="firstName"
+                  placeholder=" "
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                  required
+                />
+                <label className="form-label" htmlFor="firstName">First name</label>
               </div>
-              <div className="col-6">
-                <div className="form-group">
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="lastName"
-                    placeholder=" "
-                    value={lastName}
-                    onChange={(e) => setLastName(e.target.value)}
-                    required
-                  />
-                  <label className="form-label" htmlFor="lastName">Last name</label>
-                </div>
+              
+              <div className="form-group">
+                <input
+                  type="text"
+                  className="form-control"
+                  id="lastName"
+                  placeholder=" "
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                  required
+                />
+                <label className="form-label" htmlFor="lastName">Last name</label>
               </div>
             </div>
 
@@ -136,9 +145,13 @@ function Signup() {
               <label className="form-label" htmlFor="confirmPassword">Confirm Password</label>
             </div>
 
-          
             <button type="submit" className="submit-button" disabled={loading}>
-              {loading ? 'Signing up...' : 'Sign Up'}
+              {loading ? (
+                <>
+                  <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                  Signing up...
+                </>
+              ) : 'Sign Up'}
             </button>
           </form>
         </div>
