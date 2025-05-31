@@ -13,6 +13,7 @@
     "test": "jest --transformIgnorePatterns \"node_modules/(?!swiper)/\"",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
+    "test:clear-cache": "jest --clearCache",
     "start": "node server/index.js",
     "build:frontend": "vite build",
     "serve:frontend": "vite preview"
