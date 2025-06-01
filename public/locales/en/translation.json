@@ -16,6 +16,7 @@
     "hero": {
       "title": "Find the Best Deals",
       "subtitle": "Discover amazing discounts and offers across Jordan",
+      "invite": "And if you want to add your own discount, email us at",
       "search_placeholder": "Search for deals, locations, or categories..."
     },
     "filters": {
@@ -225,7 +226,7 @@
         "learn_more": "Learn More"
       },
       "database": {
-        "title": "Comprehensive Discount Database",
+        "title": "Comprehensive Discount ",
         "description": "Browse and filter discounts by category, location, and expiration date. Find the best deals in Jordan for restaurants, retail, services, and more. Save your favorite deals and get notified when similar offers become available",
         "learn_more": "Learn More"
       },

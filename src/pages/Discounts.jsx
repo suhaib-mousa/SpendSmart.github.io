@@ -281,32 +281,47 @@ function Discounts() {
 
   return (
     <div className="discounts-page">
-      <section className="hero-section">
-        <div className="container">
-          <div className="row align-items-center">
-            <div className="col-lg-6" data-aos="fade-right">
-              <h1>{t('discounts.hero.title')}</h1>
-              <p>{t('discounts.hero.subtitle')}</p>
-              {user && (
-                <div className="search-box">
-                  <input 
-                    type="text" 
-                    placeholder={t('discounts.hero.search_placeholder')}
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') e.preventDefault();
-                    }}
-                  />
-                </div>
-              )}
+      <div className="discounts-page">
+  <section className="hero-section">
+    <div className="container">
+      <div className="row align-items-center">
+        <div className="col-lg-6" data-aos="fade-right">
+          <h1>{t('discounts.hero.title')}</h1>
+          <p>{t('discounts.hero.subtitle')}</p>
+          
+          <p className="mt-3">
+            {t('discounts.hero.invite')}{' '}
+            <a
+              href="mailto:spendsmart04@gmail.com"
+              style={{ color: '#007BFF', textDecoration: 'underline' }}
+            >
+              spendsmart04@gmail.com
+            </a>
+          </p>
+
+          {user && (
+            <div className="search-box">
+              <input 
+                type="text" 
+                placeholder={t('discounts.hero.search_placeholder')}
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') e.preventDefault();
+                }}
+              />
             </div>
-            <div className="col-lg-6" data-aos="fade-left">
-              <img src="/Media/disc.png" alt="Discover Deals" className="hero-image" />
-            </div>
-          </div>
+          )}
         </div>
-      </section>
+
+        <div className="col-lg-6" data-aos="fade-left">
+          <img src="/Media/disc.png" alt="Discover Deals" className="hero-image" />
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
 
       {user && (
         <section className="filters-section">
