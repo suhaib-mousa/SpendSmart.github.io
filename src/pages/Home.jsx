@@ -127,7 +127,7 @@ function Home() {
                 </Link>
               </div>
               <div className="col-lg-6" data-aos="fade-right" data-aos-duration="1000">
-                <img src="/Media/disc.png" alt="Smart Recommendations" className="img-fluid feature-img" />
+                <img src="https://placehold.co/600x400/e6f2ff/0056b3?text=Smart+Recommendations" alt="Smart Recommendations" className="img-fluid feature-img" />
               </div>
             </div>
           </div>

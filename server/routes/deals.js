@@ -13,7 +13,7 @@ router.get('/', async (req, res) => {
     let filter = {};
 
     if (category) {
-      // إذا المستخدم أرسل اسم الكاتيجوري بدل الـ ID
+      //  إذا المستخدم أرسل اسم الكاتيجوري بدل الـ ID           هاي عملتها عشان ازبط الداتابيس كان ما بنادي زي ما بدي  
       const categoryDoc = await Category.findOne({ name: category });
       if (categoryDoc) {
         filter.category = categoryDoc._id;
